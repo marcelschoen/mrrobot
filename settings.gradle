@@ -1,1 +1,1 @@
-include 'game-android'
+include 'game-desktop', 'game-android', 'game-core'

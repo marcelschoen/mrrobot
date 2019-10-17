@@ -38,12 +38,26 @@ allprojects {
     }
 }
 
+project(":game-desktop") {
+    apply plugin: "java-library"
+
+
+    dependencies {
+        implementation project(":game-core")
+        api "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+        api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+
+    }
+}
+
 project(":game-android") {
     apply plugin: "android"
 
     configurations { natives }
 
     dependencies {
+        implementation project(":game-core")
         api "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
@@ -57,5 +71,16 @@ project(":game-android") {
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86_64"
         
+    }
+}
+
+project(":game-core") {
+    apply plugin: "java-library"
+
+
+    dependencies {
+        api "com.badlogicgames.gdx:gdx:$gdxVersion"
+        api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+
     }
 }
