@@ -1,1 +1,1 @@
-include 'game-desktop', 'game-android', 'game-core'
+include 'jplay-gamepad', 'game-core', 'game-desktop', 'game-android'

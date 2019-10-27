@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/game-android/game-android.iml" filepath="$PROJECT_DIR$/game-android/game-android.iml" />
       <module fileurl="file://$PROJECT_DIR$/game-core/game-core.iml" filepath="$PROJECT_DIR$/game-core/game-core.iml" />
       <module fileurl="file://$PROJECT_DIR$/game-desktop/game-desktop.iml" filepath="$PROJECT_DIR$/game-desktop/game-desktop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jplay-gamepad/jplay-gamepad.iml" filepath="$PROJECT_DIR$/jplay-gamepad/jplay-gamepad.iml" />
       <module fileurl="file://$PROJECT_DIR$/mrrobot.iml" filepath="$PROJECT_DIR$/mrrobot.iml" />
     </modules>
   </component>
