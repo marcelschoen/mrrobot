@@ -81,6 +81,13 @@ public class JPlaySprite {
 	}
 
 	/**
+	 * @return The LIBGDX sprite.
+	 */
+	public Sprite getSprite() {
+		return this.sprite;
+	}
+
+	/**
 	 * Defines if this is a DarkFunctions sprite.
 	 * 
 	 * @param value True if it is.
@@ -102,7 +109,15 @@ public class JPlaySprite {
 		TextureRegion keyFrame = this.animation.getKeyFrame(this.stateTime, true);
 		return keyFrame.getRegionHeight();
 	}
-	
+
+	public AnimationInfo getAnimationInfo() {
+		return animationInfo;
+	}
+
+	public Animation<TextureRegion> getAnimation() {
+		return animation;
+	}
+
 	/**
 	 * Draws the sprite into a given spriteBatch.
 	 * 

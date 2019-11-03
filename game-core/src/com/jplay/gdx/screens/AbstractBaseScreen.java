@@ -9,6 +9,8 @@ package com.jplay.gdx.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
@@ -27,9 +29,8 @@ import ch.marcelschoen.mrrobot.MrRobotGame;
  * @author Marcel Schoen
  * @version $Revision: 1.5 $
  */
-public abstract class AbstractBaseScreen implements Screen {
-//public abstract class AbstractBaseScreen implements Screen, InputProcessor {
-	
+public abstract class AbstractBaseScreen implements Screen, InputProcessor {
+
 	/** Reference to the game. */
 	protected Game game = null;
 
@@ -53,9 +54,10 @@ public abstract class AbstractBaseScreen implements Screen {
 	 */
 	public AbstractBaseScreen(Game game, Screen previousScreen) {
 		this.game = game;
-		this.batch = ScreenUtil.getBatch();
-		this.shapeRenderer = ScreenUtil.getShapeRenderer();
 		this.camera = ScreenUtil.getCamera();
+		this.batch = ScreenUtil.getBatch();
+		this.batch.setProjectionMatrix(this.camera.combined);
+		this.shapeRenderer = ScreenUtil.getShapeRenderer();
 		this.previousScreen = previousScreen;
 	}
 	
@@ -123,7 +125,7 @@ public abstract class AbstractBaseScreen implements Screen {
 
 		handleJoypad();
 		
-		Gdx.gl.glClearColor(1, 1, 0.5f, 1);
+		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 	}
 
@@ -175,7 +177,7 @@ public abstract class AbstractBaseScreen implements Screen {
 	 */
 	@Override
 	public void show() {
-//		Gdx.input.setInputProcessor(this);
+		Gdx.input.setInputProcessor(this);
 	}
 
 	/* (non-Javadoc)
@@ -183,7 +185,7 @@ public abstract class AbstractBaseScreen implements Screen {
 	 */
 	@Override
 	public void hide() {
-//		Gdx.input.setInputProcessor(null);
+		Gdx.input.setInputProcessor(null);
 	}
 
 	/* (non-Javadoc)
@@ -212,10 +214,44 @@ public abstract class AbstractBaseScreen implements Screen {
 		Gdx.input.setInputProcessor(null);
 	}
 
+	@Override
+	public boolean keyUp(int keycode) {
+		return false;
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		return false;
+	}
+
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+		return false;
+	}
+
+	@Override
+	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+		return false;
+	}
+
+	@Override
+	public boolean touchDragged(int screenX, int screenY, int pointer) {
+		return false;
+	}
+
+	@Override
+	public boolean mouseMoved(int screenX, int screenY) {
+		return false;
+	}
+
+	@Override
+	public boolean scrolled(int amount) {
+		return false;
+	}
+
 	/* (non-Javadoc)
 	 * @see com.badlogic.gdx.InputProcessor#keyDown(int)
 	 */
-	/*
 	@Override
 	public boolean keyDown(int keycode) {
 		if(keycode == Input.Keys.DPAD_DOWN) {
@@ -231,8 +267,7 @@ public abstract class AbstractBaseScreen implements Screen {
 		}
 		return false;
 	}
-	*/
-	
+
 	/**
 	 * Perform menu stuff when cursor up key is pressed
 	 * or up on dpad.

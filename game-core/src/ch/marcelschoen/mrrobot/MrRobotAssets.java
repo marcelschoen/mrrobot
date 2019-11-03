@@ -2,13 +2,13 @@ package ch.marcelschoen.mrrobot;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.files.FileHandle;
 import com.jplay.gdx.AnimationInfo;
 import com.jplay.gdx.Assets;
 import com.jplay.gdx.FileUtil;
 import com.jplay.gdx.FontID;
 import com.jplay.gdx.JPlaySprite;
 import com.jplay.gdx.SoundID;
+import com.jplay.gdx.SpriteID;
 import com.jplay.gdx.TextureID;
 import com.jplay.gdx.darkfunction.AnimationSheet;
 import com.jplay.gdx.darkfunction.SpriteSheet;
@@ -57,7 +57,8 @@ public class MrRobotAssets extends Assets {
     }
 
     /** IDs of textures. */
-    private static enum TEXTURE_ID implements TextureID {
+    public static enum TEXTURE_ID implements TextureID {
+        TITLE,
         LOADING;
         public static TEXTURE_ID fromString(String name) {
             for(TEXTURE_ID id : values()) {
@@ -69,13 +70,33 @@ public class MrRobotAssets extends Assets {
         }
     }
 
+    /** IDs of animated sprites. */
+    public static enum SPRITE_ID implements SpriteID {
+        MRROBOT("MRROBOT");
+        String alias;
+        SPRITE_ID(String alias) {
+            this.alias = alias;
+        }
+        public String getAlias() {
+            return alias;
+        }
+        public static SPRITE_ID fromString(String name) {
+            for(SPRITE_ID id : values()) {
+                if(id.name().equals(name)) {
+                    return id;
+                }
+            }
+            throw new IllegalArgumentException("** invalid SPRITE_ID: " + name);
+        }
+    }
+
     /**
      * Initializes the asset handler.
      */
     public void doLoadAssets() {
         // Load font for loading screen first
         loadTexture("loading.png", TEXTURE_ID.LOADING);
-        getSpriteFromTexture(getTexture(TEXTURE_ID.LOADING), 0, 0, 174, 32, SPRITE_ID.LOADING);
+        loadTexture("mrrobot-title.png", TEXTURE_ID.TITLE);
         // Immediately start loading
         super.manager.update();
     }
@@ -84,20 +105,6 @@ public class MrRobotAssets extends Assets {
      * Continues loading assets.
      */
     public void continueLoadingAssets() {
-        // List and load all game fonts
-        super.loadSpritesFromSpriteSheet(new SpriteSheet("title.sprites"));
-
-        FileHandle dir = Gdx.files.internal(AnimationSheet.getAnimationsFolder());
-        System.out.println("--> DIRECTORY: " + dir.path() + ", exists: " + dir.exists() + ", is dir: " + dir.isDirectory());
-        FileHandle[] entries = dir.list();
-        System.out.println("Entries: " + entries.length);
-        for(FileHandle entry : entries) {
-            System.out.println(" Entry suffix: " + entry.extension());
-            if(entry.extension().equals("anim")) {
-                System.out.println("Sprite animation sheet: " + entry.name());
-            }
-        }
-
         // Load all bitmap fonts
         Properties fontList = FileUtil.readConfigPropertyFile("fontlist.properties");
         for(Map.Entry<Object, Object> entry : fontList.entrySet()) {
@@ -114,38 +121,19 @@ public class MrRobotAssets extends Assets {
             loadSound(soundFile, SOUND_ID.fromString(soundName));
         }
 
-        // Read animation and sprite info
-        processAnimationSheet("mrrobot.anim");
-/*
-        processAnimationSheet("BombsAndItems.anim");
-        processAnimationSheet("joypads.anim");
-        processAnimationSheet("BombExplosion.anim");
-        processAnimationSheet("explosion_item_wall.anim");
-
-        // Load sprites of joypads separately for rendering non-animated sprites
-        super.loadSpritesFromSpriteSheet(new SpriteSheet("joypads.sprites"));
-
-        // Load textures
-        Properties textureList = FileUtil.readConfigPropertyFile("texturelist.properties");
-        for(Map.Entry<Object, Object> entry : textureList.entrySet()) {
-            String textureName = (String)entry.getKey();
-            String textureFile = (String)entry.getValue();
-            loadTexture(textureFile, TEXTURE_ID.fromString(textureName));
+        // Read sprite info
+        Properties spriteList = FileUtil.readConfigPropertyFile("spritelist.properties");
+        for(Map.Entry<Object, Object> entry : spriteList.entrySet()) {
+            String spriteFile = (String)entry.getValue();
+            super.loadSpritesFromSpriteSheet(new SpriteSheet(spriteFile));
         }
 
-        // Load sprites (single images)
-        int arrowSize = 64;
-        getSpriteFromTexture(getTexture(TEXTURE_ID.MENUARROW), 0, 0, arrowSize, arrowSize, SPRITE_ID.MENU_ARROW);
-
-        getJPlaySpriteFromTexture(getTexture(TEXTURE_ID.FLOORS_AND_WALLS), Tile.WIDTH * 0, 0, Tile.WIDTH, Tile.HEIGHT, SPRITE_ID.TILE_WALL_DESTRUCTIBLE);
-        getJPlaySpriteFromTexture(getTexture(TEXTURE_ID.FLOORS_AND_WALLS), Tile.WIDTH * 1, 0, Tile.WIDTH, Tile.HEIGHT, SPRITE_ID.TILE_WALL_HARD);
-        getJPlaySpriteFromTexture(getTexture(TEXTURE_ID.FLOORS_AND_WALLS), Tile.WIDTH * 2, 0, Tile.WIDTH, Tile.HEIGHT, SPRITE_ID.TILE_FLOOR);
-        getJPlaySpriteFromTexture(getTexture(TEXTURE_ID.FLOORS_AND_WALLS), Tile.WIDTH * 3, 0, Tile.WIDTH, Tile.HEIGHT, SPRITE_ID.TILE_FLOOR_SHADOWED);
-
-
-        PlayerCharacter.initializeCharacters();
-
- */
+        // Read animation info
+        Properties animatedSpriteList = FileUtil.readConfigPropertyFile("animationlist.properties");
+        for(Map.Entry<Object, Object> entry : animatedSpriteList.entrySet()) {
+            String animationFile = (String)entry.getValue();
+            processAnimationSheet(animationFile);
+        }
     }
 
     /**
@@ -159,7 +147,6 @@ public class MrRobotAssets extends Assets {
         Set<String> animationNames = sheet.getAnimationNames();
         for(String alias : animationNames) {
             AnimationInfo animationInfo = sheet.getAnimationInfo(alias);
-            System.out.println("Animation: " + alias);
             addJPlaySprite(new JPlaySprite(animationInfo, true), alias);
         }
     }

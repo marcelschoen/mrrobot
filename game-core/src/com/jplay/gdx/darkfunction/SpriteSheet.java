@@ -99,7 +99,7 @@ public class SpriteSheet {
 			int w = node.getIntAttribute("w");
 			int h = node.getIntAttribute("h");
 			TextureRegion region = new TextureRegion(this.texture, x, y, w, h);
-			region.flip(false, true);
+			//region.flip(false, true);
 			Sprite sprite = new Sprite(region);
 			spriteMap.put(alias, sprite);
 			System.out.println("Sprite '" + alias + "' loaded into sprite sheet.");

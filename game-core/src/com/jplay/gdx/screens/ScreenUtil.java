@@ -6,12 +6,17 @@
 
 package com.jplay.gdx.screens;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.awt.Dimension;
+
+import ch.marcelschoen.mrrobot.screens.Resolution;
 
 /**
  * Screen-related utility stuff.
@@ -24,6 +29,7 @@ public class ScreenUtil {
 	private static OrthographicCamera camera;
 	private static SpriteBatch batch;
 	private static ShapeRenderer shapeRenderer = new ShapeRenderer();
+	private static Viewport viewPort;
 
 	/** Offset and size of GL viewport. */
 	public static int viewPortWidth = -1;
@@ -31,71 +37,22 @@ public class ScreenUtil {
 	public static int viewPortX = -1;
 	public static int viewPortY = -1;
 	
-	/** Supported screen resolutions */
-	public static enum RESOLUTION {
+	/** Stores the current screen resolution. */
+	private static Resolution screenResolution = null;
 
-		/** For mobile gaming 
-		XPERIA_PLAY(854, 480),
-		*/
-		
-		/** For testing / development */
-		HD(1280, 720, "hd"),
-		
-		/** For OUYA TV gaming */
-		FULL_HD(1920, 1080, "fullhd");
-		
-		private String type = null;
-		private int width = -1;
-		private int height = -1;
-		private static Dimension size = null;
+	/** Stores the current in-game resolution. */
+	private static Resolution virtualResolution = null;
 
-		/**
-		 * Creates a gameResolution holder.
-		 * 
-		 * @param width The width in number of pixels.
-		 * @param height The height in number of pixels.
-		 */
-		RESOLUTION(int width, int height, String type) {
-			this.width = width;
-			this.height = height;
-			this.type = type;
-		}
-		
-		public int getWidth() {
-			return this.width;
-		}
-		
-		public int getHeight() {
-			return this.height;
-		}
-		
-		public Dimension getSize() {
-			return size;
-		}
-		
-		public String getType() {
-			return type;
-		}
-	}
+	/** Stores the current MIMINUM screenResolution supported by the game. */
+	private static final Resolution minimumResolution = new Resolution(1280, 720);
 
-	/** Stores the current gameResolution. */
-	private static RESOLUTION gameResolution = null;
-	
-	/** Stores the current MIMINUM gameResolution supported by the game. */
-	private static final RESOLUTION minimumResolution = RESOLUTION.HD;
 
-	/**
-	 * 
-	 */
-	public static void init() {
-	}
-	
 	/**
 	 * 
 	 * @return
 	 */
 	public static int getWidth() {
-		return gameResolution.getWidth();
+		return screenResolution.getWidth();
 	}
 	
 	/**
@@ -103,24 +60,33 @@ public class ScreenUtil {
 	 * @return
 	 */
 	public static int getHeight() {
-		return gameResolution.getHeight();
+		return screenResolution.getHeight();
 	}
-	
+
 	/**
-	 * Returns the current gameResolution.
-	 * 
-	 * @return The screen gameResolution.
+	 * Returns the current virtual game resolution.
+	 *
+	 * @return The screen game resolution.
 	 */
-	public static RESOLUTION getResolution() {
-		return gameResolution;
+	public static Resolution getVirtualResolution() {
+		return virtualResolution;
+	}
+
+	/**
+	 * Returns the current screen resolution.
+	 * 
+	 * @return The screen screen resolution.
+	 */
+	public static Resolution getScreenResolution() {
+		return screenResolution;
 	}
 	
 	/**
 	 * 
 	 * @return
 	 */
-	public static Dimension getSize() {
-		return gameResolution.getSize();
+	public static Dimension getScreenSize() {
+		return screenResolution.getSize();
 	}
 
 	/**
@@ -131,56 +97,64 @@ public class ScreenUtil {
 		batch = null;
 	}
 
+	public static void initialize(int width, int height) {
+		virtualResolution = new Resolution(width, height);
+		float w = Gdx.graphics.getWidth();
+		float h = Gdx.graphics.getHeight();
+		resize((int)w, (int)h);
+	}
+
 	/**
 	 * 
 	 * @param newDisplayWidth
 	 * @param newDisplayHeight
 	 */
 	public static void resize(int newDisplayWidth, int newDisplayHeight) {
+
+		if(virtualResolution == null) {
+			throw new IllegalStateException("Set virtual game size first with 'initialize'!");
+		}
 		
 		// Perform this stuff only once. This game does not support
 		// on-the-fly resizing anyway.
-		if(gameResolution == null) {
-			// TODO: select gameResolution based on input
-			if(newDisplayWidth < minimumResolution.width || newDisplayHeight < minimumResolution.height) {
-				throw new IllegalStateException("** Screen gameResolution too small / not supported! **");
+		if(screenResolution == null) {
+			// TODO: select screenResolution based on input
+			if(newDisplayWidth < minimumResolution.getWidth() || newDisplayHeight < minimumResolution.getHeight()) {
+				throw new IllegalStateException("** Screen screenResolution too small / not supported! **");
 			}
-			gameResolution = RESOLUTION.HD;
+			screenResolution = minimumResolution;
 			
-			System.out.println("Resolution: " + gameResolution.width + " / " + gameResolution.height);
-			camera = new OrthographicCamera(gameResolution.width, gameResolution.height);
-			camera.setToOrtho(true, gameResolution.width, gameResolution.height);
-			
+			camera = new OrthographicCamera(screenResolution.getWidth(), screenResolution.getHeight());
+			camera.setToOrtho(false, screenResolution.getWidth(), screenResolution.getHeight());
+
+			viewPort = new FitViewport(virtualResolution.getWidth(), virtualResolution.getHeight(), camera);
+
 			batch = new SpriteBatch();
 			batch.setProjectionMatrix(camera.combined);
-			
+
 			shapeRenderer = new ShapeRenderer();
 			shapeRenderer.setProjectionMatrix(camera.combined);
 			
-			float xRatio = (float)newDisplayWidth / (float)gameResolution.getWidth();
-			float yRatio = (float)newDisplayHeight / (float)gameResolution.getHeight();
+			float xRatio = (float)newDisplayWidth / (float) screenResolution.getWidth();
+			float yRatio = (float)newDisplayHeight / (float) screenResolution.getHeight();
 			
 			if(xRatio < yRatio) {
 				// Stretch horizontally
 				viewPortWidth = newDisplayWidth;
-				viewPortHeight = (int)((float)gameResolution.height * xRatio);
+				viewPortHeight = (int)((float) screenResolution.getHeight() * xRatio);
 				viewPortX = 0;
 				viewPortY = ( newDisplayHeight - viewPortHeight) / 2;
 			} else {
 				// Stretch vertically
-				viewPortWidth = (int)((float)gameResolution.width * yRatio);
+				viewPortWidth = (int)((float) screenResolution.getWidth() * yRatio);
 				viewPortHeight = newDisplayHeight;
 				viewPortX = ( newDisplayWidth - viewPortWidth ) / 2;
 				viewPortY = 0;
 			}
-			/*
-			viewPortWidth = gameResolution.width;
-			viewPortHeight = gameResolution.height;
-			viewPortX = 0;
-			viewPortY = 0;
-			*/
-			System.out.println("---- VIEWPORT ---");
-			System.out.println("Pos: " + viewPortX + "/" + viewPortY + ", size: " + viewPortWidth + "/" + viewPortHeight);
+		} else {
+			camera.update();
+			viewPort.update(newDisplayWidth, newDisplayHeight, true);
+			batch.setProjectionMatrix(camera.combined);
 		}
 	}
 

@@ -1,9 +1,7 @@
 package ch.marcelschoen.mrrobot;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.jplay.gdx.Assets;
 import com.jplay.gdx.darkfunction.AnimationSheet;
 import com.jplay.gdx.screens.OnScreenLabelTweenAccessor;
@@ -32,6 +30,10 @@ import ch.marcelschoen.mrrobot.screens.TitleScreen;
  */
 public class MrRobotGame extends Game {
 
+    // Map is 40x22 with 8x8 pixel tiles
+    public static int VIRTUAL_WIDTH = 320;
+    public static int VIRTUAL_HEIGHT = 176;
+
     public static boolean testing = false;
 
     /** Singleton instance of game. */
@@ -40,7 +42,7 @@ public class MrRobotGame extends Game {
     /** Stores the current display mode. */
     public static Graphics.DisplayMode displayMode = null;
 
-    public SpriteBatch spriteBatch;
+    public PlayScreen playScreen;
 
     @Override
     public void create() {
@@ -49,8 +51,7 @@ public class MrRobotGame extends Game {
         }
         instance = this;
 
-        AnimationSheet.initialize("sprites");
-///////        com.jplay.gdx.joypad.Controllers.initialize();
+        AnimationSheet.initialize("animation");
 
         if(System.getProperty("game.testing","").equalsIgnoreCase("on")) {
             // enable interactive testing
@@ -60,22 +61,17 @@ public class MrRobotGame extends Game {
         SpriteTweenAccessor.register();
         OnScreenLabelTweenAccessor.register();
 
-        float w = Gdx.graphics.getWidth();
-        float h = Gdx.graphics.getHeight();
-        ScreenUtil.resize((int)w, (int)h);
+        ScreenUtil.initialize(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
         Assets assets = new MrRobotAssets();
         assets.initialize();
-
-        this.spriteBatch = new SpriteBatch();
-        //setScreen(new PlayScreen(this));
 
         TitleScreen titleScreen = new TitleScreen(this);
         setScreen(new LoadingScreen(this, titleScreen));
     }
 
     public void finishInitialization() {
-        PlayScreen playScreen = new PlayScreen(this);
+        playScreen = new PlayScreen(this);
     }
 
     /**

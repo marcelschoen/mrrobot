@@ -7,14 +7,13 @@ package ch.marcelschoen.mrrobot.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.Texture;
 import com.jplay.gdx.Assets;
 import com.jplay.gdx.screens.AbstractBaseScreen;
 import com.jplay.gdx.screens.ScreenUtil;
 
 import ch.marcelschoen.mrrobot.MrRobotAssets;
 import ch.marcelschoen.mrrobot.MrRobotGame;
-import ch.marcelschoen.mrrobot.SPRITE_ID;
 
 /**
  * The first screen, displayed while the assets
@@ -52,10 +51,11 @@ public class LoadingScreen extends AbstractBaseScreen {
 			MrRobotGame.instance().finishInitialization();
 			MrRobotGame.instance().setScreen(titleScreen);
 		}
-		Sprite loading = Assets.instance().getSprite(SPRITE_ID.LOADING);
+
+		Texture loading = Assets.instance().getTexture(MrRobotAssets.TEXTURE_ID.LOADING);
 		if(loading != null) {
-			int x = (int) (( ScreenUtil.getResolution().getWidth() - loading.getWidth() ) / 2);
-			int y = (int) (( ScreenUtil.getResolution().getHeight() - loading.getHeight() ) / 2);
+			int x = (int) (( ScreenUtil.getScreenResolution().getWidth() - loading.getWidth() ) / 2);
+			int y = (int) (( ScreenUtil.getScreenResolution().getHeight() - loading.getHeight() ) / 2);
 			batch.draw(loading, x, y);
 		}
 		batch.end();

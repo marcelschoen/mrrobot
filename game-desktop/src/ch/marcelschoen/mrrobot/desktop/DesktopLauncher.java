@@ -15,9 +15,9 @@ public class DesktopLauncher {
 	public static void main (String[] args) {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "bombmaniacs-gdx";
-		cfg.width = 1280;
-		cfg.height = 720;
-		cfg.fullscreen = false;
+		cfg.width = 1920;
+		cfg.height = 1080;
+		cfg.fullscreen = true;
 		if(args != null && args.length > 0 && args[0].equalsIgnoreCase("fullscreen")) {
 			cfg.fullscreen = true;
 		}

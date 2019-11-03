@@ -2,8 +2,6 @@ package ch.marcelschoen.mrrobot.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.maps.MapLayer;
@@ -13,58 +11,35 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import com.jplay.gdx.Assets;
+import com.jplay.gdx.DebugOutput;
+import com.jplay.gdx.JPlaySprite;
+import com.jplay.gdx.screens.AbstractBaseScreen;
+import com.jplay.gdx.screens.ScreenUtil;
 
+import ch.marcelschoen.mrrobot.MrRobotAssets;
 import ch.marcelschoen.mrrobot.MrRobotGame;
-import ch.marcelschoen.mrrobot.scenes.Hud;
 
-public class PlayScreen implements Screen {
-
-    // Map is 40x22 with 8x8 pixel tiles
-    public static int VIRTUAL_WIDTH = 320;
-    public static int VIRTUAL_HEIGHT = 176;
-
-    private MrRobotGame game;
-    private Viewport gamePort = null;
-    private OrthographicCamera camera = null;
-    private Hud hud;
+public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ {
 
     private TiledMap map;
-    private OrthogonalTiledMapRenderer renderer;
+    private OrthogonalTiledMapRenderer tileMapRenderer;
     private TmxMapLoader loader;
 
-    private BitmapFont font;
+    private JPlaySprite mrRobotSprite;
 
-    private World world;
-    private Box2DDebugRenderer b2dr;
+    private boolean initialized = false;
 
-    //private Texture mrrobotSprite;
-
+    /**
+     *
+     * @param game
+     */
     public PlayScreen(MrRobotGame game) {
-        this.game = game;
-
-        this.world = new World(new Vector2(0,0), true); // world without gravity
-        b2dr = new Box2DDebugRenderer();
-
-        font = new BitmapFont(Gdx.files.internal("fonts/font1.fnt"),
-                Gdx.files.internal("fonts/font1.png"), false);
-        this.camera = new OrthographicCamera(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
-        this.camera.position.set(VIRTUAL_WIDTH / 2, VIRTUAL_HEIGHT / 2, 0f);
-
-        this.gamePort = new FitViewport(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, this.camera);
-        //this.gamePort = new ScreenViewport(this.camera);
+        super(game, null);
 
         this.loader = new TmxMapLoader();
         this.map = loader.load("map/level1_large.tmx");
-        this.renderer = new OrthogonalTiledMapRenderer(map);
+        this.tileMapRenderer = new OrthogonalTiledMapRenderer(map);
 
         System.out.println("------------------------ BEGIN -----------------------------");
         System.out.println("> Layers: " + this.map.getLayers().getCount());
@@ -84,19 +59,8 @@ public class PlayScreen implements Screen {
                             TiledMapTile tile = tiledMapTileLayer.getCell(colCt, lineCt).getTile();
                             line += tile.getId();
                             if(tile.getId() == 1 || tile.getId() == 2 || tile.getId() == 3 || tile.getId() == 4) {
-                                // generate polygon for box2d collision detection
-                                BodyDef bdef = new BodyDef();
-                                bdef.type = BodyDef.BodyType.StaticBody;
-                                bdef.position.set(colCt * 8, lineCt * 8);
+                                // tile with point to collect
 
-                                PolygonShape shape = new PolygonShape();
-                                shape.setAsBox(8, 8);
-
-                                FixtureDef fdef = new FixtureDef();
-                                fdef.shape = shape;
-
-                                Body body = world.createBody(bdef);
-                                body.createFixture(fdef);
                             }
                         }
                     }
@@ -110,18 +74,16 @@ public class PlayScreen implements Screen {
             }
         }
 
-        this.hud = new Hud(game.spriteBatch, this.font);
-
-        //this.mrrobotSprite = new Texture("sprite_mrrobot1.png");
-    }
-
-    @Override
-    public void show() {
+        this.mrRobotSprite = Assets.instance().getJPlaySprite("mrrobot_walk_right");
     }
 
     public void handleInput(float dt) {
         if(Gdx.input.isTouched()) {
             camera.position.x += 100 * dt;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            ScreenUtil.dispose();
+            System.exit(-1);
         }
         if(Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)) {
 
@@ -133,66 +95,33 @@ public class PlayScreen implements Screen {
         }
     }
 
-    public void update(float dt) {
-        handleInput(dt);
+    /* (non-Javadoc)
+     * @see com.jplay.gdx.screens.AbstractBaseScreen#doRender(float)
+     */
+    @Override
+    public void doRender(float delta) {
+        handleInput(delta);
         this.camera.update();
-        this.renderer.setView(this.camera);
-    }
+        this.tileMapRenderer.setView((OrthographicCamera)this.camera);
 
-    @Override
-    public void render(float delta) {
-        try {
-            update(delta);
+        tileMapRenderer.render();
 
-            Gdx.gl.glClearColor(0f, 0f, 0f,1);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-            renderer.render();
-/*
-            game.spriteBatch.setProjectionMatrix(this.camera.combined);
-            game.spriteBatch.begin();
-//            game.spriteBatch.draw(this.mrrobotSprite, 10, 10);
-            game.spriteBatch.end();
-*/
-            game.spriteBatch.setProjectionMatrix(hud.stage.getCamera().combined);
-
-            hud.stage.draw();
-        } catch(Throwable e) {
-            e.printStackTrace();
+        batch.begin();
+        if(!initialized) {
+            initialized = true;
+            DebugOutput.initialize(Assets.instance().getFont(MrRobotAssets.FONT_ID.DEBUG));
         }
-    }
 
-    @Override
-    public void resize(int width, int height) {
-        gamePort.update(width, height, true);
-/*
-        gamePort.update(Gdx.graphics.getWidth() - 80, Gdx.graphics.getHeight() - 80, true);
-        System.out.println("w: " + (Gdx.graphics.getWidth() - 80));
-        gamePort.setScreenBounds(80, 80, Gdx.graphics.getWidth() - 160, Gdx.graphics.getHeight() - 160);
-        gamePort.apply();
-        gamePort.update(width, height);
- */
-//        gamePort.setScreenPosition(40, 40);
-        camera.update();
-    }
+        this.mrRobotSprite.draw(batch, 40, 40, delta);
 
-    @Override
-    public void pause() {
+        // print debug stuff on screen
+        // TODO: Enable only in testing / debug mode
+        DebugOutput.draw(batch);
 
-    }
+        BitmapFont font = Assets.instance().getFont(MrRobotAssets.FONT_ID.LOADING);
+        font.draw(batch, "SCORE: 0", 0f, 160f);
 
-    @Override
-    public void resume() {
 
-    }
-
-    @Override
-    public void hide() {
-        dispose();
-    }
-
-    @Override
-    public void dispose() {
-
+        batch.end();
     }
 }

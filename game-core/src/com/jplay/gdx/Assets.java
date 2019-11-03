@@ -16,11 +16,12 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.jplay.gdx.darkfunction.AnimationSheet;
 import com.jplay.gdx.darkfunction.SpriteSheet;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import ch.marcelschoen.mrrobot.MrRobotAssets;
 
 /**
  * Handles loading / caching and accessing game assets, such as
@@ -33,8 +34,7 @@ public abstract class Assets {
 	
 	/** The singleton reference of the assets handler. */
 	private static Assets assets = null;
-	
-	
+
 	/** Singleton asset manager instance. */
 	protected AssetManager manager = null;
 
@@ -48,8 +48,6 @@ public abstract class Assets {
 	
 	private Map<AnimationID, Animation<TextureRegion>> animationMap = new HashMap<AnimationID, Animation<TextureRegion>>();
 
-	private Map<AnimationID, AnimationSheet> animationSheetMap = new HashMap<AnimationID, AnimationSheet>();
-	
 	/**
 	 * Returns the singleton assets instance.
 	 * 
@@ -78,16 +76,7 @@ public abstract class Assets {
 	 * Starts loading textures, fonts etc.
 	 */
 	public abstract void doLoadAssets();
-	
-	/**
-	 * Stores a given animation sheet in the animation caching map.
-	 * 
-	 * @param animationSheet The animation sheet to store.
-	 */
-	public void addAnimationSheet(AnimationSheet animationSheet) {
-//		animationSheetMap.put(id, animationSheet);
-	}
-	
+
 	/**
 	 * Stores a given animation in the animation caching map.
 	 * 
@@ -104,7 +93,6 @@ public abstract class Assets {
 	 * @param id
 	 */
 	public void addJPlaySprite(JPlaySprite sprite, String id) {
-		System.out.println("---> add JPlaySprite: " + id);
 		jplaySpriteMap.put(id, sprite);
 	}
 	
@@ -122,43 +110,7 @@ public abstract class Assets {
 		}
 		return result;
 	}
-	
-	/**
-	 * Creates an animation by extracting a number of pictures from the
-	 * given texture. Also stores the animation under the given ID in 
-	 * the animation map, so that it can be accessed later using that ID.
-	 * 
-	 * @param texture The texture from which to extract the animation images.
-	 * @param startX The starting x-coordinate (upper left).
-	 * @param startY The starting y-coordinate (upper left).
-	 * @param width The width of one image in pixels.
-	 * @param height The height of one image in pixels.
-	 * @param number The number of images to extract.
-	 * @param vertical If true, the images will be extracted in vertical order (from top to
-	 *                 bottom) from the texture; if false, from left to right.
-	 * @param speed The speed of the animation.
-	 * @param id The ID of the animation.
-	 * @return The created animation.
-	 */
-	protected Animation<TextureRegion> getAnimationFromTexture(Texture texture, int startX, int startY,
-			int width, int height, int number, boolean vertical, float speed, AnimationID id) {
-		TextureRegion[] regions = new TextureRegion[number];
-		int x = startX, y = startY;
-		for(int num = 0; num < number; num++) {
-			TextureRegion region = new TextureRegion(texture, x, y, width, height);
-			region.flip(false, true);
-			regions[num] = region;
-			if(vertical) {
-				y += height;
-			} else {
-				x += width;
-			}
-		}
-		Animation<TextureRegion> animation = new Animation<TextureRegion>(speed, regions);
-		animationMap.put(id, animation);
-		return animation;
-	}
-	
+
 	/**
 	 * Returns the given animation from the caching map.
 	 * 
@@ -173,7 +125,7 @@ public abstract class Assets {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 
 	 * @param texture
@@ -189,7 +141,7 @@ public abstract class Assets {
 		addJPlaySprite(new JPlaySprite(sprite), id);
 		return this.jplaySpriteMap.get(id);
 	}
-	
+
 	/**
 	 * Extracts a LIBGDX sprite from the given texture. Also stores the sprite 
 	 * under the given ID in the sprite map, so that it can be accessed later 
@@ -205,7 +157,7 @@ public abstract class Assets {
 	 */
 	public Sprite getSpriteFromTexture(Texture texture, int x, int y, int width, int height, String id) {
 		TextureRegion region = new TextureRegion(texture, x, y, width, height);
-		region.flip(false, true);
+		/////////////////////////////////////////region.flip(false, true);
 		Sprite sprite = new Sprite(region);
 		spriteMap.put(id, sprite);
 		return sprite;
@@ -284,12 +236,23 @@ public abstract class Assets {
 	 * @return The texture, if it was loaded before using "loadTexture()".
 	 * @throws IllegalStateException If the texture has not been loaded yet.
 	 */
-	protected Texture getTexture(TextureID id) {
+	public Texture getTexture(TextureID id) {
 		Texture result = textureMap.get(id); 
 		if(result == null) {
 			throw new IllegalStateException("Texture not available: " + id);
 		}
 		return result;
+	}
+
+	/**
+	 * Returns the given sprite from the caching map.
+	 *
+	 * @param id The ID of the sprite.
+	 * @return The sprite, if it was loaded before using "getSpriteFromTexture()".
+	 * @throws IllegalStateException If the sprite has not been created yet.
+	 */
+	public Sprite getSprite(MrRobotAssets.SPRITE_ID sprite_id) {
+		return getSprite(sprite_id.getAlias());
 	}
 
 	/**
