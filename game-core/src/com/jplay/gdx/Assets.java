@@ -14,15 +14,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import ch.marcelschoen.darkfunction.Animated2DSprite;
-import ch.marcelschoen.darkfunction.SpriteSheet;
-import ch.marcelschoen.mrrobot.MrRobotAssets;
+import ch.marcelschoen.darkfunction.DarkFunctionEditorAnimationSheet;
 
 /**
  * Handles loading / caching and accessing game assets, such as
@@ -44,9 +42,11 @@ public abstract class Assets {
 
 	private Map<SoundID, Sound> soundMap = new HashMap<SoundID, Sound>();
 	private Map<TextureID, Texture> textureMap = new HashMap<TextureID, Texture>();
-	private Map<String, Sprite> spriteMap = new HashMap<String, Sprite>();
-	private Map<String, Animated2DSprite> jplaySpriteMap = new HashMap<String, Animated2DSprite>();
-	
+//	private Map<String, Sprite> spriteMap = new HashMap<String, Sprite>();
+//   private Map<String, Animated2DSprite> jplaySpriteMap = new HashMap<String, Animated2DSprite>();
+
+	private DarkFunctionEditorAnimationSheet animationSheet = null;
+
 	private Map<AnimationID, Animation<TextureRegion>> animationMap = new HashMap<AnimationID, Animation<TextureRegion>>();
 
 	/**
@@ -87,30 +87,6 @@ public abstract class Assets {
 	public void addAnimation(Animation<TextureRegion> animation, AnimationID id) {
 		animationMap.put(id, animation);
 	}
-	
-	/**
-	 * 
-	 * @param sprite
-	 * @param id
-	 */
-	public void addJPlaySprite(Animated2DSprite sprite, String id) {
-		jplaySpriteMap.put(id, sprite);
-	}
-	
-	/**
-	 * Returns the JPlaySprite with the given ID.
-	 * 
-	 * @param id The ID of the sprite.
-	 * @return The sprite with the given ID.
-	 * @throws IllegalStateException If the sprite had not been loaded before.
-	 */
-	public Animated2DSprite getJPlaySprite(String id) {
-		Animated2DSprite result = jplaySpriteMap.get(id);
-		if(result == null) {
-			throw new IllegalStateException("JPlaySprite not available: " + id);
-		}
-		return result;
-	}
 
 	/**
 	 * Returns the given animation from the caching map.
@@ -127,56 +103,18 @@ public abstract class Assets {
 		return result;
 	}
 
-	/**
-	 * 
-	 * @param texture
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
-	 * @param id
-	 * @return
-	 */
-	public Animated2DSprite getJPlaySpriteFromTexture(Texture texture, int x, int y, int width, int height, String id) {
-		Sprite sprite = getSpriteFromTexture(texture, x, y, width, height, id);
-		addJPlaySprite(new Animated2DSprite(sprite), id);
-		return this.jplaySpriteMap.get(id);
+	public DarkFunctionEditorAnimationSheet getAnimationSheet() {
+		return animationSheet;
 	}
 
-	/**
-	 * Extracts a LIBGDX sprite from the given texture. Also stores the sprite 
-	 * under the given ID in the sprite map, so that it can be accessed later 
-	 * using that ID.
-	 * 
-	 * @param texture The texture holding the sprite images.
-	 * @param x The x-coordinate (column) of the upper left corner of the sprite.
-	 * @param y The y-coordinate (row) of the upper left corner of the sprite.
-	 * @param width The width of the sprite in number of pixels.
-	 * @param height The height of the sprite in number of pixels.
-	 * @param id The ID with which the extracted sprite will be accessed later.
-	 * @return The extracted sprite.
-	 */
-	public Sprite getSpriteFromTexture(Texture texture, int x, int y, int width, int height, String id) {
-		TextureRegion region = new TextureRegion(texture, x, y, width, height);
-		/////////////////////////////////////////region.flip(false, true);
-		Sprite sprite = new Sprite(region);
-		spriteMap.put(id, sprite);
-		return sprite;
+	public void setAnimationSheet(DarkFunctionEditorAnimationSheet animationSheet) {
+		this.animationSheet = animationSheet;
 	}
-	
-	/**
-	 * Loads all the sprites from the given sprite sheet
-	 * into the global sprite map.
-	 * 
-	 * @param sheet The sprite sheet to load.
-	 */
-	public void loadSpritesFromSpriteSheet(SpriteSheet sheet) {
-		Map<String, Sprite> sprites = sheet.getSprites();
-		for(String alias : sprites.keySet()) {
-			spriteMap.put(alias, sprites.get(alias));
-		}
+
+	public Animated2DSprite getAnimated2DSprite(String name) {
+		return animationSheet.getAnimated2DSprite(name);
 	}
-	
+
 	/**
 	 * Loads a sound from the given file. Also stores the sound
 	 * under the given ID in the sound map, so that it can be accessed later
@@ -245,32 +183,6 @@ public abstract class Assets {
 		return result;
 	}
 
-	/**
-	 * Returns the given sprite from the caching map.
-	 *
-	 * @param id The ID of the sprite.
-	 * @return The sprite, if it was loaded before using "getSpriteFromTexture()".
-	 * @throws IllegalStateException If the sprite has not been created yet.
-	 */
-	public Sprite getSprite(MrRobotAssets.SPRITE_ID sprite_id) {
-		return getSprite(sprite_id.getAlias());
-	}
-
-	/**
-	 * Returns the given sprite from the caching map.
-	 * 
-	 * @param id The ID of the sprite.
-	 * @return The sprite, if it was loaded before using "getSpriteFromTexture()".
-	 * @throws IllegalStateException If the sprite has not been created yet.
-	 */
-	public Sprite getSprite(String id) {
-		Sprite result = spriteMap.get(id); 
-		if(result == null) {
-			throw new IllegalStateException("Sprite not available: " + id);
-		}
-		return result;
-	}
-	
 	/**
 	 * Loads a bitmap font from the given file. Should be a *.fnt file, created
 	 * with a tools like "Hiero". Also stores the font

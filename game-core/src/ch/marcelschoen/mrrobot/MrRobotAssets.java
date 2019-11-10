@@ -13,18 +13,13 @@ import com.jplay.gdx.music.MusicWrapper;
 
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
-import ch.marcelschoen.darkfunction.Animated2DSprite;
-import ch.marcelschoen.darkfunction.AnimationInfo;
-import ch.marcelschoen.darkfunction.AnimationSheet;
-import ch.marcelschoen.darkfunction.SpriteSheet;
+import ch.marcelschoen.darkfunction.DarkFunctionEditorAnimationSheet;
 
 public class MrRobotAssets extends Assets {
 
     /** Stores the loaded music. */
     private static Music gdxMusic = null;
-
 
     /** IDs of sounds. */
     public static enum SOUND_ID implements SoundID {
@@ -122,33 +117,11 @@ public class MrRobotAssets extends Assets {
             loadSound(soundFile, SOUND_ID.fromString(soundName));
         }
 
-        // Read sprite info
-        Properties spriteList = FileUtil.readConfigPropertyFile("spritelist.properties");
-        for(Map.Entry<Object, Object> entry : spriteList.entrySet()) {
-            String spriteFile = (String)entry.getValue();
-            super.loadSpritesFromSpriteSheet(new SpriteSheet(spriteFile));
-        }
-
         // Read animation info
         Properties animatedSpriteList = FileUtil.readConfigPropertyFile("animationlist.properties");
         for(Map.Entry<Object, Object> entry : animatedSpriteList.entrySet()) {
             String animationFile = (String)entry.getValue();
-            processAnimationSheet(animationFile);
-        }
-    }
-
-    /**
-     * Reads an animation sheet.
-     */
-    public void processAnimationSheet(String name) {
-        AnimationSheet sheet = new AnimationSheet(name);
-        // Add all the single sprites
-        loadSpritesFromSpriteSheet(sheet.getCurrentSpriteSheet());
-        // Add all the animations
-        Set<String> animationNames = sheet.getAnimationNames();
-        for(String alias : animationNames) {
-            AnimationInfo animationInfo = sheet.getAnimationInfo(alias);
-            addJPlaySprite(new Animated2DSprite(animationInfo, true), alias);
+            setAnimationSheet(new DarkFunctionEditorAnimationSheet(animationFile));
         }
     }
 

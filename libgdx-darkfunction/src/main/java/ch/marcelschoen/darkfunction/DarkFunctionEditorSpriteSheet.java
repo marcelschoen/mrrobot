@@ -24,7 +24,7 @@ import java.util.Map;
  * @author Marcel Schoen
  * @version $Revision: $
  */
-public class SpriteSheet {
+public class DarkFunctionEditorSpriteSheet {
 
 	/** The texture which holds the sprite data. */
 	private Texture texture = null;
@@ -41,13 +41,10 @@ public class SpriteSheet {
 	 * 
 	 * @param filename The name of the spritesheet file (in the animations folder subdirectory).
 	 */
-	public SpriteSheet(String filename) {
+	public DarkFunctionEditorSpriteSheet(String filename) {
 		XmlReader reader = new XmlReader();
-		FileHandle spriteSheetFile = Gdx.files.internal(AnimationSheet.getAnimationsFolder() + filename);
-		System.out.println("...try to read spritesheet file: " + filename);
+		FileHandle spriteSheetFile = Gdx.files.internal(DarkFunctionEditorAnimationSheet.getAnimationsFolder() + filename);
 		XmlReader.Element topNode = reader.parse(spriteSheetFile);
-		System.out.println("Spritesheet file parsed, process...");
-
 		processNode(topNode);
 	}
 	
@@ -82,7 +79,7 @@ public class SpriteSheet {
 	 */
 	private void processNode(XmlReader.Element node) {
 		if(node.getName().equals("img")) {
-			FileHandle textureFile = Gdx.files.internal(AnimationSheet.getAnimationsFolder() + node.getAttribute("name"));
+			FileHandle textureFile = Gdx.files.internal(DarkFunctionEditorAnimationSheet.getAnimationsFolder() + node.getAttribute("name"));
 			if(!textureFile.exists()) {
 				throw new IllegalStateException("** texturefile not found: " + node.getAttribute("name"));
 			}
@@ -99,10 +96,8 @@ public class SpriteSheet {
 			int w = node.getIntAttribute("w");
 			int h = node.getIntAttribute("h");
 			TextureRegion region = new TextureRegion(this.texture, x, y, w, h);
-			//region.flip(false, true);
 			Sprite sprite = new Sprite(region);
 			spriteMap.put(alias, sprite);
-			System.out.println("Sprite '" + alias + "' loaded into sprite sheet.");
 		}
 		
 		// Recursively process all child nodes

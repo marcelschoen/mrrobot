@@ -59,10 +59,10 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
         this.map = loader.load("map/level16.tmx");
         this.tileMapRenderer = new OrthogonalTiledMapRenderer(map);
 
-        this.mrRobot.setSprite("mrrobot_stand_right", Assets.instance().getJPlaySprite("mrrobot_stand_right"));
-        this.mrRobot.setSprite("mrrobot_walk_right", Assets.instance().getJPlaySprite("mrrobot_walk_right"));
-        this.mrRobot.setSprite("mrrobot_stand_left", Assets.instance().getJPlaySprite("mrrobot_stand_left"));
-        this.mrRobot.setSprite("mrrobot_walk_left", Assets.instance().getJPlaySprite("mrrobot_walk_left"));
+        this.mrRobot.setSprite("mrrobot_stand_right", Assets.instance().getAnimated2DSprite("mrrobot_stand_right"));
+        this.mrRobot.setSprite("mrrobot_walk_right", Assets.instance().getAnimated2DSprite("mrrobot_walk_right"));
+        this.mrRobot.setSprite("mrrobot_stand_left", Assets.instance().getAnimated2DSprite("mrrobot_stand_left"));
+        this.mrRobot.setSprite("mrrobot_walk_left", Assets.instance().getAnimated2DSprite("mrrobot_walk_left"));
         //this.mrRobotSprite = Assets.instance().getJPlaySprite("mrrobot_walk_right");
 
         System.out.println("------------------------ BEGIN -----------------------------");

@@ -9,6 +9,7 @@ package ch.marcelschoen.darkfunction;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.XmlReader;
@@ -27,10 +28,10 @@ import java.util.Set;
  * @author Marcel Schoen
  * @version $Revision: $
  */
-public class AnimationSheet {
+public class DarkFunctionEditorAnimationSheet {
 
 	/** The spritesheet which contains the sprite data. */
-	private SpriteSheet currentSpriteSheet = null;
+	private DarkFunctionEditorSpriteSheet currentSpriteSheet = null;
 
 	/** Stateful animation keyframe holder used for XML parsing. */
 	private List<TextureRegion> currentKeyFrames = new ArrayList<TextureRegion>();
@@ -44,6 +45,9 @@ public class AnimationSheet {
 	/** Stores the animations read from the file. */
 	private Map<String, AnimationInfo> animations = new HashMap<String, AnimationInfo>();
 	private Set<String> animationNames = new HashSet<String>();
+
+	private Map<String, Sprite> spriteMap = new HashMap<String, Sprite>();
+	private Map<String, Animated2DSprite> animated2DSpriteMap = new HashMap<String, Animated2DSprite>();
 
 	private static String animationsFolder = null;
 
@@ -63,7 +67,7 @@ public class AnimationSheet {
 	 * 
 	 * @param filename The name of the animation file (in the animations folder subdirectory).
 	 */
-	public AnimationSheet(String filename) {
+	public DarkFunctionEditorAnimationSheet(String filename) {
 		FileHandle spriteAnimFile = Gdx.files.internal(animationsFolder + filename);
 		if(!spriteAnimFile.exists()) {
 			throw new IllegalArgumentException("Invalid filename, file does not exist: " + filename);
@@ -72,6 +76,49 @@ public class AnimationSheet {
 		XmlReader.Element topNode = reader.parse(spriteAnimFile);
 		processNode(topNode);
 		storeCurrentAnimation();
+
+		// cache sprites from spritesheet
+		Map<String, Sprite> sprites = getCurrentSpriteSheet().getSprites();
+		for(String alias : sprites.keySet()) {
+			spriteMap.put(alias, sprites.get(alias));
+		}
+
+		// create animated sprites
+		Set<String> animationNames = getAnimationNames();
+		for(String alias : animationNames) {
+			AnimationInfo animationInfo = getAnimationInfo(alias);
+			animated2DSpriteMap.put(alias, new Animated2DSprite(animationInfo, true));
+		}
+	}
+
+	/**
+	 * Returns the JPlaySprite with the given ID.
+	 *
+	 * @param id The ID of the sprite.
+	 * @return The sprite with the given ID.
+	 * @throws IllegalStateException If the sprite had not been loaded before.
+	 */
+	public Animated2DSprite getAnimated2DSprite(String id) {
+		Animated2DSprite result = animated2DSpriteMap.get(id);
+		if(result == null) {
+			throw new IllegalStateException("JPlaySprite not available: " + id);
+		}
+		return result;
+	}
+
+	/**
+	 * Returns the given sprite from the caching map.
+	 *
+	 * @param id The ID of the sprite.
+	 * @return The sprite, if it was loaded before using "getSpriteFromTexture()".
+	 * @throws IllegalStateException If the sprite has not been created yet.
+	 */
+	public Sprite getSprite(String id) {
+		Sprite result = spriteMap.get(id);
+		if(result == null) {
+			throw new IllegalStateException("Sprite not available: " + id);
+		}
+		return result;
 	}
 
 	/**
@@ -86,14 +133,14 @@ public class AnimationSheet {
 	/**
 	 * @return the currentSpriteSheet
 	 */
-	public SpriteSheet getCurrentSpriteSheet() {
+	public DarkFunctionEditorSpriteSheet getCurrentSpriteSheet() {
 		return currentSpriteSheet;
 	}
 
 	/**
 	 * @param currentSpriteSheet the currentSpriteSheet to set
 	 */
-	public void setCurrentSpriteSheet(SpriteSheet currentSpriteSheet) {
+	public void setCurrentSpriteSheet(DarkFunctionEditorSpriteSheet currentSpriteSheet) {
 		this.currentSpriteSheet = currentSpriteSheet;
 	}
 
@@ -138,11 +185,11 @@ public class AnimationSheet {
 	private void processNode(XmlReader.Element node) {
 //		System.out.println("Animation node: " + node.getName());
 		if(node.getName().equals("animations")) {
-			FileHandle spriteSheetFile = Gdx.files.internal(AnimationSheet.getAnimationsFolder() + node.getAttribute("spriteSheet"));
+			FileHandle spriteSheetFile = Gdx.files.internal(DarkFunctionEditorAnimationSheet.getAnimationsFolder() + node.getAttribute("spriteSheet"));
 			if(!spriteSheetFile.exists()) {
 				throw new IllegalStateException("** spritesheet file not found: " + node.getAttribute("name"));
 			}
-			this.currentSpriteSheet = new SpriteSheet(node.getAttribute("spriteSheet"));
+			this.currentSpriteSheet = new DarkFunctionEditorSpriteSheet(node.getAttribute("spriteSheet"));
 		} else if(node.getName().equals("anim")) {
 			storeCurrentAnimation();
 			this.currentAnimationName = node.getAttribute("name");

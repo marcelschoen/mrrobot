@@ -7,7 +7,7 @@ import com.jplay.gdx.screens.OnScreenLabelTweenAccessor;
 import com.jplay.gdx.screens.ScreenUtil;
 import com.jplay.gdx.tween.SpriteTweenAccessor;
 
-import ch.marcelschoen.darkfunction.AnimationSheet;
+import ch.marcelschoen.darkfunction.DarkFunctionEditorAnimationSheet;
 import ch.marcelschoen.mrrobot.screens.LoadingScreen;
 import ch.marcelschoen.mrrobot.screens.PlayScreen;
 import ch.marcelschoen.mrrobot.screens.TitleScreen;
@@ -51,7 +51,7 @@ public class MrRobotGame extends Game {
         }
         instance = this;
 
-        AnimationSheet.initialize("animation");
+        DarkFunctionEditorAnimationSheet.initialize("animation");
 
         if(System.getProperty("game.testing","").equalsIgnoreCase("on")) {
             // enable interactive testing
