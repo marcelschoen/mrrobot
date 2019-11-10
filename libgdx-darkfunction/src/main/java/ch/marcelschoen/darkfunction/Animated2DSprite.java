@@ -183,17 +183,14 @@ public class Animated2DSprite {
 	 */
 	public void draw(SpriteBatch batch, float xPosition, float yPosition, float delta) {
 		float x = xPosition, y = yPosition;
-		System.out.println(">> draw at: " + x + "," + y);
 		if(this.sprite != null) {
 			batch.draw(this.sprite, x, y);
 		} else {
 			if(this.animationRunning) {
 	            this.stateTime += delta;
-	            /*
 	            if(this.stateTime > 1.0) {
-	            	this.stateTime = 0f;
+	            	this.stateTime -= 1f;
 	            }
-	            */
 			}
 			if(batch == null) {
 				throw new IllegalArgumentException("batch must not be null");
