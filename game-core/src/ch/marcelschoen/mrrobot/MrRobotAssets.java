@@ -2,22 +2,23 @@ package ch.marcelschoen.mrrobot;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
-import com.jplay.gdx.Animated2DSprite;
-import com.jplay.gdx.AnimationInfo;
 import com.jplay.gdx.Assets;
 import com.jplay.gdx.FileUtil;
 import com.jplay.gdx.FontID;
 import com.jplay.gdx.SoundID;
 import com.jplay.gdx.SpriteID;
 import com.jplay.gdx.TextureID;
-import com.jplay.gdx.darkfunction.AnimationSheet;
-import com.jplay.gdx.darkfunction.SpriteSheet;
 import com.jplay.gdx.music.MusicPlayer;
 import com.jplay.gdx.music.MusicWrapper;
 
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
+import ch.marcelschoen.darkfunction.Animated2DSprite;
+import ch.marcelschoen.darkfunction.AnimationInfo;
+import ch.marcelschoen.darkfunction.AnimationSheet;
+import ch.marcelschoen.darkfunction.SpriteSheet;
 
 public class MrRobotAssets extends Assets {
 

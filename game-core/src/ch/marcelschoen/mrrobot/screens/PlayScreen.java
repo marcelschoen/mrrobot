@@ -106,19 +106,17 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
                 System.out.println("> obj: " + obj.getName() + " / " + obj.getClass().getName());
             }
         }
-
     }
 
     private void handleMrRobot() {
+        float x = mrRobot.getX();
+        float y = mrRobot.getY();
         if(mrRobotState == MRROBOT_STATE.WALKING_RIGHT) {
-            float x = mrRobot.getX();
-            float y = mrRobot.getY();
             mrRobot.setPosition(x + 0.5f, y);
         } else if(mrRobotState == MRROBOT_STATE.WALKING_LEFT) {
-            float x = mrRobot.getX();
-            float y = mrRobot.getY();
             mrRobot.setPosition(x - 0.5f, y);
         }
+
     }
 
     public void handleInput(float dt) {

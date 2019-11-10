@@ -4,7 +4,7 @@
  * @Copyright: Marcel Schoen, Switzerland, 2013, All Rights Reserved.
  */
 
-package com.jplay.gdx.darkfunction;
+package ch.marcelschoen.darkfunction;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.XmlReader;
-import com.jplay.gdx.AnimationInfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -152,7 +151,17 @@ public class AnimationSheet {
 		} else if(node.getName().equals("cell")) {
 			this.currentDuration = node.getIntAttribute("delay");
 		} else if(node.getName().equals("spr")) {
-			this.currentKeyFrames.add(this.currentSpriteSheet.getSprite(node.getAttribute("name")));
+			TextureRegion textureRegion = this.currentSpriteSheet.getSprite(node.getAttribute("name"));
+			boolean flipX = node.getIntAttribute("flipH", 0) == 1;
+			boolean flipY = node.getIntAttribute("flipV", 0) == 1;
+			if(flipX || flipY) {
+				textureRegion = new TextureRegion(textureRegion);
+				textureRegion.flip(flipX, flipY);
+			}
+			System.out.println("Add sprite '" + node.getAttribute("name") + "' to animation '"
+					+ this.currentAnimationName + "' / xflip: " + flipX + ", yflip: " + flipY);
+			this.currentKeyFrames.add(textureRegion);
+
 		}
 		int children = node.getChildCount();
 		if(children > 0) {

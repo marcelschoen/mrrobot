@@ -1,5 +1,4 @@
 buildscript {
-    
 
     repositories {
         mavenLocal()
@@ -37,11 +36,32 @@ allprojects {
     }
 }
 
+project(":jplay-gamepad") {
+    apply plugin: "java-library"
+}
+
+project(":libgdx-darkfunction") {
+    apply plugin: "java-library"
+}
+
+project(":game-core") {
+    apply plugin: "java-library"
+
+    dependencies {
+        implementation project(":libgdx-darkfunction")
+        implementation project(":jplay-gamepad")
+        implementation group: 'org.mini2Dx', name: 'universal-tween-engine', version: '6.3.3'
+        api "com.badlogicgames.gdx:gdx:$gdxVersion"
+        api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+    }
+}
+
 project(":game-desktop") {
     apply plugin: "java-library"
 
     dependencies {
         implementation project(":jplay-gamepad")
+        implementation project(":libgdx-darkfunction")
         implementation project(":game-core")
         api "com.codeminders:hidapi:$hidVersion"
         api "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
@@ -58,6 +78,7 @@ project(":game-android") {
 
     dependencies {
         implementation project(":game-core")
+        implementation project(":libgdx-darkfunction")
         api "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
@@ -72,19 +93,4 @@ project(":game-android") {
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86_64"
         
     }
-}
-
-project(":game-core") {
-    apply plugin: "java-library"
-
-    dependencies {
-        implementation project(":jplay-gamepad")
-        implementation group: 'org.mini2Dx', name: 'universal-tween-engine', version: '6.3.3'
-        api "com.badlogicgames.gdx:gdx:$gdxVersion"
-        api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
-    }
-}
-
-project(":jplay-gamepad") {
-    apply plugin: "java-library"
 }

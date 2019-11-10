@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import java.util.HashMap;
 import java.util.Map;
 
+import ch.marcelschoen.darkfunction.Animated2DSprite;
+
 public class MoveableEntity {
 
     private String name;

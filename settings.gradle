@@ -1,1 +1,1 @@
-include 'jplay-gamepad', 'game-core', 'game-desktop', 'game-android'
+include 'libgdx-darkfunction', 'jplay-gamepad', 'game-core', 'game-desktop', 'game-android'

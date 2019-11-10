@@ -16,11 +16,12 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.jplay.gdx.darkfunction.SpriteSheet;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import ch.marcelschoen.darkfunction.Animated2DSprite;
+import ch.marcelschoen.darkfunction.SpriteSheet;
 import ch.marcelschoen.mrrobot.MrRobotAssets;
 
 /**

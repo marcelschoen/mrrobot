@@ -4,7 +4,7 @@
  * @Copyright: Marcel Schoen, Switzerland, 2013, All Rights Reserved.
  */
 
-package com.jplay.gdx;
+package ch.marcelschoen.darkfunction;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
