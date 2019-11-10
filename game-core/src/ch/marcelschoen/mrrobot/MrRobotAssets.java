@@ -2,11 +2,11 @@ package ch.marcelschoen.mrrobot;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
+import com.jplay.gdx.Animated2DSprite;
 import com.jplay.gdx.AnimationInfo;
 import com.jplay.gdx.Assets;
 import com.jplay.gdx.FileUtil;
 import com.jplay.gdx.FontID;
-import com.jplay.gdx.JPlaySprite;
 import com.jplay.gdx.SoundID;
 import com.jplay.gdx.SpriteID;
 import com.jplay.gdx.TextureID;
@@ -147,7 +147,7 @@ public class MrRobotAssets extends Assets {
         Set<String> animationNames = sheet.getAnimationNames();
         for(String alias : animationNames) {
             AnimationInfo animationInfo = sheet.getAnimationInfo(alias);
-            addJPlaySprite(new JPlaySprite(animationInfo, true), alias);
+            addJPlaySprite(new Animated2DSprite(animationInfo, true), alias);
         }
     }
 

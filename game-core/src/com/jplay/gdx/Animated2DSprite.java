@@ -18,7 +18,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  * @author Marcel Schoen
  * @version $Revision: 1.1 $
  */
-public class JPlaySprite {
+public class Animated2DSprite {
 
 	/** 
 	 * Flag which marks sprites read from spritesheets
@@ -40,13 +40,19 @@ public class JPlaySprite {
 
     /** Flag which determines if animation is active. */
     private boolean animationRunning = false;
-    
+
+    /** X-coordinate on screen. */
+    private float x = 0;
+
+    /** Y-coordinate on screen. */
+    private float y = 0;
+
     /**
      * Creates a sprite which wraps a certain LIBGDX sprite.
      * 
      * @param sprite The wrapped LIBGDX sprite.
      */
-	public JPlaySprite(Sprite sprite) {
+	public Animated2DSprite(Sprite sprite) {
 		this.sprite = sprite;
 	}
 	
@@ -55,7 +61,7 @@ public class JPlaySprite {
 	 * 
 	 * @param animationInfo The animation info for this sprite.
 	 */
-	public JPlaySprite(AnimationInfo animationInfo, boolean isDarkFunctions) {
+	public Animated2DSprite(AnimationInfo animationInfo, boolean isDarkFunctions) {
 		if(animationInfo == null) {
 			throw new IllegalArgumentException("animation info must not be null!");
 		}
@@ -71,8 +77,8 @@ public class JPlaySprite {
 	 * 
 	 * @return The new sprite instance.
 	 */
-	public JPlaySprite copy() {
-		JPlaySprite copy = new JPlaySprite(this.sprite);
+	public Animated2DSprite copy() {
+		Animated2DSprite copy = new Animated2DSprite(this.sprite);
 		copy.animationInfo = this.animationInfo;
 		copy.animation = new Animation(this.animationInfo.frameDuration, this.animationInfo.keyFrames);
 		copy.animationRunning = this.animationRunning;
@@ -85,6 +91,31 @@ public class JPlaySprite {
 	 */
 	public Sprite getSprite() {
 		return this.sprite;
+	}
+
+	/**
+	 * Sets the position of the sprite.
+	 *
+	 * @param x The x-coordinate on screen.
+	 * @param y The y-coordinate on screen.
+	 */
+	public void setPosition(float x, float y) {
+		this.x = x;
+		this.y = y;
+	}
+
+	/**
+	 * @return The x-coordinate on screen.
+	 */
+	public float getX() {
+		return x;
+	}
+
+	/**
+	 * @return The Y-coordinate on screen.
+	 */
+	public float getY() {
+		return y;
 	}
 
 	/**
@@ -110,12 +141,36 @@ public class JPlaySprite {
 		return keyFrame.getRegionHeight();
 	}
 
+	/**
+	 * Returns the width in pixels of the current sprite.
+	 *
+	 * @param delta The number of seconds since last screen refresh.
+	 * @return The current width.
+	 */
+	public int getCurrentWidth(float delta) {
+		if(this.sprite != null) {
+			return (int)this.sprite.getHeight();
+		}
+		TextureRegion keyFrame = this.animation.getKeyFrame(this.stateTime, true);
+		return keyFrame.getRegionWidth();
+	}
+
 	public AnimationInfo getAnimationInfo() {
 		return animationInfo;
 	}
 
 	public Animation<TextureRegion> getAnimation() {
 		return animation;
+	}
+
+	/**
+	 * Draws the sprite into a given spriteBatch at the current position.
+	 *
+	 * @param batch The target spriteBatch.
+	 * @param delta The time in seconds since last refresh.
+	 */
+	public void draw(SpriteBatch batch, float delta) {
+		draw(batch, x, y, delta);
 	}
 
 	/**
@@ -128,6 +183,7 @@ public class JPlaySprite {
 	 */
 	public void draw(SpriteBatch batch, float xPosition, float yPosition, float delta) {
 		float x = xPosition, y = yPosition;
+		System.out.println(">> draw at: " + x + "," + y);
 		if(this.sprite != null) {
 			batch.draw(this.sprite, x, y);
 		} else {

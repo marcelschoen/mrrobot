@@ -44,7 +44,7 @@ public abstract class Assets {
 	private Map<SoundID, Sound> soundMap = new HashMap<SoundID, Sound>();
 	private Map<TextureID, Texture> textureMap = new HashMap<TextureID, Texture>();
 	private Map<String, Sprite> spriteMap = new HashMap<String, Sprite>();
-	private Map<String, JPlaySprite> jplaySpriteMap = new HashMap<String, JPlaySprite>();
+	private Map<String, Animated2DSprite> jplaySpriteMap = new HashMap<String, Animated2DSprite>();
 	
 	private Map<AnimationID, Animation<TextureRegion>> animationMap = new HashMap<AnimationID, Animation<TextureRegion>>();
 
@@ -92,7 +92,7 @@ public abstract class Assets {
 	 * @param sprite
 	 * @param id
 	 */
-	public void addJPlaySprite(JPlaySprite sprite, String id) {
+	public void addJPlaySprite(Animated2DSprite sprite, String id) {
 		jplaySpriteMap.put(id, sprite);
 	}
 	
@@ -103,8 +103,8 @@ public abstract class Assets {
 	 * @return The sprite with the given ID.
 	 * @throws IllegalStateException If the sprite had not been loaded before.
 	 */
-	public JPlaySprite getJPlaySprite(String id) {
-		JPlaySprite result = jplaySpriteMap.get(id); 
+	public Animated2DSprite getJPlaySprite(String id) {
+		Animated2DSprite result = jplaySpriteMap.get(id);
 		if(result == null) {
 			throw new IllegalStateException("JPlaySprite not available: " + id);
 		}
@@ -136,9 +136,9 @@ public abstract class Assets {
 	 * @param id
 	 * @return
 	 */
-	public JPlaySprite getJPlaySpriteFromTexture(Texture texture, int x, int y, int width, int height, String id) {
+	public Animated2DSprite getJPlaySpriteFromTexture(Texture texture, int x, int y, int width, int height, String id) {
 		Sprite sprite = getSpriteFromTexture(texture, x, y, width, height, id);
-		addJPlaySprite(new JPlaySprite(sprite), id);
+		addJPlaySprite(new Animated2DSprite(sprite), id);
 		return this.jplaySpriteMap.get(id);
 	}
 

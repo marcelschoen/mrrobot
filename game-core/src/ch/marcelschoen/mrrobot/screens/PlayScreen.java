@@ -13,7 +13,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.jplay.gdx.Assets;
 import com.jplay.gdx.DebugOutput;
-import com.jplay.gdx.JPlaySprite;
+import com.jplay.gdx.MoveableEntity;
 import com.jplay.gdx.screens.AbstractBaseScreen;
 import com.jplay.gdx.screens.ScreenUtil;
 
@@ -26,9 +26,27 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
     private OrthogonalTiledMapRenderer tileMapRenderer;
     private TmxMapLoader loader;
 
-    private JPlaySprite mrRobotSprite;
+    private MoveableEntity mrRobot = new MoveableEntity("mrrobot", 0, 0);
 
     private boolean initialized = false;
+
+    private enum MRROBOT_STATE {
+        STANDING_RIGHT(true),
+        STANDING_LEFT(false),
+        WALKING_RIGHT(true),
+        WALKING_LEFT(false);
+
+        private boolean isFacingRight = true;
+
+        MRROBOT_STATE(boolean isFacingRight) {
+            this.isFacingRight = isFacingRight;
+        }
+
+        public boolean isFacingRight() {
+            return this.isFacingRight;
+        }
+    }
+    private MRROBOT_STATE mrRobotState = MRROBOT_STATE.STANDING_RIGHT;
 
     /**
      *
@@ -38,8 +56,14 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
         super(game, null);
 
         this.loader = new TmxMapLoader();
-        this.map = loader.load("map/level1_large.tmx");
+        this.map = loader.load("map/level16.tmx");
         this.tileMapRenderer = new OrthogonalTiledMapRenderer(map);
+
+        this.mrRobot.setSprite("mrrobot_stand_right", Assets.instance().getJPlaySprite("mrrobot_stand_right"));
+        this.mrRobot.setSprite("mrrobot_walk_right", Assets.instance().getJPlaySprite("mrrobot_walk_right"));
+        this.mrRobot.setSprite("mrrobot_stand_left", Assets.instance().getJPlaySprite("mrrobot_stand_left"));
+        this.mrRobot.setSprite("mrrobot_walk_left", Assets.instance().getJPlaySprite("mrrobot_walk_left"));
+        //this.mrRobotSprite = Assets.instance().getJPlaySprite("mrrobot_walk_right");
 
         System.out.println("------------------------ BEGIN -----------------------------");
         System.out.println("> Layers: " + this.map.getLayers().getCount());
@@ -62,6 +86,15 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
                                 // tile with point to collect
 
                             }
+                            if(tile.getId() == 18) {
+                                System.out.println("Found mrrobot at: " + colCt + "," + lineCt);
+                                tiledMapTileLayer.setCell(colCt, lineCt, null);
+                                // Placement of Mr. Robot starting position
+                                float x = (colCt * 8) - 8;
+                                float y = lineCt * 8;
+                                mrRobot.setPosition(x, y);
+                                mrRobot.setState("mrrobot_stand_right");
+                            }
                         }
                     }
                     System.out.println("==>> " + lineCt + ": " + line);
@@ -74,7 +107,18 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
             }
         }
 
-        this.mrRobotSprite = Assets.instance().getJPlaySprite("mrrobot_walk_right");
+    }
+
+    private void handleMrRobot() {
+        if(mrRobotState == MRROBOT_STATE.WALKING_RIGHT) {
+            float x = mrRobot.getX();
+            float y = mrRobot.getY();
+            mrRobot.setPosition(x + 0.5f, y);
+        } else if(mrRobotState == MRROBOT_STATE.WALKING_LEFT) {
+            float x = mrRobot.getX();
+            float y = mrRobot.getY();
+            mrRobot.setPosition(x - 0.5f, y);
+        }
     }
 
     public void handleInput(float dt) {
@@ -85,14 +129,45 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
             ScreenUtil.dispose();
             System.exit(-1);
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)) {
-
-        }
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            camera.position.x -= 100 * dt;
+            if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+                camera.position.x -= 100 * dt;
+            } else {
+                if(mrRobotState != MRROBOT_STATE.WALKING_LEFT) {
+                    mrRobot.setState("mrrobot_walk_left");
+                    mrRobotState = MRROBOT_STATE.WALKING_LEFT;
+                }
+            }
         } else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            camera.position.x += 100 * dt;
+            if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+                camera.position.x += 100 * dt;
+            } else {
+                if(mrRobotState != MRROBOT_STATE.WALKING_RIGHT) {
+                    mrRobot.setState("mrrobot_walk_right");
+                    mrRobotState = MRROBOT_STATE.WALKING_RIGHT;
+                }
+            }
+        } else {
+            // Stop movement
+            if(mrRobotState.isFacingRight) {
+                if(mrRobotState != MRROBOT_STATE.STANDING_RIGHT) {
+                    mrRobot.setState("mrrobot_stand_right");
+                    mrRobotState = MRROBOT_STATE.STANDING_RIGHT;
+                }
+            } else {
+                if(mrRobotState != MRROBOT_STATE.STANDING_LEFT) {
+                    mrRobot.setState("mrrobot_stand_left");
+                    mrRobotState = MRROBOT_STATE.STANDING_LEFT;
+                }
+            }
         }
+
+        handleMrRobot();
+    }
+
+    @Override
+    public void show() {
+        MrRobotAssets.stopMenuMusic();
     }
 
     /* (non-Javadoc)
@@ -112,14 +187,19 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
             DebugOutput.initialize(Assets.instance().getFont(MrRobotAssets.FONT_ID.DEBUG));
         }
 
-        this.mrRobotSprite.draw(batch, 40, 40, delta);
+        this.mrRobot.draw(batch, delta);
+
+        // get cell
+        int cellX = ((int)this.mrRobot.getX() + 8) / 8;
+        int cellY = (int)this.mrRobot.getY() / 8;
+        //System.out.println("CELL: " + cellX + "," + cellY);
 
         // print debug stuff on screen
         // TODO: Enable only in testing / debug mode
         DebugOutput.draw(batch);
 
         BitmapFont font = Assets.instance().getFont(MrRobotAssets.FONT_ID.LOADING);
-        font.draw(batch, "SCORE: 0", 0f, 160f);
+        font.draw(batch, "SCORE: 0", 2f, 140f);
 
 
         batch.end();

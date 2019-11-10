@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset name="allblocks2" tilewidth="8" tileheight="8" tilecount="1024" columns="32">
+<tileset version="1.2" tiledversion="1.2.5" name="allblocks2" tilewidth="8" tileheight="8" tilecount="1024" columns="32">
  <image source="tiles.png" width="256" height="256"/>
  <tile id="0">
   <properties>
@@ -65,12 +65,24 @@
    <property name="solid" value="true"/>
    <property name="type" type="int" value="5"/>
   </properties>
+  <animation>
+   <frame tileid="11" duration="100"/>
+   <frame tileid="107" duration="100"/>
+   <frame tileid="75" duration="100"/>
+   <frame tileid="43" duration="100"/>
+  </animation>
  </tile>
  <tile id="12">
   <properties>
    <property name="solid" type="bool" value="true"/>
    <property name="type" type="int" value="5"/>
   </properties>
+  <animation>
+   <frame tileid="12" duration="100"/>
+   <frame tileid="44" duration="100"/>
+   <frame tileid="76" duration="100"/>
+   <frame tileid="108" duration="100"/>
+  </animation>
  </tile>
  <tile id="13">
   <properties>
@@ -89,12 +101,24 @@
    <property name="solid" value="true"/>
    <property name="type" type="int" value="7"/>
   </properties>
+  <animation>
+   <frame tileid="15" duration="100"/>
+   <frame tileid="47" duration="100"/>
+   <frame tileid="79" duration="100"/>
+   <frame tileid="111" duration="100"/>
+  </animation>
  </tile>
  <tile id="16">
   <properties>
    <property name="solid" type="bool" value="false"/>
    <property name="type" type="int" value="8"/>
   </properties>
+  <animation>
+   <frame tileid="16" duration="100"/>
+   <frame tileid="48" duration="100"/>
+   <frame tileid="80" duration="100"/>
+   <frame tileid="112" duration="100"/>
+  </animation>
  </tile>
  <tile id="17">
   <properties>
@@ -111,6 +135,18 @@
    <property name="solid" value="true"/>
    <property name="type" value="9"/>
   </properties>
+  <animation>
+   <frame tileid="19" duration="100"/>
+   <frame tileid="51" duration="100"/>
+   <frame tileid="83" duration="100"/>
+   <frame tileid="115" duration="100"/>
+   <frame tileid="147" duration="100"/>
+   <frame tileid="179" duration="100"/>
+   <frame tileid="211" duration="100"/>
+   <frame tileid="243" duration="100"/>
+   <frame tileid="275" duration="100"/>
+   <frame tileid="307" duration="100"/>
+  </animation>
  </tile>
  <tile id="21">
   <properties>
@@ -441,6 +477,22 @@
   <properties>
    <property name="type" type="int" value="3"/>
   </properties>
+ </tile>
+ <tile id="139">
+  <animation>
+   <frame tileid="139" duration="100"/>
+   <frame tileid="171" duration="100"/>
+   <frame tileid="203" duration="100"/>
+   <frame tileid="235" duration="100"/>
+  </animation>
+ </tile>
+ <tile id="140">
+  <animation>
+   <frame tileid="140" duration="100"/>
+   <frame tileid="236" duration="100"/>
+   <frame tileid="204" duration="100"/>
+   <frame tileid="172" duration="100"/>
+  </animation>
  </tile>
  <tile id="147">
   <properties>

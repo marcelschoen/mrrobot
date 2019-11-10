@@ -41,4 +41,14 @@
       <spr name="/mrrobot_r6" x="0" y="0" z="0" flipH="1"/>
     </cell>
   </anim>
+  <anim name="mrrobot_stand_right" loops="0">
+    <cell index="0" delay="1">
+      <spr name="/mrrobot_r1" x="0" y="0" z="0"/>
+    </cell>
+  </anim>
+  <anim name="mrrobot_stand_left" loops="0">
+    <cell index="0" delay="1">
+      <spr name="/mrrobot_r1" x="0" y="0" z="0" flipH="1"/>
+    </cell>
+  </anim>
 </animations>
