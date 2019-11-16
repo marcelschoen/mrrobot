@@ -3,6 +3,7 @@ package ch.marcelschoen.mrrobot;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.jplay.gdx.Assets;
+import com.jplay.gdx.DebugOutput;
 import com.jplay.gdx.FileUtil;
 import com.jplay.gdx.FontID;
 import com.jplay.gdx.SoundID;
@@ -95,6 +96,11 @@ public class MrRobotAssets extends Assets {
         loadTexture("mrrobot-title.png", TEXTURE_ID.TITLE);
         // Immediately start loading
         super.manager.update();
+    }
+
+    @Override
+    public void loadingCompleted() {
+        DebugOutput.initialize(getFont(MrRobotAssets.FONT_ID.DEBUG));
     }
 
     /**

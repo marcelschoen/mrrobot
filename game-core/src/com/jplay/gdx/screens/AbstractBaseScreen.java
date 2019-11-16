@@ -13,6 +13,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -45,6 +46,9 @@ public abstract class AbstractBaseScreen implements Screen, InputProcessor {
 
 	/** Stores the previous screen for going back. */
 	private Screen previousScreen = null;
+
+	private Color backgroundColor = Color.BLACK;
+	private Color flickerBackgroundColor = null;
 
 	/**
 	 * Creates a screen.
@@ -110,6 +114,18 @@ public abstract class AbstractBaseScreen implements Screen, InputProcessor {
 		doRender(delta);
 	}
 
+	protected void flickerBackground(Color color) {
+		flickerBackgroundColor = color;
+	}
+
+	protected void setBackground(Color color) {
+		backgroundColor = color;
+	}
+
+	protected void resetBackground() {
+		backgroundColor = Color.BLACK;
+	}
+
 	/**
 	 * @param delta
 	 */
@@ -124,8 +140,13 @@ public abstract class AbstractBaseScreen implements Screen, InputProcessor {
 		MusicPlayer.instance().update(delta);
 
 		handleJoypad();
-		
-		Gdx.gl.glClearColor(0, 0, 0, 1);
+
+		if(flickerBackgroundColor != null) {
+			Gdx.gl.glClearColor(flickerBackgroundColor.r, flickerBackgroundColor.g, flickerBackgroundColor.b, 1);
+			flickerBackgroundColor = null;
+		} else {
+			Gdx.gl.glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, 1);
+		}
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 	}
 

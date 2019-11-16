@@ -17,7 +17,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
  */
 public class DebugOutput {
 
-	private static StringBuilder[] debugLines = new StringBuilder[20];
+	private static StringBuilder[] debugLines = new StringBuilder[4];
 	
 	private static BitmapFont debugFont = null;
 	private static float yStep = 0;
@@ -30,7 +30,8 @@ public class DebugOutput {
 		if(!initialized) {
 			initialized = true;
 			debugFont = font;
-			yStep = (debugFont.getXHeight() * -1) + 4;
+			yStep = debugFont.getLineHeight();
+			System.out.println("Debug line height: " + debugFont.getLineHeight() + ", cap height: " + debugFont.getCapHeight() + ", Xheight: " + debugFont.getXHeight());
 			for(int i = 0; i < debugLines.length; i++) {
 				debugLines[i] = new StringBuilder(300);
 			}

@@ -44,11 +44,12 @@ public class LoadingScreen extends AbstractBaseScreen {
 	@Override
 	public void doRender(float arg0) {
 		batch.begin();
-		if(!Assets.instance().loadCompleted()) {
+		if(!Assets.instance().isLoadingCompleted()) {
 			Assets.instance().load();
 		} else {
 			System.out.println("All assets loaded.");
 			MrRobotGame.instance().finishInitialization();
+			Assets.instance().loadingCompleted();
 			MrRobotGame.instance().setScreen(titleScreen);
 		}
 

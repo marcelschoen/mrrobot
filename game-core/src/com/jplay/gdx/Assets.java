@@ -195,6 +195,7 @@ public abstract class Assets {
 	protected void loadFont(String filename, FontID id) {
 		String fontName = "fonts/" + filename;
 		fontFileNameMap.put(id, fontName);
+		System.out.println(">> LOAD FONT: " + fontName);
 		manager.load(fontName, BitmapFont.class);
 	}
 	
@@ -233,16 +234,23 @@ public abstract class Assets {
 	 * 
 	 * @return True if loading has completed.
 	 */
-	public boolean loadCompleted() {
+	public boolean isLoadingCompleted() {
 		if(manager.getProgress() == 1.0) {
 			return true;
 		}
 		return false;
 	}
+
+	/**
+	 * Is invoked from the loading screen once loading has finished.
+	 */
+	public void loadingCompleted() {
+		// do nothing
+	}
 	
 	/**
 	 * Continue loading the assets (happens asynchronously). Use
-	 * "boolean loadCompleted()" to check if loading has finished.
+	 * "boolean isLoadingCompleted()" to check if loading has finished.
 	 */
 	public void load() {
 		manager.update();

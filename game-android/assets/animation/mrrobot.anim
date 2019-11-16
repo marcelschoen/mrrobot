@@ -51,4 +51,12 @@
       <spr name="/mrrobot_r1" x="0" y="0" z="0" flipH="1"/>
     </cell>
   </anim>
+  <anim name="mrrobot_climb" loops="0">
+    <cell index="0" delay="10">
+      <spr name="/mrrobot_climb1" x="0" y="0" z="0"/>
+    </cell>
+    <cell index="1" delay="10">
+      <spr name="/mrrobot_climb2" x="0" y="0" z="0"/>
+    </cell>
+  </anim>
 </animations>
