@@ -8,6 +8,10 @@ package com.jplay.gdx;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.GridPoint2;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Prints debug output into the game screen.
@@ -17,35 +21,23 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
  */
 public class DebugOutput {
 
-	private static StringBuilder[] debugLines = new StringBuilder[4];
-	
+	private static Map<GridPoint2, String> debugLines = new HashMap();
+
 	private static BitmapFont debugFont = null;
-	private static float yStep = 0;
-	
-	private static int currentLine = 0;
-	
+
 	private static boolean initialized = false;
 	
 	public static void initialize(BitmapFont font) {
 		if(!initialized) {
 			initialized = true;
 			debugFont = font;
-			yStep = debugFont.getLineHeight();
 			System.out.println("Debug line height: " + debugFont.getLineHeight() + ", cap height: " + debugFont.getCapHeight() + ", Xheight: " + debugFont.getXHeight());
-			for(int i = 0; i < debugLines.length; i++) {
-				debugLines[i] = new StringBuilder(300);
-			}
 		}
 	}
 	
-	public static void log(String text) {
+	public static void log(String text, int x, int y) {
 		if(initialized) {
-			debugLines[currentLine].setLength(0);
-			debugLines[currentLine].append(text);
-			currentLine ++;
-			if(currentLine >= debugLines.length) {
-				currentLine = 0;
-			}
+			debugLines.put(new GridPoint2(x, y), text);
 		}
 	}
 	
@@ -53,14 +45,8 @@ public class DebugOutput {
 		if(debugFont == null) {
 			throw new IllegalStateException("Debug font not ready.");
 		}
-		float y = 100;
-		int line = currentLine - 1;
-		for(int i = 0; i < debugLines.length; i++) {
-			if(line < 0) {
-				line = debugLines.length - 1;
-			}
-			debugFont.draw(batch, debugLines[line--], 10, y);
-			y += yStep;
+		for(GridPoint2 position : debugLines.keySet()) {
+			debugFont.draw(batch, debugLines.get(position), position.x, position.y);
 		}
 	}
 }

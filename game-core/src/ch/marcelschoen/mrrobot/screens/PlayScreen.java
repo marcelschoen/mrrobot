@@ -24,9 +24,16 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
 
     public static final int TILE_DOT = 2;
     public static final int TILE_SLIDER = 17;
+    public static final int TILE_ROLL_RIGHT_1 = 12;
+    public static final int TILE_ROLL_RIGHT_2 = 13;
+
+    public static final int TILE_ROLL_LEFT_1 = 140;
+    public static final int TILE_ROLL_LEFT_2 = 141;
 
     private static final float WALK_SPEED = 32;
     private static final float DOWN_SPEED = 24;
+
+    private static int score = 0;
 
     private TiledMap map;
     private OrthogonalTiledMapRenderer tileMapRenderer;
@@ -36,6 +43,21 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
 
     private TiledMapTileLayer tiledMapTileLayer;
     private TiledMapTile clearedFloor = null;
+
+    private enum CELL_TYPE {
+        BELOW(1f),
+        FURTHER_BELOW(2f),
+        BEHIND(0f);
+
+        private float yOffset = 0;
+        CELL_TYPE(float yOffset) {
+            this.yOffset = yOffset;
+        }
+
+        public float getyOffset() {
+            return this.yOffset;
+        }
+    }
 
     private boolean initialized = false;
 
@@ -152,19 +174,10 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
             }
         } else if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
             mrRobot.setState("mrrobot_climb");
+
         } else {
             // Stop movement
-            if(mrRobotState.isFacingRight) {
-                if(mrRobotState != MRROBOT_STATE.STANDING_RIGHT) {
-                    mrRobot.setState("mrrobot_stand_right");
-                    intendedState = MRROBOT_STATE.STANDING_RIGHT;
-                }
-            } else {
-                if(mrRobotState != MRROBOT_STATE.STANDING_LEFT) {
-                    mrRobot.setState("mrrobot_stand_left");
-                    intendedState = MRROBOT_STATE.STANDING_LEFT;
-                }
-            }
+            intendedState = stopMrRobot();
         }
 
         if(intendedState != null) {
@@ -176,6 +189,21 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
 
         moveMrRobot(delta);
         checkMrRobot(delta);
+    }
+
+    private MRROBOT_STATE stopMrRobot() {
+        if(mrRobotState.isFacingRight) {
+            if(mrRobotState != MRROBOT_STATE.STANDING_RIGHT) {
+                mrRobot.setState("mrrobot_stand_right");
+                return MRROBOT_STATE.STANDING_RIGHT;
+            }
+        } else {
+            if(mrRobotState != MRROBOT_STATE.STANDING_LEFT) {
+                mrRobot.setState("mrrobot_stand_left");
+                return MRROBOT_STATE.STANDING_LEFT;
+            }
+        }
+        return null;
     }
 
     private void moveMrRobot(float delta) {
@@ -191,6 +219,20 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
         }
     }
 
+    private TiledMapTileLayer.Cell getTileMapCell(CELL_TYPE type) {
+        float x = mrRobot.getX() + 12f;
+        float y = mrRobot.getY()+ 7f;
+
+        float col = x / 8f;
+        float line = (y / 8f) - 1f;
+        if(type == CELL_TYPE.BEHIND) {
+            line -= 1;
+        } else if(type == CELL_TYPE.FURTHER_BELOW) {
+            line += 1;
+        }
+        return getCell((int)col, (int)line);
+    }
+
     private void checkMrRobot(float delta) {
         float x = mrRobot.getX() + 12f;
         float y = mrRobot.getY()+ 7f;
@@ -198,8 +240,9 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
         float col = x / 8f;
         float line = (y / 8f) - 1f;
 
-        TiledMapTileLayer.Cell cell = getCell((int)col, (int)line);
-        DebugOutput.log("tile: " + (cell == null ? "-" : cell.getTile().getId()));
+        TiledMapTileLayer.Cell cell = getTileMapCell(CELL_TYPE.BELOW);
+
+        DebugOutput.log("tile: " + (cell == null ? "-" : cell.getTile().getId()), 200, 160);
 
         if(cell == null) {
             if(!mrRobotIsFalling()) {
@@ -216,6 +259,7 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
             }
             if(cell.getTile().getId() == TILE_DOT) {
                 cell.setTile(clearedFloor);
+                score += 1;
             }
         }
 
@@ -295,7 +339,7 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
         DebugOutput.draw(batch);
 
         BitmapFont font = Assets.instance().getFont(MrRobotAssets.FONT_ID.LOADING);
-        font.draw(batch, "SCORE: 0", 2f, 140f);
+        font.draw(batch, "SCORE: " + score, 2f, 150f);
 
 
         batch.end();
