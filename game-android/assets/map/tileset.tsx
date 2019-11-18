@@ -48,6 +48,14 @@
   <properties>
    <property name="type" type="int" value="4"/>
   </properties>
+  <animation>
+   <frame tileid="8" duration="100"/>
+   <frame tileid="40" duration="100"/>
+   <frame tileid="72" duration="100"/>
+   <frame tileid="40" duration="100"/>
+   <frame tileid="8" duration="100"/>
+   <frame tileid="104" duration="100"/>
+  </animation>
  </tile>
  <tile id="9">
   <properties>

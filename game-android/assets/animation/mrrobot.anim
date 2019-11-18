@@ -59,4 +59,9 @@
       <spr name="/mrrobot_climb2" x="0" y="0" z="0"/>
     </cell>
   </anim>
+  <anim name="mrrobot_stand_on_ladder" loops="0">
+    <cell index="0" delay="1">
+      <spr name="/mrrobot_climb1" x="0" y="0" z="0"/>
+    </cell>
+  </anim>
 </animations>

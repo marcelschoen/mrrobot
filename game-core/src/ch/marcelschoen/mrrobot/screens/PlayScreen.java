@@ -26,6 +26,8 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
     public static final int TILE_SLIDER = 17;
     public static final int TILE_ROLL_RIGHT_1 = 12;
     public static final int TILE_ROLL_RIGHT_2 = 13;
+    public static final int TILE_LADDER_LEFT = 6;
+    public static final int TILE_LADDER_RIGHT = 7;
 
     public static final int TILE_ROLL_LEFT_1 = 140;
     public static final int TILE_ROLL_LEFT_2 = 141;
@@ -62,10 +64,13 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
     private boolean initialized = false;
 
     private enum MRROBOT_STATE {
+        CLIMBING_UP(true),
+        CLIMBING_DOWN(true),
         SLIDING_RIGHT(true),
         SLIDING_LEFT(false),
         FALLING_RIGHT(true),
         FALLING_LEFT(false),
+        STANDING_ON_LADDER(true),
         STANDING_RIGHT(true),
         STANDING_LEFT(false),
         WALKING_RIGHT(true),
@@ -99,6 +104,7 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
         this.mrRobot.setSprite("mrrobot_stand_left", Assets.instance().getAnimated2DSprite("mrrobot_stand_left"));
         this.mrRobot.setSprite("mrrobot_walk_left", Assets.instance().getAnimated2DSprite("mrrobot_walk_left"));
         this.mrRobot.setSprite("mrrobot_climb", Assets.instance().getAnimated2DSprite("mrrobot_climb"));
+        this.mrRobot.setSprite("mrrobot_stand_on_ladder", Assets.instance().getAnimated2DSprite("mrrobot_stand_on_ladder"));
         //this.mrRobotSprite = Assets.instance().getJPlaySprite("mrrobot_walk_right");
 
         this.clearedFloor = this.map.getTileSets().getTileSet(0).getTile(3);
@@ -159,8 +165,10 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
                 camera.position.x -= 100 * delta;
             } else {
                 if(mrRobotState != MRROBOT_STATE.WALKING_LEFT) {
-                    mrRobot.setState("mrrobot_walk_left");
-                    intendedState = MRROBOT_STATE.WALKING_LEFT;
+                    if(!mrRobotIsClimbing() && !mrRobotIsFalling() && !mrRobotIsSliding()) {
+                        mrRobot.setState("mrrobot_walk_left");
+                        intendedState = MRROBOT_STATE.WALKING_LEFT;
+                    }
                 }
             }
         } else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
@@ -168,13 +176,14 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
                 camera.position.x += 100 * delta;
             } else {
                 if(mrRobotState != MRROBOT_STATE.WALKING_RIGHT) {
-                    mrRobot.setState("mrrobot_walk_right");
-                    intendedState = MRROBOT_STATE.WALKING_RIGHT;
+                    if(!mrRobotIsClimbing() && !mrRobotIsFalling() && !mrRobotIsSliding()) {
+                        mrRobot.setState("mrrobot_walk_right");
+                        intendedState = MRROBOT_STATE.WALKING_RIGHT;
+                    }
                 }
             }
         } else if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
-            mrRobot.setState("mrrobot_climb");
-
+            intendedState = mrRobotClimbing(MRROBOT_STATE.CLIMBING_UP);
         } else {
             // Stop movement
             intendedState = stopMrRobot();
@@ -191,16 +200,69 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
         checkMrRobot(delta);
     }
 
+    private MRROBOT_STATE mrRobotClimbing(MRROBOT_STATE climbingType) {
+        TiledMapTileLayer.Cell cell = getTileMapCell(CELL_TYPE.BEHIND);
+        TiledMapTileLayer.Cell cellBelow = getTileMapCell(CELL_TYPE.FURTHER_BELOW);
+        DebugOutput.log("behind: " + (cell == null ? "-" : cell.getTile().getId()), 80, 160);
+        int tileId = cell != null && cell.getTile() != null ? cell.getTile().getId() : -1;
+        int tileBelowId = cellBelow != null && cellBelow.getTile() != null ? cellBelow.getTile().getId() : -1;
+//        DebugOutput.log("behind: " + tileId, 0, 40);
+        boolean climb = false;
+        boolean alignLeftTile = false;
+        if(cell != null && (tileId == TILE_LADDER_LEFT || tileId == TILE_LADDER_RIGHT)) {
+            alignLeftTile = tileId == TILE_LADDER_RIGHT;
+            climb = true;
+        } else if(cellBelow != null && (tileBelowId == TILE_LADDER_LEFT || tileBelowId == TILE_LADDER_RIGHT)) {
+            alignLeftTile = tileBelowId == TILE_LADDER_RIGHT;
+            climb = true;
+        }
+        if(climb && mrRobotIsNearlyAligned()) {
+            alignMrRobotHorizontally(alignLeftTile);
+            mrRobot.setState("mrrobot_climb");
+            mrRobotState = climbingType;
+        }
+        return null;
+    }
+
+    private float alignMrRobotVertically() {
+        float y = mrRobot.getY() + 12;
+        int row = (int)(y / 8f) - 1;
+        mrRobot.setPosition(mrRobot.getX(), row * 8f);
+        return mrRobot.getY();
+    }
+
+    private void alignMrRobotHorizontally(boolean alignLeftTile) {
+        float x = mrRobot.getX() + 12;
+        int col = (int)(x / 8f) - 2;
+        if(alignLeftTile) {
+            col --;
+        }
+        mrRobot.setPosition(col * 8f + 12, mrRobot.getY());
+    }
+
+    private boolean mrRobotIsNearlyAligned() {
+        float x = mrRobot.getX() + 6f;
+        int col = (int)(x / 8f) + 1;
+        float diff = x - (col * 8f);
+        /////////DebugOutput.log("x: " + x + ", col: " + col + ", diff: " + diff, 0, 100);
+        return Math.abs(diff) < 8f;
+    }
+
     private MRROBOT_STATE stopMrRobot() {
-        if(mrRobotState.isFacingRight) {
-            if(mrRobotState != MRROBOT_STATE.STANDING_RIGHT) {
-                mrRobot.setState("mrrobot_stand_right");
-                return MRROBOT_STATE.STANDING_RIGHT;
-            }
+        if(mrRobotIsClimbing()) {
+            mrRobot.setState("mrrobot_stand_on_ladder");
+            return MRROBOT_STATE.STANDING_ON_LADDER;
         } else {
-            if(mrRobotState != MRROBOT_STATE.STANDING_LEFT) {
-                mrRobot.setState("mrrobot_stand_left");
-                return MRROBOT_STATE.STANDING_LEFT;
+            if(mrRobotState.isFacingRight) {
+                if(mrRobotState != MRROBOT_STATE.STANDING_RIGHT) {
+                    mrRobot.setState("mrrobot_stand_right");
+                    return MRROBOT_STATE.STANDING_RIGHT;
+                }
+            } else {
+                if(mrRobotState != MRROBOT_STATE.STANDING_LEFT) {
+                    mrRobot.setState("mrrobot_stand_left");
+                    return MRROBOT_STATE.STANDING_LEFT;
+                }
             }
         }
         return null;
@@ -210,13 +272,31 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
         float x = mrRobot.getX();
         float y = mrRobot.getY();
         if (mrRobotState == MRROBOT_STATE.WALKING_RIGHT) {
-            mrRobot.setPosition(x + WALK_SPEED * delta, y);
+            x += WALK_SPEED * delta;
+            y = alignMrRobotVertically();
         } else if (mrRobotState == MRROBOT_STATE.WALKING_LEFT) {
-            mrRobot.setPosition(x - WALK_SPEED * delta, y);
+            x -= WALK_SPEED * delta;
+            y = alignMrRobotVertically();
         } else if (mrRobotState == MRROBOT_STATE.FALLING_RIGHT || mrRobotState == MRROBOT_STATE.FALLING_LEFT
             || mrRobotState == MRROBOT_STATE.SLIDING_LEFT || mrRobotState == MRROBOT_STATE.SLIDING_RIGHT) {
-            mrRobot.setPosition(x, y - DOWN_SPEED * delta);
+            y -= DOWN_SPEED * delta;
+        } else if (mrRobotState == MRROBOT_STATE.CLIMBING_UP) {
+            y += WALK_SPEED * delta;
+        } else if (mrRobotState == MRROBOT_STATE.CLIMBING_DOWN) {
+            y -= WALK_SPEED * delta;
         }
+
+        if(x < -5) {
+            x = -5;
+            if(mrRobotIsFalling()) {
+                // TODO - REVERSE DIRECTION
+            }
+            // TODO - CONSTANT FOR MR.ROBOT SPRITE WIDTH
+        } else if(x > MrRobotGame.VIRTUAL_WIDTH - 19) {
+            x = MrRobotGame.VIRTUAL_WIDTH - 19;
+        }
+
+        mrRobot.setPosition(x, y);
     }
 
     private TiledMapTileLayer.Cell getTileMapCell(CELL_TYPE type) {
@@ -226,11 +306,19 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
         float col = x / 8f;
         float line = (y / 8f) - 1f;
         if(type == CELL_TYPE.BEHIND) {
-            line -= 1;
-        } else if(type == CELL_TYPE.FURTHER_BELOW) {
             line += 1;
+        } else if(type == CELL_TYPE.FURTHER_BELOW) {
+            line -= 1;
         }
         return getCell((int)col, (int)line);
+    }
+
+    private boolean cellEmpty(TiledMapTileLayer.Cell cell) {
+        if(cell == null || cell.getTile() == null) {
+            return true;
+        }
+        return false;
+//        return cell.getTile().getId() == TILE_LADDER_RIGHT || cell.getTile().getId() == TILE_LADDER_LEFT;
     }
 
     private void checkMrRobot(float delta) {
@@ -242,9 +330,7 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
 
         TiledMapTileLayer.Cell cell = getTileMapCell(CELL_TYPE.BELOW);
 
-        DebugOutput.log("tile: " + (cell == null ? "-" : cell.getTile().getId()), 200, 160);
-
-        if(cell == null) {
+        if(cellEmpty(cell)) {
             if(!mrRobotIsFalling()) {
                 mrRobotStartsFalling();
             }
@@ -260,6 +346,11 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
             if(cell.getTile().getId() == TILE_DOT) {
                 cell.setTile(clearedFloor);
                 score += 1;
+            }
+            if(cell.getTile().getId() == TILE_ROLL_LEFT_1 || cell.getTile().getId() == TILE_ROLL_LEFT_2) {
+                mrRobot.setPosition(mrRobot.getX() - 20f * delta, mrRobot.getY());
+            } else if(cell.getTile().getId() == TILE_ROLL_RIGHT_1 || cell.getTile().getId() == TILE_ROLL_RIGHT_2) {
+                mrRobot.setPosition(mrRobot.getX() + 20f * delta, mrRobot.getY());
             }
         }
 
@@ -293,6 +384,12 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
         } else {
             mrRobotState = MRROBOT_STATE.SLIDING_LEFT;
         }
+    }
+
+    private boolean mrRobotIsClimbing() {
+        return mrRobotState == MRROBOT_STATE.CLIMBING_DOWN
+                || mrRobotState == MRROBOT_STATE.CLIMBING_UP
+                || mrRobotState == MRROBOT_STATE.STANDING_ON_LADDER;
     }
 
     private boolean mrRobotIsFalling() {

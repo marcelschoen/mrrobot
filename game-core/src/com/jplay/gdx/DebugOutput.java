@@ -40,6 +40,10 @@ public class DebugOutput {
 			debugLines.put(new GridPoint2(x, y), text);
 		}
 	}
+
+	public static void clear() {
+		debugLines.clear();
+	}
 	
 	public static void draw(SpriteBatch batch) {
 		if(debugFont == null) {
