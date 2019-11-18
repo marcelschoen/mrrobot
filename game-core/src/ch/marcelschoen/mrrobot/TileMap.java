@@ -96,7 +96,7 @@ public class TileMap {
 
     public TiledMapTileLayer.Cell getTileMapCell(CELL_TYPE type) {
         float x = mrRobot.getX() + 12f;
-        float y = mrRobot.getY()+ 7f;
+        float y = mrRobot.getY()+ 6f;
 
         float col = x / 8f;
         float line = (y / 8f) - 1f;

@@ -114,7 +114,7 @@ public abstract class AbstractBaseScreen implements Screen, InputProcessor {
 		doRender(delta);
 	}
 
-	protected void flickerBackground(Color color) {
+	public void flickerBackground(Color color) {
 		flickerBackgroundColor = color;
 	}
 

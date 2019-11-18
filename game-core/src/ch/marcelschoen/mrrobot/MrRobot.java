@@ -3,6 +3,7 @@ package ch.marcelschoen.mrrobot;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.jplay.gdx.Assets;
@@ -78,6 +79,13 @@ public class MrRobot {
 
     public void draw(SpriteBatch batch, float delta) {
         this.sprite.draw(batch, delta);
+
+        TiledMapTileLayer.Cell cell = tileMap.getTileMapCell(TileMap.CELL_TYPE.BEHIND);
+        TiledMapTileLayer.Cell cellBelow = tileMap.getTileMapCell(TileMap.CELL_TYPE.BELOW);
+        TiledMapTileLayer.Cell cellFurtherBelow = tileMap.getTileMapCell(TileMap.CELL_TYPE.FURTHER_BELOW);
+        DebugOutput.log("behind: " + (cell == null ? "x" : cell.getTile().getId()), 40, 50);
+        DebugOutput.log("below: " + (cellBelow == null ? "x" : cellBelow.getTile().getId()), 40, 30);
+        DebugOutput.log("below 2: " + (cellFurtherBelow == null ? "x" : cellFurtherBelow.getTile().getId()), 40, 10);
     }
 
     public void setPosition(float x, float y) {
@@ -149,32 +157,28 @@ public class MrRobot {
      * @param animationName
      */
     private void tryClimbing(MRROBOT_STATE intendedState, String animationName) {
-        intendedMovement.animationName = animationName;
-        intendedMovement.mrrobot_state = mrRobotClimbing(intendedState);
-    }
-
-    public MRROBOT_STATE mrRobotClimbing(MRROBOT_STATE climbingType) {
         TiledMapTileLayer.Cell cell = tileMap.getTileMapCell(TileMap.CELL_TYPE.BEHIND);
         TiledMapTileLayer.Cell cellBelow = tileMap.getTileMapCell(TileMap.CELL_TYPE.FURTHER_BELOW);
-        DebugOutput.log("behind: " + (cell == null ? "-" : cell.getTile().getId()), 80, 160);
+
         int tileId = cell != null && cell.getTile() != null ? cell.getTile().getId() : -1;
         int tileBelowId = cellBelow != null && cellBelow.getTile() != null ? cellBelow.getTile().getId() : -1;
 //        DebugOutput.log("behind: " + tileId, 0, 40);
         boolean climb = false;
         boolean alignLeftTile = false;
         if(cell != null && (tileId == TILE_LADDER_LEFT || tileId == TILE_LADDER_RIGHT)) {
+   DebugOutput.flicker(Color.YELLOW);
             alignLeftTile = tileId == TILE_LADDER_RIGHT;
             climb = true;
         } else if(cellBelow != null && (tileBelowId == TILE_LADDER_LEFT || tileBelowId == TILE_LADDER_RIGHT)) {
+ DebugOutput.flicker(Color.RED);
             alignLeftTile = tileBelowId == TILE_LADDER_RIGHT;
             climb = true;
         }
         if(climb && mrRobotIsNearlyAligned()) {
             alignMrRobotHorizontally(alignLeftTile);
-            sprite.setState(ANIM.mrrobot_climb.name());
-            mrRobotState = climbingType;
+            intendedMovement.animationName = ANIM.mrrobot_climb.name();
+            intendedMovement.mrrobot_state = intendedState;
         }
-        return null;
     }
 
     /**

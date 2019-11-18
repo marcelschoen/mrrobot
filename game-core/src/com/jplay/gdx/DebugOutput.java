@@ -6,12 +6,15 @@
 
 package com.jplay.gdx;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.GridPoint2;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import ch.marcelschoen.mrrobot.screens.PlayScreen;
 
 /**
  * Prints debug output into the game screen.
@@ -24,6 +27,8 @@ public class DebugOutput {
 	private static Map<GridPoint2, String> debugLines = new HashMap();
 
 	private static BitmapFont debugFont = null;
+
+	private static PlayScreen playScreen;
 
 	private static boolean initialized = false;
 	
@@ -39,6 +44,14 @@ public class DebugOutput {
 		if(initialized) {
 			debugLines.put(new GridPoint2(x, y), text);
 		}
+	}
+
+	public static void setPlayScreen(PlayScreen screen) {
+		playScreen = screen;
+	}
+
+	public static void flicker(Color color) {
+		playScreen.flickerBackground(color);
 	}
 
 	public static void clear() {

@@ -25,6 +25,7 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
     public PlayScreen(MrRobotGame game) {
         super(game, null);
 
+        DebugOutput.setPlayScreen(this);
         this.mrRobot = new MrRobot(this.camera);
         this.tileMap = new TileMap("map/level16.tmx", this.mrRobot);
         this.mrRobot.setTileMap(this.tileMap);
