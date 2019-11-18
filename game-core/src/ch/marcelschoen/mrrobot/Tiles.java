@@ -1,6 +1,12 @@
 package ch.marcelschoen.mrrobot;
 
+/**
+ * Tile-information information holder.
+ *
+ * @author Marcel Schoen
+ */
 public class Tiles {
+
     public static final int TILE_DOT = 2;
     public static final int TILE_SLIDER = 17;
     public static final int TILE_ROLL_RIGHT_1 = 12;
