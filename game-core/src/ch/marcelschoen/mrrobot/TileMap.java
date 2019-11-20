@@ -74,7 +74,7 @@ public class TileMap {
                                 float x = (colCt * 8) - 8;
                                 float y = lineCt * 8;
                                 mrRobot.setPosition(x, y);
-                                mrRobot.setState("mrrobot_stand_right");
+                                mrRobot.setState(MrRobot.MRROBOT_STATE.STANDING_RIGHT);
                             }
                         }
                     }
@@ -92,6 +92,14 @@ public class TileMap {
 
     public void clearCell(TiledMapTileLayer.Cell cell) {
         cell.setTile(clearedFloor);
+    }
+
+    public int getTileMapTile(CELL_TYPE type) {
+        TiledMapTileLayer.Cell cell = getTileMapCell(type);
+        if(cell == null || cell.getTile() == null) {
+            return -1;
+        }
+        return cell.getTile().getId();
     }
 
     public TiledMapTileLayer.Cell getTileMapCell(CELL_TYPE type) {
@@ -124,6 +132,17 @@ public class TileMap {
             return null;
         }
         return cell;
+    }
+
+    public int getTile(int col, int line) {
+        TiledMapTileLayer.Cell cell = tiledMapTileLayer.getCell(col, line);
+        if(cell == null) {
+            return -1;
+        }
+        if(cell.getTile() == null) {
+            return -1;
+        }
+        return cell.getTile().getId();
     }
 
     public void doRender(float delta, Camera camera) {
