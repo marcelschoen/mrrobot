@@ -164,7 +164,7 @@ public class MrRobot {
      */
     private void tryClimbing(MRROBOT_STATE intendedState, String animationName) {
         int tileId = tileMap.getTileMapTile(TileMap.CELL_TYPE.BEHIND);
-        int tileFurtherBelowId = tileMap.getTileMapTile(TileMap.CELL_TYPE.FURTHER_BELOW);
+        int tileFurtherBelowId = tileMap.getTileMapTile(TileMap.CELL_TYPE.BELOW);
         boolean climb = false;
         boolean alignLeftTile = false;
         if(tileId != -1 && (tileId == TILE_LADDER_LEFT || tileId == TILE_LADDER_RIGHT)) {
