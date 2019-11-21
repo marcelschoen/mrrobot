@@ -7,6 +7,8 @@ package ch.marcelschoen.mrrobot;
  */
 public class Tiles {
 
+    public static final int NO_TILE = -1;
+
     public static final int TILE_DOT = 2;
     public static final int TILE_SLIDER = 17;
     public static final int TILE_ROLL_RIGHT_1 = 12;
