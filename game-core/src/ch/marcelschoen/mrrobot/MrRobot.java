@@ -3,7 +3,6 @@ package ch.marcelschoen.mrrobot;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.jplay.gdx.Assets;
 import com.jplay.gdx.DebugOutput;
@@ -122,6 +121,9 @@ public class MrRobot {
                     if(mrRobotIsOnLadder()) {
                         if(tileBelowId != -1 && tileBelowId != TILE_LADDER_LEFT ) {
                             tryMoveLeft = true;
+                        } else if(tileBehindId != -1 && tileBehindId != TILE_LADDER_LEFT
+                                && mrRobotIsNearlyAlignedVerticallyAtTop()) {
+                            tryMoveLeft = true;
                         }
                     } else {
                         tryMoveLeft = true;
@@ -140,6 +142,9 @@ public class MrRobot {
                 if(!mrRobotIsFalling() && !mrRobotIsSliding()) {
                     if(mrRobotIsOnLadder()) {
                         if(tileBelowId != -1 && tileBelowId != TILE_LADDER_LEFT ) {
+                            tryMoveRight = true;
+                        } else if(tileBehindId != -1 && tileBehindId != TILE_LADDER_LEFT
+                                    && mrRobotIsNearlyAlignedVerticallyAtTop()) {
                             tryMoveRight = true;
                         }
                     } else {
@@ -383,7 +388,6 @@ public class MrRobot {
             } else {
                 if(tileBehindId == TILE_LADDER_LEFT && tileBelowId != TILE_LADDER_LEFT) {
                     if(mrRobotIsNearlyAlignedVertically()) {
-                        DebugOutput.flicker(Color.YELLOW);
                         setState(MRROBOT_STATE.STANDING_RIGHT);
                         mrRobotLands();
                     }
@@ -413,6 +417,13 @@ public class MrRobot {
         int row = (int)(y / 8f);
         float diff = y - (row * 8f);
         return Math.abs(diff) < 1.5f;
+    }
+
+    public boolean mrRobotIsNearlyAlignedVerticallyAtTop() {
+        float y = sprite.getY();
+        int row = (int)(y / 8f);
+        float diff = y - (row * 8f);
+        return diff > 1.5f;
     }
 
     public float alignMrRobotVertically() {
