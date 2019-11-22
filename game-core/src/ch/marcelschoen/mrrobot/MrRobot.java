@@ -3,8 +3,8 @@ package ch.marcelschoen.mrrobot;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.jplay.gdx.Assets;
 import com.jplay.gdx.DebugOutput;
 import com.jplay.gdx.MoveableEntity;
@@ -36,6 +36,10 @@ public class MrRobot {
     private static final float DOWN_SPEED = 24;
 
     private MoveableEntity sprite = new MoveableEntity("mrrobot", 0, 0);
+
+    private int tileBehindId = NO_TILE;
+    private int tileBelowId = NO_TILE;
+    private int tileFurtherBelowId = NO_TILE;
 
     private Camera camera;
     private TileMap tileMap;
@@ -83,21 +87,17 @@ public class MrRobot {
 
     public void draw(SpriteBatch batch, float delta) {
         this.sprite.draw(batch, delta);
-
-        TiledMapTileLayer.Cell cell = tileMap.getTileMapCell(TileMap.CELL_TYPE.BEHIND);
-        TiledMapTileLayer.Cell cellBelow = tileMap.getTileMapCell(TileMap.CELL_TYPE.BELOW);
-        TiledMapTileLayer.Cell cellFurtherBelow = tileMap.getTileMapCell(TileMap.CELL_TYPE.FURTHER_BELOW);
-        DebugOutput.log("behind: " + (cell == null ? "x" : cell.getTile().getId()), 40, 60);
-        DebugOutput.log("below: " + (cellBelow == null ? "x" : cellBelow.getTile().getId()), 40, 46);
-        DebugOutput.log("below 2: " + (cellFurtherBelow == null ? "x" : cellFurtherBelow.getTile().getId()), 40, 32);
-        DebugOutput.log("cursor keys: l=" + Gdx.input.isKeyPressed(Input.Keys.LEFT)
-                + ",r:" + Gdx.input.isKeyPressed(Input.Keys.RIGHT)
-                + ",u:" + Gdx.input.isKeyPressed(Input.Keys.UP)
-                + ",d:" + Gdx.input.isKeyPressed(Input.Keys.DOWN), 40, 16);
+        DebugOutput.log("y: " + getY(), 40, 75);
+        DebugOutput.log("behind: " + tileBehindId, 40, 60);
+        DebugOutput.log("below: " + tileBelowId, 40, 46);
+        DebugOutput.log("below 2: " + tileFurtherBelowId, 40, 32);
     }
 
     public void setPosition(float x, float y) {
         this.sprite.setPosition(x, y);
+        tileBehindId = tileMap.getTileMapTile(TileMap.CELL_TYPE.BEHIND);
+        tileBelowId = tileMap.getTileMapTile(TileMap.CELL_TYPE.BELOW);
+        tileFurtherBelowId = tileMap.getTileMapTile(TileMap.CELL_TYPE.FURTHER_BELOW);
     }
 
     public void setState(MRROBOT_STATE state) {
@@ -114,8 +114,6 @@ public class MrRobot {
 
     public void handleInput(float delta) {
         intendedMovement.clear();
-        int tileBehindId = tileMap.getTileMapTile(TileMap.CELL_TYPE.BEHIND);
-        int tileBelowId = tileMap.getTileMapTile(TileMap.CELL_TYPE.BELOW);
 
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
             if(mrRobotState != MRROBOT_STATE.WALKING_LEFT) {
@@ -132,7 +130,7 @@ public class MrRobot {
                 if(tryMoveLeft) {
                     alignMrRobotVertically();
                     tryMovingSideways(MRROBOT_STATE.WALKING_LEFT, ANIM.mrrobot_walk_left.name());
-                } else if(!mrRobotIsFalling()) {
+                } else if(!mrRobotIsFalling() && !mrRobotIsSliding()) {
                     stopMrRobot();
                 }
             }
@@ -151,17 +149,17 @@ public class MrRobot {
                 if(tryMoveRight) {
                     alignMrRobotVertically();
                     tryMovingSideways(MRROBOT_STATE.WALKING_RIGHT, ANIM.mrrobot_walk_right.name());
-                } else if(!mrRobotIsFalling()) {
+                } else if(!mrRobotIsFalling() && !mrRobotIsSliding()) {
                     stopMrRobot();
                 }
             }
         } else if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
             if(!mrRobotIsClimbing()) {
-                tryClimbing(MRROBOT_STATE.CLIMBING_UP, ANIM.mrrobot_climb.name());
+                tryClimbingUp();
             }
         } else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             if(!mrRobotIsClimbing()) {
-                tryClimbing(MRROBOT_STATE.CLIMBING_DOWN, ANIM.mrrobot_climb.name());
+                tryClimbingDown();
             }
         } else {
             if(mrRobotIsClimbing() || mrRobotIsWalking()) {
@@ -215,12 +213,8 @@ public class MrRobot {
 
     /**
      *
-     * @param intendedState
-     * @param animationName
      */
-    private void tryClimbing(MRROBOT_STATE intendedState, String animationName) {
-        int tileBehindId = tileMap.getTileMapTile(TileMap.CELL_TYPE.BEHIND);
-        int tileFurtherBelowId = tileMap.getTileMapTile(TileMap.CELL_TYPE.FURTHER_BELOW);
+    private void tryClimbingUp() {
         boolean climb = false;
         boolean alignLeftTile = false;
         if(tileBehindId == TILE_LADDER_LEFT || tileBehindId == TILE_LADDER_RIGHT) {
@@ -235,7 +229,28 @@ public class MrRobot {
         if(climb && mrRobotIsNearlyAlignedHorizontally()) {
             alignMrRobotHorizontally(alignLeftTile);
             intendedMovement.animationName = ANIM.mrrobot_climb.name();
-            intendedMovement.mrrobot_state = intendedState;
+            intendedMovement.mrrobot_state = MRROBOT_STATE.CLIMBING_UP;
+        }
+    }
+
+    /**
+     *
+     */
+    private void tryClimbingDown() {
+        boolean climb = false;
+        boolean alignLeftTile = false;
+        if(mrRobotIsOnLadder()) {
+            alignLeftTile = tileBelowId == TILE_LADDER_RIGHT;
+            climb = true;
+        }
+        if(tileFurtherBelowId == TILE_LADDER_LEFT || tileFurtherBelowId == TILE_LADDER_RIGHT) {
+            alignLeftTile = tileBelowId == TILE_LADDER_RIGHT;
+            climb = true;
+        }
+        if(climb && mrRobotIsNearlyAlignedHorizontally()) {
+            alignMrRobotHorizontally(alignLeftTile);
+            intendedMovement.animationName = ANIM.mrrobot_climb.name();
+            intendedMovement.mrrobot_state = MRROBOT_STATE.CLIMBING_DOWN;
         }
     }
 
@@ -271,7 +286,8 @@ public class MrRobot {
             x = MrRobotGame.VIRTUAL_WIDTH - 19;
         }
 
-        sprite.setPosition(x, y);
+//        sprite.setPosition(x, y);
+        setPosition(x, y);
     }
 
     /**
@@ -286,6 +302,7 @@ public class MrRobot {
      *
      */
     public void mrRobotStartsFalling() {
+
         if(mrRobotState.isFacingRight()) {
             setState(MRROBOT_STATE.FALLING_RIGHT);
         } else {
@@ -346,43 +363,47 @@ public class MrRobot {
         float col = x / 8f;
         float line = (y / 8f) - 1f;
 
-        int cellBehind = tileMap.getTileMapTile(TileMap.CELL_TYPE.BEHIND);
-        int cellBelow = tileMap.getTileMapTile(TileMap.CELL_TYPE.BELOW);
-        int cellFurtherBelow = tileMap.getTileMapTile(TileMap.CELL_TYPE.FURTHER_BELOW);
-
-        if(cellBelow == NO_TILE) {
+        if(tileBelowId == NO_TILE) {
             if (!mrRobotIsFalling()) {
                 mrRobotStartsFalling();
             }
         } else if(mrRobotIsFalling() || mrRobotIsSliding()) {
             // TODO - CHECK ONLY FOR SOLID BLOCKS TO STAND ON, NOT DOWNWARD PIPES OR LADDERS
-            if (cellBelow != NO_TILE && cellBelow != TILE_SLIDER) {
+            if (tileBelowId != NO_TILE && tileBelowId != TILE_SLIDER) {
                 if (mrRobotIsNearlyAlignedVertically()) {
                     mrRobotLands();
-                    sprite.setPosition(sprite.getX(), line * 8f);
+                    setPosition(sprite.getX(), line * 8f);
                 }
             }
         } else if(mrRobotIsClimbing()) {
             if(mrRobotState == MRROBOT_STATE.CLIMBING_UP) {
-                if(cellBehind == NO_TILE && cellBelow != TILE_LADDER_LEFT) {
-                    mrRobotState = MRROBOT_STATE.STANDING_RIGHT;
+                if(tileBehindId == NO_TILE && tileBelowId != TILE_LADDER_LEFT) {
+                    setState(MRROBOT_STATE.STANDING_RIGHT);
                     mrRobotLands();
+                }
+            } else {
+                if(tileBehindId == TILE_LADDER_LEFT && tileBelowId != TILE_LADDER_LEFT) {
+                    if(mrRobotIsNearlyAlignedVertically()) {
+                        DebugOutput.flicker(Color.YELLOW);
+                        setState(MRROBOT_STATE.STANDING_RIGHT);
+                        mrRobotLands();
+                    }
                 }
             }
         } else {
-            if(cellBelow == TILE_DOT) {
+            if(tileBelowId == TILE_DOT) {
                 tileMap.clearCell(tileMap.getTileMapCell(TileMap.CELL_TYPE.BELOW));
                 Hud.addScore(1);
             }
-            if(cellBelow == TILE_ROLL_LEFT_1 || cellBelow == TILE_ROLL_LEFT_2) {
-                sprite.setPosition(sprite.getX() - 20f * delta, sprite.getY());
-            } else if(cellBelow == TILE_ROLL_RIGHT_1 || cellBelow == TILE_ROLL_RIGHT_2) {
-                sprite.setPosition(sprite.getX() + 20f * delta, sprite.getY());
+            if(tileBelowId == TILE_ROLL_LEFT_1 || tileBelowId == TILE_ROLL_LEFT_2) {
+                setPosition(sprite.getX() - 20f * delta, sprite.getY());
+            } else if(tileBelowId == TILE_ROLL_RIGHT_1 || tileBelowId == TILE_ROLL_RIGHT_2) {
+                setPosition(sprite.getX() + 20f * delta, sprite.getY());
             }
         }
 
         if(line > 0) {
-            if(cellFurtherBelow == TILE_SLIDER && !mrRobotIsSliding()) {
+            if(tileFurtherBelowId == TILE_SLIDER && !mrRobotIsSliding()) {
                 mrRobotStartsSliding();
             }
         }
@@ -398,7 +419,7 @@ public class MrRobot {
     public float alignMrRobotVertically() {
         float y = sprite.getY() + 12;
         int row = (int)(y / 8f) - 1;
-        sprite.setPosition(sprite.getX(), row * 8f);
+        setPosition(sprite.getX(), row * 8f);
         return sprite.getY();
     }
 
@@ -408,7 +429,7 @@ public class MrRobot {
         if(alignLeftTile) {
             col --;
         }
-        sprite.setPosition(col * 8f + 11, sprite.getY());
+        setPosition(col * 8f + 11, sprite.getY());
     }
 
     public boolean mrRobotIsNearlyAlignedHorizontally() {

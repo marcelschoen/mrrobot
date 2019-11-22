@@ -73,6 +73,7 @@ public class TileMap {
                                 // Placement of Mr. Robot starting position
                                 float x = (colCt * 8) - 8;
                                 float y = lineCt * 8;
+                                mrRobot.setTileMap(this);
                                 mrRobot.setPosition(x, y);
                                 mrRobot.setState(MrRobot.MRROBOT_STATE.STANDING_RIGHT);
                             }
