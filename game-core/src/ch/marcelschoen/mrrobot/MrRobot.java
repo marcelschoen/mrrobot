@@ -244,7 +244,7 @@ public class MrRobot {
             climb = true;
         }
         if(tileFurtherBelowId == TILE_LADDER_LEFT || tileFurtherBelowId == TILE_LADDER_RIGHT) {
-            alignLeftTile = tileBelowId == TILE_LADDER_RIGHT;
+            alignLeftTile = tileFurtherBelowId == TILE_LADDER_RIGHT;
             climb = true;
         }
         if(climb && mrRobotIsNearlyAlignedHorizontally()) {
@@ -286,7 +286,6 @@ public class MrRobot {
             x = MrRobotGame.VIRTUAL_WIDTH - 19;
         }
 
-//        sprite.setPosition(x, y);
         setPosition(x, y);
     }
 
