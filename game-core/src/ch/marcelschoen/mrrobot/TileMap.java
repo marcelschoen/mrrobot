@@ -9,6 +9,10 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.jplay.gdx.MoveableEntity;
+
+import static ch.marcelschoen.mrrobot.Tiles.TILE_FLAME;
+import static ch.marcelschoen.mrrobot.Tiles.TILE_MR_ROBOT;
 
 /**
  * Encapsulates tilemap-related functionality.
@@ -25,6 +29,7 @@ public class TileMap {
 
     private MrRobot mrRobot;
 
+
     public enum CELL_TYPE {
         BELOW(1f),
         FURTHER_BELOW(2f),
@@ -40,8 +45,9 @@ public class TileMap {
         }
     }
 
-    public TileMap(String filename, MrRobot mrRobot) {
+    public TileMap(String filename, MrRobot mrRobot, Camera camera) {
         this.mrRobot = mrRobot;
+        Flame.flames.clear();
         this.loader = new TmxMapLoader();
         this.map = loader.load("map/level16.tmx");
 
@@ -63,12 +69,7 @@ public class TileMap {
                         } else {
                             TiledMapTile tile = tiledMapTileLayer.getCell(colCt, lineCt).getTile();
                             line += tile.getId();
-                            if(tile.getId() == 1 || tile.getId() == 2 || tile.getId() == 3 || tile.getId() == 4) {
-                                // tile with point to collect
-
-                            }
-                            if(tile.getId() == 18) {
-                                System.out.println("Found mrrobot at: " + colCt + "," + lineCt);
+                            if(tile.getId() == TILE_MR_ROBOT) {
                                 tiledMapTileLayer.setCell(colCt, lineCt, null);
                                 // Placement of Mr. Robot starting position
                                 float x = (colCt * 8) - 8;
@@ -76,6 +77,16 @@ public class TileMap {
                                 mrRobot.setTileMap(this);
                                 mrRobot.setPosition(x, y);
                                 mrRobot.setState(MrRobot.MRROBOT_STATE.STANDING_RIGHT);
+                            } else if(tile.getId() == TILE_FLAME) {
+                                tiledMapTileLayer.setCell(colCt, lineCt, null);
+                                // Placement of flame starting position
+                                float x = (colCt * 8) - 8;
+                                float y = lineCt * 8;
+                                Flame flame = new Flame(camera);
+                                Flame.flames.add(flame);
+                                flame.setTileMap(this);
+                                flame.setPosition(x, y);
+                                flame.setState(Flame.FLAME_STATE.WALKING_LEFT);
                             }
                         }
                     }
@@ -96,17 +107,20 @@ public class TileMap {
     }
 
     public int getTileMapTile(CELL_TYPE type) {
-        TiledMapTileLayer.Cell cell = getTileMapCell(type);
+        return getTileMapTile(mrRobot.getSprite(), type);
+    }
+
+    public int getTileMapTile(MoveableEntity sprite, CELL_TYPE type) {
+        TiledMapTileLayer.Cell cell = getTileMapCell(sprite, type);
         if(cell == null || cell.getTile() == null) {
             return -1;
         }
         return cell.getTile().getId();
     }
 
-    public TiledMapTileLayer.Cell getTileMapCell(CELL_TYPE type) {
+    public TiledMapTileLayer.Cell getTileMapCell(MoveableEntity entity, CELL_TYPE type) {
         float x = mrRobot.getX() + 12f;
         float y = mrRobot.getY();
-//////        float y = mrRobot.getY()+ 6f;
 
         float col = x / 8f;
         float line = (y / 8f) - 1f;
@@ -118,11 +132,8 @@ public class TileMap {
         return getCell((int)col, (int)line);
     }
 
-    public boolean cellEmpty(TiledMapTileLayer.Cell cell) {
-        if(cell == null || cell.getTile() == null) {
-            return true;
-        }
-        return false;
+    public TiledMapTileLayer.Cell getTileMapCell(CELL_TYPE type) {
+        return getTileMapCell(mrRobot.getSprite(), type);
     }
 
     public TiledMapTileLayer.Cell getCell(int col, int line) {
@@ -134,17 +145,6 @@ public class TileMap {
             return null;
         }
         return cell;
-    }
-
-    public int getTile(int col, int line) {
-        TiledMapTileLayer.Cell cell = tiledMapTileLayer.getCell(col, line);
-        if(cell == null) {
-            return -1;
-        }
-        if(cell.getTile() == null) {
-            return -1;
-        }
-        return cell.getTile().getId();
     }
 
     public void doRender(float delta, Camera camera) {

@@ -16,6 +16,9 @@ public class Tiles {
     public static final int TILE_LADDER_LEFT = 6;
     public static final int TILE_LADDER_RIGHT = 7;
 
+    public static final int TILE_MR_ROBOT = 18;
+    public static final int TILE_FLAME = 19;
+
     public static final int TILE_ROLL_LEFT_1 = 140;
     public static final int TILE_ROLL_LEFT_2 = 141;
 

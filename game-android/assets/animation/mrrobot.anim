@@ -64,4 +64,32 @@
       <spr name="/mrrobot_climb1" x="0" y="0" z="0"/>
     </cell>
   </anim>
+  <anim name="flame_left" loops="0">
+    <cell index="0" delay="20">
+      <spr name="/flame1" x="0" y="0" z="0"/>
+    </cell>
+    <cell index="1" delay="20">
+      <spr name="/flame2" x="0" y="0" z="0"/>
+    </cell>
+    <cell index="2" delay="20">
+      <spr name="/flame3" x="0" y="0" z="0"/>
+    </cell>
+    <cell index="3" delay="20">
+      <spr name="/flame2" x="0" y="0" z="0"/>
+    </cell>
+  </anim>
+  <anim name="flame_right" loops="0">
+    <cell index="0" delay="10">
+      <spr name="/flame1" x="0" y="0" z="0" flipH="1"/>
+    </cell>
+    <cell index="1" delay="10">
+      <spr name="/flame2" x="0" y="0" z="0" flipH="1"/>
+    </cell>
+    <cell index="2" delay="10">
+      <spr name="/flame3" x="0" y="0" z="0" flipH="1"/>
+    </cell>
+    <cell index="3" delay="10">
+      <spr name="/flame2" x="0" y="0" z="0" flipH="1"/>
+    </cell>
+  </anim>
 </animations>

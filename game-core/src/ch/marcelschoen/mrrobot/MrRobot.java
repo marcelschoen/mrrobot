@@ -5,7 +5,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.jplay.gdx.Assets;
-import com.jplay.gdx.DebugOutput;
 import com.jplay.gdx.MoveableEntity;
 
 import static ch.marcelschoen.mrrobot.Tiles.NO_TILE;
@@ -32,7 +31,8 @@ public class MrRobot {
     };
 
     private static final float WALK_SPEED = 32;
-    private static final float DOWN_SPEED = 24;
+    private static final float DOWN_SPEED = 32;
+    private static final float ROLLING_SPEED = 26;
 
     private MoveableEntity sprite = new MoveableEntity("mrrobot", 0, 0);
 
@@ -86,10 +86,12 @@ public class MrRobot {
 
     public void draw(SpriteBatch batch, float delta) {
         this.sprite.draw(batch, delta);
+        /*
         DebugOutput.log("y: " + getY(), 40, 75);
         DebugOutput.log("behind: " + tileBehindId, 40, 60);
         DebugOutput.log("below: " + tileBelowId, 40, 46);
         DebugOutput.log("below 2: " + tileFurtherBelowId, 40, 32);
+         */
     }
 
     public void setPosition(float x, float y) {
@@ -109,6 +111,10 @@ public class MrRobot {
     }
     public float getY() {
         return this.sprite.getY();
+    }
+
+    public MoveableEntity getSprite() {
+        return sprite;
     }
 
     public void handleInput(float delta) {
@@ -399,9 +405,9 @@ public class MrRobot {
                 Hud.addScore(1);
             }
             if(tileBelowId == TILE_ROLL_LEFT_1 || tileBelowId == TILE_ROLL_LEFT_2) {
-                setPosition(sprite.getX() - 20f * delta, sprite.getY());
+                setPosition(sprite.getX() - ROLLING_SPEED * delta, sprite.getY());
             } else if(tileBelowId == TILE_ROLL_RIGHT_1 || tileBelowId == TILE_ROLL_RIGHT_2) {
-                setPosition(sprite.getX() + 20f * delta, sprite.getY());
+                setPosition(sprite.getX() + ROLLING_SPEED * delta, sprite.getY());
             }
         }
 

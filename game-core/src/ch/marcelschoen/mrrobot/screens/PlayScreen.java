@@ -6,6 +6,7 @@ import com.jplay.gdx.DebugOutput;
 import com.jplay.gdx.screens.AbstractBaseScreen;
 import com.jplay.gdx.screens.ScreenUtil;
 
+import ch.marcelschoen.mrrobot.Flame;
 import ch.marcelschoen.mrrobot.Hud;
 import ch.marcelschoen.mrrobot.MrRobot;
 import ch.marcelschoen.mrrobot.MrRobotAssets;
@@ -27,7 +28,7 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
 
         DebugOutput.setPlayScreen(this);
         this.mrRobot = new MrRobot(this.camera);
-        this.tileMap = new TileMap("map/level16.tmx", this.mrRobot);
+        this.tileMap = new TileMap("map/level16.tmx", this.mrRobot, this.camera);
 //        this.mrRobot.setTileMap(this.tileMap);
 
         Hud.setScore(0);
@@ -73,6 +74,10 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
         // Draw Mr. Robot
         this.mrRobot.draw(batch, delta);
 
+        // Draw all flames
+        for(Flame flame : Flame.flames) {
+            flame.draw(batch, delta);
+        }
         // print debug stuff on screen
         // TODO: Enable only in testing / debug mode
         DebugOutput.draw(batch);

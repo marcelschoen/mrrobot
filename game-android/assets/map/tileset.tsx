@@ -74,10 +74,10 @@
    <property name="type" type="int" value="5"/>
   </properties>
   <animation>
-   <frame tileid="11" duration="100"/>
-   <frame tileid="107" duration="100"/>
-   <frame tileid="75" duration="100"/>
-   <frame tileid="43" duration="100"/>
+   <frame tileid="11" duration="80"/>
+   <frame tileid="107" duration="80"/>
+   <frame tileid="75" duration="80"/>
+   <frame tileid="43" duration="80"/>
   </animation>
  </tile>
  <tile id="12">
@@ -86,10 +86,10 @@
    <property name="type" type="int" value="5"/>
   </properties>
   <animation>
-   <frame tileid="12" duration="100"/>
-   <frame tileid="44" duration="100"/>
-   <frame tileid="76" duration="100"/>
-   <frame tileid="108" duration="100"/>
+   <frame tileid="12" duration="80"/>
+   <frame tileid="44" duration="80"/>
+   <frame tileid="76" duration="80"/>
+   <frame tileid="108" duration="80"/>
   </animation>
  </tile>
  <tile id="13">
@@ -488,18 +488,18 @@
  </tile>
  <tile id="139">
   <animation>
-   <frame tileid="139" duration="100"/>
-   <frame tileid="171" duration="100"/>
-   <frame tileid="203" duration="100"/>
-   <frame tileid="235" duration="100"/>
+   <frame tileid="139" duration="80"/>
+   <frame tileid="171" duration="80"/>
+   <frame tileid="203" duration="80"/>
+   <frame tileid="235" duration="80"/>
   </animation>
  </tile>
  <tile id="140">
   <animation>
-   <frame tileid="140" duration="100"/>
-   <frame tileid="236" duration="100"/>
-   <frame tileid="204" duration="100"/>
-   <frame tileid="172" duration="100"/>
+   <frame tileid="140" duration="80"/>
+   <frame tileid="236" duration="80"/>
+   <frame tileid="204" duration="80"/>
+   <frame tileid="172" duration="80"/>
   </animation>
  </tile>
  <tile id="147">
