@@ -3,9 +3,16 @@ package ch.marcelschoen.mrrobot;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.jplay.gdx.Assets;
+import com.jplay.gdx.DebugOutput;
 import com.jplay.gdx.MoveableEntity;
+import com.jplay.gdx.tween.JPlayTweenManager;
+import com.jplay.gdx.tween.SpriteTweenAccessor;
+
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenEquations;
 
 import static ch.marcelschoen.mrrobot.Tiles.NO_TILE;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_DOT;
@@ -27,6 +34,7 @@ public class MrRobot {
         mrrobot_stand_left,
         mrrobot_walk_left,
         mrrobot_climb,
+        mrrobot_jump,
         mrrobot_stand_on_ladder
     };
 
@@ -44,6 +52,8 @@ public class MrRobot {
     private TileMap tileMap;
 
     public enum MRROBOT_STATE {
+        JUMP_UP_RIGHT(true, ANIM.mrrobot_jump.name()),
+        JUMP_UP_LEFT(true, ANIM.mrrobot_jump.name()),
         CLIMBING_UP(true, ANIM.mrrobot_climb.name()),
         CLIMBING_DOWN(true, ANIM.mrrobot_climb.name()),
         SLIDING_RIGHT(true, ANIM.mrrobot_stand_right.name()),
@@ -172,6 +182,11 @@ public class MrRobot {
             if(!mrRobotIsClimbing()) {
                 tryClimbingDown();
             }
+        } else if(Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            if(!mrRobotIsFalling() && !mrRobotIsSliding() && !mrRobotIsClimbing()) {
+                DebugOutput.flicker(Color.YELLOW);
+                tryJumping();
+            }
         } else {
             if(mrRobotIsClimbing() || mrRobotIsWalking()) {
                 // Stop movement
@@ -190,11 +205,19 @@ public class MrRobot {
         checkMrRobot(delta);
     }
 
+    private void tryJumping() {
+        JPlayTweenManager.instance().killTarget(this);
+        Tween.to(this.getSprite(), SpriteTweenAccessor.POSITION, 1f)
+                .target(getX() + 22, getY() - 22)
+                .ease(TweenEquations.easeOutCirc)
+                .start(JPlayTweenManager.instance());
+    }
+
     /**
      *
      * @return
      */
-    public void stopMrRobot() {
+    private void stopMrRobot() {
         if(mrRobotIsOnLadder()) {
             setState(MRROBOT_STATE.STANDING_ON_LADDER);
         } else {

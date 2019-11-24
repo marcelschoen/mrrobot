@@ -84,10 +84,6 @@ public abstract class Assets {
 		for(String name : animationHashMap.keySet()) {
 			this.animationHashMap.put(name.substring(name.lastIndexOf("/") + 1), animationHashMap.get(name));
 		}
-		System.out.println("--------------- SET ANIMATION HASH MAP -----------------");
-		for(String name : this.animationHashMap.keySet()) {
-			System.out.println("Animation: " + name + ", frames: " + this.animationHashMap.get(name).getKeyFrames().length);
-		}
 	}
 
 	public Animated2DSprite getAnimated2DSprite(String name) {

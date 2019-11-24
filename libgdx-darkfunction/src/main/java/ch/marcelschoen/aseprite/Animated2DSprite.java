@@ -18,7 +18,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  * @author Marcel Schoen
  * @version $Revision: 1.1 $
  */
-public class Animated2DSprite {
+public class Animated2DSprite extends Sprite {
 
 	/** Holds the LIBGDX sprite. */
 	private Sprite sprite = null;
