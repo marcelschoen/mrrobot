@@ -83,7 +83,11 @@ public abstract class Assets {
 	}
 
 	public Animation<TextureRegion> getAnimation(String name) {
-		return this.animationHashMap.get(name);
+		Animation<TextureRegion> result = this.animationHashMap.get(name);
+		if(result == null) {
+			throw new IllegalArgumentException("No animation found with name '" + name + "'");
+		}
+		return result;
 	}
 
 	/**

@@ -3,11 +3,13 @@ package ch.marcelschoen.mrrobot;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.jplay.gdx.Assets;
-import com.jplay.gdx.DebugOutput;
+import com.jplay.gdx.tween.JPlayTweenManager;
+import com.jplay.gdx.tween.SpriteTweenAccessor;
 
+import aurelienribon.tweenengine.Tween;
+import aurelienribon.tweenengine.TweenEquations;
 import ch.marcelschoen.aseprite.Animated2DSprite;
 
 import static ch.marcelschoen.mrrobot.Tiles.NO_TILE;
@@ -30,7 +32,8 @@ public class MrRobot {
         mrrobot_stand_left,
         mrrobot_walk_left,
         mrrobot_climb,
-        mrrobot_jump,
+        mrrobot_jump_right,
+        mrrobot_jump_left,
         mrrobot_stand_on_ladder
     };
 
@@ -48,8 +51,8 @@ public class MrRobot {
     private TileMap tileMap;
 
     public enum MRROBOT_STATE {
-        JUMP_UP_RIGHT(true, ANIM.mrrobot_jump.name()),
-        JUMP_UP_LEFT(true, ANIM.mrrobot_jump.name()),
+        JUMP_UP_RIGHT(true, ANIM.mrrobot_jump_right.name()),
+        JUMP_UP_LEFT(true, ANIM.mrrobot_jump_left.name()),
         CLIMBING_UP(true, ANIM.mrrobot_climb.name()),
         CLIMBING_DOWN(true, ANIM.mrrobot_climb.name()),
         SLIDING_RIGHT(true, ANIM.mrrobot_stand_right.name()),
@@ -91,6 +94,7 @@ public class MrRobot {
     }
 
     public void draw(SpriteBatch batch, float delta) {
+        System.out.println("> State: " + mrRobotState.name());
         this.sprite.draw(batch, delta);
         /*
         DebugOutput.log("y: " + getY(), 40, 75);
@@ -179,8 +183,7 @@ public class MrRobot {
                 tryClimbingDown();
             }
         } else if(Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            if(!mrRobotIsFalling() && !mrRobotIsSliding() && !mrRobotIsClimbing()) {
-                DebugOutput.flicker(Color.YELLOW);
+            if(!mrRobotIsFalling() && !mrRobotIsSliding() && !mrRobotIsClimbing() && !mrRobotIsJumping()) {
                 tryJumping();
             }
         } else {
@@ -202,14 +205,18 @@ public class MrRobot {
     }
 
     private void tryJumping() {
-        /*
-        JPlayTweenManager.instance().killTarget(this);
+        float xTarget = 22f;
+        if(mrRobotState.isFacingRight()) {
+            setState(MRROBOT_STATE.JUMP_UP_RIGHT);
+        } else {
+            xTarget = xTarget * -1;
+            setState(MRROBOT_STATE.JUMP_UP_LEFT);
+        }
+        JPlayTweenManager.instance().killTarget(this.getSprite());
         Tween.to(this.getSprite(), SpriteTweenAccessor.POSITION, 1f)
-                .target(getX() + 22, getY() - 22)
-                .ease(TweenEquations.easeOutCirc)
+                .target(getX() + xTarget, getY() + 22)
+                .ease(TweenEquations.easeNone)
                 .start(JPlayTweenManager.instance());
-
-         */
     }
 
     /**
@@ -334,7 +341,6 @@ public class MrRobot {
      *
      */
     public void mrRobotStartsFalling() {
-
         if(mrRobotState.isFacingRight()) {
             setState(MRROBOT_STATE.FALLING_RIGHT);
         } else {
@@ -359,6 +365,11 @@ public class MrRobot {
     public boolean mrRobotIsClimbing() {
         return mrRobotState == MRROBOT_STATE.CLIMBING_DOWN
                 || mrRobotState == MRROBOT_STATE.CLIMBING_UP;
+    }
+
+    public boolean mrRobotIsJumping() {
+        return mrRobotState == MRROBOT_STATE.JUMP_UP_LEFT
+                || mrRobotState == MRROBOT_STATE.JUMP_UP_RIGHT;
     }
 
     public boolean mrRobotIsOnLadder() {
@@ -401,7 +412,8 @@ public class MrRobot {
             }
         } else if(mrRobotIsFalling() || mrRobotIsSliding()) {
             // TODO - CHECK ONLY FOR SOLID BLOCKS TO STAND ON, NOT DOWNWARD PIPES OR LADDERS
-            if (tileBelowId != NO_TILE && tileBelowId != TILE_SLIDER) {
+            if (tileBelowId != NO_TILE && tileBelowId != TILE_SLIDER
+                    && tileBelowId != TILE_LADDER_LEFT && tileBelowId != TILE_LADDER_RIGHT) {
                 if (mrRobotIsNearlyAlignedVertically()) {
                     mrRobotLands();
                     setPosition(sprite.getX(), line * 8f);

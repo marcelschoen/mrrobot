@@ -186,7 +186,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
     "sourceSize": { "w": 24, "h": 24 },
-    "duration": 100
+    "duration": 1
    },
    {
     "filename": "mrrobot_sprites 21.ase",
@@ -258,7 +258,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
     "sourceSize": { "w": 24, "h": 24 },
-    "duration": 500
+    "duration": 100
    },
    {
     "filename": "mrrobot_sprites 29.ase",
@@ -294,7 +294,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
     "sourceSize": { "w": 24, "h": 24 },
-    "duration": 200
+    "duration": 500
    },
    {
     "filename": "mrrobot_sprites 33.ase",
@@ -330,7 +330,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
     "sourceSize": { "w": 24, "h": 24 },
-    "duration": 100
+    "duration": 200
    },
    {
     "filename": "mrrobot_sprites 37.ase",
@@ -376,6 +376,15 @@
     "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
     "sourceSize": { "w": 24, "h": 24 },
     "duration": 100
+   },
+   {
+    "filename": "mrrobot_sprites 42.ase",
+    "frame": { "x": 1008, "y": 0, "w": 24, "h": 24 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
+    "sourceSize": { "w": 24, "h": 24 },
+    "duration": 100
    }
  ],
  "meta": {
@@ -383,7 +392,7 @@
   "version": "1.2.15-x64",
   "image": "mrrobot_sprites.png",
   "format": "I8",
-  "size": { "w": 1008, "h": 24 },
+  "size": { "w": 1032, "h": 24 },
   "scale": "1",
   "frameTags": [
    { "name": "mrrobot_walk_right", "from": 0, "to": 5, "direction": "forward" },
@@ -393,8 +402,10 @@
    { "name": "mrrobot_fall", "from": 14, "to": 14, "direction": "forward" },
    { "name": "mrrobot_climb", "from": 15, "to": 17, "direction": "forward" },
    { "name": "mrrobot_stand_on_ladder", "from": 17, "to": 17, "direction": "forward" },
-   { "name": "flame_left", "from": 28, "to": 31, "direction": "forward" },
-   { "name": "flame_right", "from": 32, "to": 35, "direction": "forward" }
+   { "name": "mrrobot_jump_right", "from": 19, "to": 19, "direction": "forward" },
+   { "name": "mrrobot_jump_left", "from": 20, "to": 20, "direction": "forward" },
+   { "name": "flame_left", "from": 29, "to": 32, "direction": "forward" },
+   { "name": "flame_right", "from": 33, "to": 36, "direction": "forward" }
   ],
   "layers": [
    { "name": "Sprite Sheet", "opacity": 255, "blendMode": "normal" }

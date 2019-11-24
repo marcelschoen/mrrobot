@@ -42,8 +42,10 @@ public class Animated2DSprite extends Sprite {
     }
 
     public void setAnimation(String name) {
-	    animation = animationMap.get(name);
-	    assert(animation != null);
+	    this.animation = animationMap.get(name);
+	    if(this.animation == null) {
+	    	throw new IllegalArgumentException("No animation found for name '" + name + "'");
+		}
     }
 
 	/**
