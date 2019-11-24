@@ -2,6 +2,7 @@ package ch.marcelschoen.mrrobot;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.files.FileHandle;
 import com.jplay.gdx.Assets;
 import com.jplay.gdx.DebugOutput;
 import com.jplay.gdx.FileUtil;
@@ -15,7 +16,7 @@ import com.jplay.gdx.music.MusicWrapper;
 import java.util.Map;
 import java.util.Properties;
 
-import ch.marcelschoen.darkfunction.DarkFunctionEditorAnimationSheet;
+import ch.marcelschoen.aseprite.Aseprite;
 
 public class MrRobotAssets extends Assets {
 
@@ -126,8 +127,8 @@ public class MrRobotAssets extends Assets {
         // Read animation info
         Properties animatedSpriteList = FileUtil.readConfigPropertyFile("animationlist.properties");
         for(Map.Entry<Object, Object> entry : animatedSpriteList.entrySet()) {
-            String animationFile = (String)entry.getValue();
-            setAnimationSheet(new DarkFunctionEditorAnimationSheet(animationFile));
+            FileHandle animationFile = Gdx.files.internal( "animation/" + (String)entry.getValue() );
+            setAnimationMap(Aseprite.fromFile(animationFile.path()));
         }
     }
 

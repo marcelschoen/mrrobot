@@ -19,8 +19,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import java.util.HashMap;
 import java.util.Map;
 
-import ch.marcelschoen.darkfunction.Animated2DSprite;
-import ch.marcelschoen.darkfunction.DarkFunctionEditorAnimationSheet;
+import ch.marcelschoen.aseprite.Animated2DSprite;
 
 /**
  * Handles loading / caching and accessing game assets, such as
@@ -42,12 +41,10 @@ public abstract class Assets {
 
 	private Map<SoundID, Sound> soundMap = new HashMap<SoundID, Sound>();
 	private Map<TextureID, Texture> textureMap = new HashMap<TextureID, Texture>();
-//	private Map<String, Sprite> spriteMap = new HashMap<String, Sprite>();
-//   private Map<String, Animated2DSprite> jplaySpriteMap = new HashMap<String, Animated2DSprite>();
 
-	private DarkFunctionEditorAnimationSheet animationSheet = null;
+	private HashMap<String, Animation<TextureRegion>> animationHashMap = null;
 
-	private Map<AnimationID, Animation<TextureRegion>> animationMap = new HashMap<AnimationID, Animation<TextureRegion>>();
+	private static HashMap<String, Animated2DSprite> spriteCache = new HashMap<>();
 
 	/**
 	 * Returns the singleton assets instance.
@@ -78,41 +75,28 @@ public abstract class Assets {
 	 */
 	public abstract void doLoadAssets();
 
-	/**
-	 * Stores a given animation in the animation caching map.
-	 * 
-	 * @param id The ID of the animation.
-	 * @param animation The animation to store.
-	 */
-	public void addAnimation(Animation<TextureRegion> animation, AnimationID id) {
-		animationMap.put(id, animation);
+	public HashMap<String, Animation<TextureRegion>> getAnimationMap() {
+		return animationHashMap;
 	}
 
-	/**
-	 * Returns the given animation from the caching map.
-	 * 
-	 * @param id The ID of the animation.
-	 * @return The animation, if it was loaded before using "addAnimation()".
-	 * @throws IllegalStateException If the animation has not been created yet.
-	 */
-	public Animation getAnimation(AnimationID id) {
-		Animation result = animationMap.get(id); 
-		if(result == null) {
-			throw new IllegalStateException("Animation not available: " + id);
+	public void setAnimationMap(HashMap<String, Animation<TextureRegion>> animationHashMap) {
+		this.animationHashMap = new HashMap<>();
+		for(String name : animationHashMap.keySet()) {
+			this.animationHashMap.put(name.substring(name.lastIndexOf("/") + 1), animationHashMap.get(name));
 		}
-		return result;
-	}
-
-	public DarkFunctionEditorAnimationSheet getAnimationSheet() {
-		return animationSheet;
-	}
-
-	public void setAnimationSheet(DarkFunctionEditorAnimationSheet animationSheet) {
-		this.animationSheet = animationSheet;
+		System.out.println("--------------- SET ANIMATION HASH MAP -----------------");
+		for(String name : this.animationHashMap.keySet()) {
+			System.out.println("Animation: " + name + ", frames: " + this.animationHashMap.get(name).getKeyFrames().length);
+		}
 	}
 
 	public Animated2DSprite getAnimated2DSprite(String name) {
-		return animationSheet.getAnimated2DSprite(name);
+		Animated2DSprite sprite = spriteCache.get(name);
+		if(sprite == null) {
+			sprite = new Animated2DSprite(this.animationHashMap.get(name));
+			spriteCache.put(name, sprite);
+		}
+		return sprite;
 	}
 
 	/**

@@ -4,7 +4,7 @@
  * @Copyright: Marcel Schoen, Switzerland, 2013, All Rights Reserved.
  */
 
-package ch.marcelschoen.darkfunction;
+package ch.marcelschoen.aseprite;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -20,21 +20,12 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  */
 public class Animated2DSprite {
 
-	/** 
-	 * Flag which marks sprites read from spritesheets
-	 * created with the DarkFunctions Editor.
-	 */
-	private boolean isDarkFunctions = false;
-	
 	/** Holds the LIBGDX sprite. */
 	private Sprite sprite = null;
 
 	/** Stores the animation. */
 	private Animation<TextureRegion> animation = null;
 
-	/** Stores the animation info. */
-	private AnimationInfo animationInfo = null;
-	
 	/** The animation state time holder. */
     private float stateTime = 0.0f;
 
@@ -59,31 +50,11 @@ public class Animated2DSprite {
 	/**
 	 * Creates a sprite with a certain animation.
 	 * 
-	 * @param animationInfo The animation info for this sprite.
 	 */
-	public Animated2DSprite(AnimationInfo animationInfo, boolean isDarkFunctions) {
-		if(animationInfo == null) {
-			throw new IllegalArgumentException("animation info must not be null!");
-		}
-		this.animationInfo = animationInfo;
-		this.animation = new Animation(this.animationInfo.frameDuration, this.animationInfo.keyFrames);
+	public Animated2DSprite(Animation<TextureRegion> animation) {
+		assert(animation != null);
+		this.animation = animation;
 		this.animationRunning = true;
-		this.isDarkFunctions = isDarkFunctions;
-	}
-	
-	/**
-	 * Creates a new sprite instance with the same attributes as
-	 * this one.
-	 * 
-	 * @return The new sprite instance.
-	 */
-	public Animated2DSprite copy() {
-		Animated2DSprite copy = new Animated2DSprite(this.sprite);
-		copy.animationInfo = this.animationInfo;
-		copy.animation = new Animation(this.animationInfo.frameDuration, this.animationInfo.keyFrames);
-		copy.animationRunning = this.animationRunning;
-		copy.isDarkFunctions = this.isDarkFunctions;
-		return copy;
 	}
 
 	/**
@@ -119,15 +90,6 @@ public class Animated2DSprite {
 	}
 
 	/**
-	 * Defines if this is a DarkFunctions sprite.
-	 * 
-	 * @param value True if it is.
-	 */
-	public void setDarkFunctions(boolean value) {
-		this.isDarkFunctions = value;
-	}
-
-	/**
 	 * Returns the height in pixels of the current sprite.
 	 * 
 	 * @param delta The number of seconds since last screen refresh.
@@ -153,10 +115,6 @@ public class Animated2DSprite {
 		}
 		TextureRegion keyFrame = this.animation.getKeyFrame(this.stateTime, true);
 		return keyFrame.getRegionWidth();
-	}
-
-	public AnimationInfo getAnimationInfo() {
-		return animationInfo;
 	}
 
 	public Animation<TextureRegion> getAnimation() {
