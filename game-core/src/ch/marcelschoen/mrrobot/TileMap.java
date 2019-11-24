@@ -9,7 +9,8 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.jplay.gdx.MoveableEntity;
+
+import ch.marcelschoen.aseprite.Animated2DSprite;
 
 import static ch.marcelschoen.mrrobot.Tiles.TILE_FLAME;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_MR_ROBOT;
@@ -110,7 +111,7 @@ public class TileMap {
         return getTileMapTile(mrRobot.getSprite(), type);
     }
 
-    public int getTileMapTile(MoveableEntity sprite, CELL_TYPE type) {
+    public int getTileMapTile(Animated2DSprite sprite, CELL_TYPE type) {
         TiledMapTileLayer.Cell cell = getTileMapCell(sprite, type);
         if(cell == null || cell.getTile() == null) {
             return -1;
@@ -118,7 +119,7 @@ public class TileMap {
         return cell.getTile().getId();
     }
 
-    public TiledMapTileLayer.Cell getTileMapCell(MoveableEntity entity, CELL_TYPE type) {
+    public TiledMapTileLayer.Cell getTileMapCell(Animated2DSprite entity, CELL_TYPE type) {
         float x = mrRobot.getX() + 12f;
         float y = mrRobot.getY();
 

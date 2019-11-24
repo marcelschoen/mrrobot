@@ -3,10 +3,11 @@ package ch.marcelschoen.mrrobot;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.jplay.gdx.Assets;
-import com.jplay.gdx.MoveableEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import ch.marcelschoen.aseprite.Animated2DSprite;
 
 import static ch.marcelschoen.mrrobot.Tiles.NO_TILE;
 
@@ -23,7 +24,7 @@ public class Flame {
     private static final float DOWN_SPEED = 40;
     private static final float ROLLING_SPEED = 26;
 
-    private MoveableEntity sprite = new MoveableEntity("flame", 0, 0);
+    private Animated2DSprite sprite = new Animated2DSprite();
 
     private int tileBehindId = NO_TILE;
     private int tileBelowId = NO_TILE;
@@ -60,7 +61,7 @@ public class Flame {
         this.camera = camera;
 
         for(ANIM animation : ANIM.values()) {
-            this.sprite.setSprite(animation.name(), Assets.instance().getAnimated2DSprite(animation.name()));
+            this.sprite.addAnimation(animation.name(), Assets.instance().getAnimation(animation.name()));
         }
     }
 
@@ -81,7 +82,7 @@ public class Flame {
 
     public void setState(FLAME_STATE state) {
         this.flameState = state;
-        this.sprite.setState(state.getAnimationName());
+        this.sprite.setAnimation(state.getAnimationName());
     }
 
     public float getX() {

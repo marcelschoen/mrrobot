@@ -7,12 +7,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.jplay.gdx.Assets;
 import com.jplay.gdx.DebugOutput;
-import com.jplay.gdx.MoveableEntity;
-import com.jplay.gdx.tween.JPlayTweenManager;
-import com.jplay.gdx.tween.SpriteTweenAccessor;
 
-import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenEquations;
+import ch.marcelschoen.aseprite.Animated2DSprite;
 
 import static ch.marcelschoen.mrrobot.Tiles.NO_TILE;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_DOT;
@@ -42,7 +38,7 @@ public class MrRobot {
     private static final float DOWN_SPEED = 32;
     private static final float ROLLING_SPEED = 26;
 
-    private MoveableEntity sprite = new MoveableEntity("mrrobot", 0, 0);
+    private Animated2DSprite sprite = new Animated2DSprite();
 
     private int tileBehindId = NO_TILE;
     private int tileBelowId = NO_TILE;
@@ -86,7 +82,7 @@ public class MrRobot {
         this.camera = camera;
 
         for(ANIM animation : ANIM.values()) {
-            this.sprite.setSprite(animation.name(), Assets.instance().getAnimated2DSprite(animation.name()));
+            this.sprite.addAnimation(animation.name(), Assets.instance().getAnimation(animation.name()));
         }
     }
 
@@ -104,6 +100,10 @@ public class MrRobot {
          */
     }
 
+    public Animated2DSprite getSprite() {
+        return this.sprite;
+    }
+
     public void setPosition(float x, float y) {
         this.sprite.setPosition(x, y);
         tileBehindId = tileMap.getTileMapTile(TileMap.CELL_TYPE.BEHIND);
@@ -113,7 +113,7 @@ public class MrRobot {
 
     public void setState(MRROBOT_STATE state) {
         this.mrRobotState = state;
-        this.sprite.setState(state.getAnimationName());
+        this.sprite.setAnimation(state.getAnimationName());
     }
 
     public float getX() {
@@ -121,10 +121,6 @@ public class MrRobot {
     }
     public float getY() {
         return this.sprite.getY();
-    }
-
-    public MoveableEntity getSprite() {
-        return sprite;
     }
 
     public void handleInput(float delta) {
@@ -206,11 +202,14 @@ public class MrRobot {
     }
 
     private void tryJumping() {
+        /*
         JPlayTweenManager.instance().killTarget(this);
         Tween.to(this.getSprite(), SpriteTweenAccessor.POSITION, 1f)
                 .target(getX() + 22, getY() - 22)
                 .ease(TweenEquations.easeOutCirc)
                 .start(JPlayTweenManager.instance());
+
+         */
     }
 
     /**

@@ -42,7 +42,7 @@ public abstract class Assets {
 	private Map<SoundID, Sound> soundMap = new HashMap<SoundID, Sound>();
 	private Map<TextureID, Texture> textureMap = new HashMap<TextureID, Texture>();
 
-	private HashMap<String, Animation<TextureRegion>> animationHashMap = null;
+	private Map<String, Animation<TextureRegion>> animationHashMap = null;
 
 	private static HashMap<String, Animated2DSprite> spriteCache = new HashMap<>();
 
@@ -75,10 +75,6 @@ public abstract class Assets {
 	 */
 	public abstract void doLoadAssets();
 
-	public HashMap<String, Animation<TextureRegion>> getAnimationMap() {
-		return animationHashMap;
-	}
-
 	public void setAnimationMap(HashMap<String, Animation<TextureRegion>> animationHashMap) {
 		this.animationHashMap = new HashMap<>();
 		for(String name : animationHashMap.keySet()) {
@@ -86,13 +82,8 @@ public abstract class Assets {
 		}
 	}
 
-	public Animated2DSprite getAnimated2DSprite(String name) {
-		Animated2DSprite sprite = spriteCache.get(name);
-		if(sprite == null) {
-			sprite = new Animated2DSprite(this.animationHashMap.get(name));
-			spriteCache.put(name, sprite);
-		}
-		return sprite;
+	public Animation<TextureRegion> getAnimation(String name) {
+		return this.animationHashMap.get(name);
 	}
 
 	/**
