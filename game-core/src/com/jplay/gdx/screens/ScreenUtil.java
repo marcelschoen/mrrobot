@@ -14,8 +14,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import java.awt.Dimension;
-
 import ch.marcelschoen.mrrobot.screens.Resolution;
 
 /**
@@ -79,14 +77,6 @@ public class ScreenUtil {
 	 */
 	public static Resolution getScreenResolution() {
 		return screenResolution;
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public static Dimension getScreenSize() {
-		return screenResolution.getSize();
 	}
 
 	/**
@@ -172,13 +162,5 @@ public class ScreenUtil {
 	 */
 	public static SpriteBatch getBatch() {
 		return batch;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public static ShapeRenderer getShapeRenderer() {
-		return shapeRenderer;
 	}
 }

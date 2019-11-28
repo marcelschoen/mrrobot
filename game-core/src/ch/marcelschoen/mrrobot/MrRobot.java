@@ -4,13 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Interpolation;
 import com.jplay.gdx.Assets;
-import com.jplay.gdx.tween.JPlayTweenManager;
-import com.jplay.gdx.tween.SpriteTweenAccessor;
-
-import aurelienribon.tweenengine.Tween;
-import aurelienribon.tweenengine.TweenEquations;
-import ch.marcelschoen.aseprite.Animated2DSprite;
+import com.jplay.gdx.sprites.Animated2DSprite;
+import com.jplay.gdx.sprites.SpriteEvent;
+import com.jplay.gdx.sprites.SpriteListener;
 
 import static ch.marcelschoen.mrrobot.Tiles.NO_TILE;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_DOT;
@@ -22,7 +20,7 @@ import static ch.marcelschoen.mrrobot.Tiles.TILE_ROLL_RIGHT_1;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_ROLL_RIGHT_2;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_SLIDER;
 
-public class MrRobot {
+public class MrRobot implements SpriteListener  {
 
     private IntendedMovement intendedMovement = new IntendedMovement();
 
@@ -34,6 +32,7 @@ public class MrRobot {
         mrrobot_climb,
         mrrobot_jump_right,
         mrrobot_jump_left,
+        mrrobot_fall,
         mrrobot_stand_on_ladder
     };
 
@@ -52,13 +51,15 @@ public class MrRobot {
 
     public enum MRROBOT_STATE {
         JUMP_UP_RIGHT(true, ANIM.mrrobot_jump_right.name()),
-        JUMP_UP_LEFT(true, ANIM.mrrobot_jump_left.name()),
+        JUMP_UP_LEFT(false, ANIM.mrrobot_jump_left.name()),
         CLIMBING_UP(true, ANIM.mrrobot_climb.name()),
         CLIMBING_DOWN(true, ANIM.mrrobot_climb.name()),
         SLIDING_RIGHT(true, ANIM.mrrobot_stand_right.name()),
         SLIDING_LEFT(false, ANIM.mrrobot_stand_left.name()),
-        FALLING_RIGHT(true, ANIM.mrrobot_stand_right.name()),
-        FALLING_LEFT(false, ANIM.mrrobot_stand_left.name()),
+        FALL_RIGHT(true, ANIM.mrrobot_jump_right.name()),
+        FALL_LEFT(false, ANIM.mrrobot_jump_left.name()),
+        DROP_RIGHT(true, ANIM.mrrobot_fall.name()),
+        DROP_LEFT(false, ANIM.mrrobot_fall.name()),
         STANDING_ON_LADDER(true, ANIM.mrrobot_stand_on_ladder.name()),
         STANDING_RIGHT(true, ANIM.mrrobot_stand_right.name()),
         STANDING_LEFT(false, ANIM.mrrobot_stand_left.name()),
@@ -67,10 +68,19 @@ public class MrRobot {
 
         private boolean isFacingRight = true;
         private String animationName = null;
+        private MRROBOT_STATE reverse;
 
         MRROBOT_STATE(boolean isFacingRight, String animationName) {
             this.isFacingRight = isFacingRight;
             this.animationName = animationName;
+        }
+
+        public MRROBOT_STATE getReverse() {
+            return reverse;
+        }
+
+        public void setReverse(MRROBOT_STATE state) {
+            reverse = state;
         }
 
         public String getAnimationName() { return this.animationName; }
@@ -83,6 +93,23 @@ public class MrRobot {
 
     public MrRobot(Camera camera) {
         this.camera = camera;
+        for(MRROBOT_STATE state : MRROBOT_STATE.values()) {
+            for(MRROBOT_STATE state2 : MRROBOT_STATE.values()) {
+                if(state != state2 && state.name().contains("_") && state2.name().contains("_")) {
+                    String part1a = state.name().substring(0, state.name().indexOf("_"));
+                    String part1b = state2.name().substring(0, state2.name().indexOf("_"));
+                    if(part1a.equals(part1b)) {
+                        String part2a = state.name().substring(state.name().indexOf("_") + 1);
+                        String part2b = state2.name().substring(state2.name().indexOf("_") + 1);
+                        if( (part2a.equals("LEFT") && part2b.equals("RIGHT"))
+                            || (part2a.equals("RIGHT") && part2b.equals("LEFT"))) {
+                            state.setReverse(state2);
+                            state2.setReverse(state);
+                        }
+                    }
+                }
+            }
+        }
 
         for(ANIM animation : ANIM.values()) {
             this.sprite.addAnimation(animation.name(), Assets.instance().getAnimation(animation.name()));
@@ -94,7 +121,6 @@ public class MrRobot {
     }
 
     public void draw(SpriteBatch batch, float delta) {
-        System.out.println("> State: " + mrRobotState.name());
         this.sprite.draw(batch, delta);
         /*
         DebugOutput.log("y: " + getY(), 40, 75);
@@ -130,47 +156,45 @@ public class MrRobot {
     public void handleInput(float delta) {
         intendedMovement.clear();
 
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)
+                && !mrRobotIsJumping() && !mrRobotIsFalling() && !mrRobotIsSlidingDown()) {
             if(mrRobotState != MRROBOT_STATE.WALKING_LEFT) {
                 boolean tryMoveLeft = false;
-                if(!mrRobotIsFalling() && !mrRobotIsSliding()) {
-                    if(mrRobotIsOnLadder()) {
-                        if(tileBelowId != -1 && tileBelowId != TILE_LADDER_LEFT ) {
-                            tryMoveLeft = true;
-                        } else if(tileBehindId != -1 && tileBehindId != TILE_LADDER_LEFT
-                                && mrRobotIsNearlyAlignedVerticallyAtTop()) {
-                            tryMoveLeft = true;
-                        }
-                    } else {
+                if(mrRobotIsOnLadder()) {
+                    if(tileBelowId != -1 && tileBelowId != TILE_LADDER_LEFT ) {
+                        tryMoveLeft = true;
+                    } else if(tileBehindId != -1 && tileBehindId != TILE_LADDER_LEFT
+                            && mrRobotIsNearlyAlignedVerticallyAtTop()) {
                         tryMoveLeft = true;
                     }
+                } else {
+                    tryMoveLeft = true;
                 }
                 if(tryMoveLeft) {
                     alignMrRobotVertically();
                     tryMovingSideways(MRROBOT_STATE.WALKING_LEFT, ANIM.mrrobot_walk_left.name());
-                } else if(!mrRobotIsFalling() && !mrRobotIsSliding()) {
+                } else if(!mrRobotIsFalling() && !mrRobotIsSlidingDown()) {
                     stopMrRobot();
                 }
             }
-        } else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+        } else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)
+                && !mrRobotIsJumping() && !mrRobotIsFalling() && !mrRobotIsSlidingDown()) {
             if(mrRobotState != MRROBOT_STATE.WALKING_RIGHT) {
                 boolean tryMoveRight = false;
-                if(!mrRobotIsFalling() && !mrRobotIsSliding()) {
-                    if(mrRobotIsOnLadder()) {
-                        if(tileBelowId != -1 && tileBelowId != TILE_LADDER_LEFT ) {
-                            tryMoveRight = true;
-                        } else if(tileBehindId != -1 && tileBehindId != TILE_LADDER_LEFT
-                                    && mrRobotIsNearlyAlignedVerticallyAtTop()) {
-                            tryMoveRight = true;
-                        }
-                    } else {
+                if(mrRobotIsOnLadder()) {
+                    if(tileBelowId != -1 && tileBelowId != TILE_LADDER_LEFT ) {
+                        tryMoveRight = true;
+                    } else if(tileBehindId != -1 && tileBehindId != TILE_LADDER_LEFT
+                                && mrRobotIsNearlyAlignedVerticallyAtTop()) {
                         tryMoveRight = true;
                     }
+                } else {
+                    tryMoveRight = true;
                 }
                 if(tryMoveRight) {
                     alignMrRobotVertically();
                     tryMovingSideways(MRROBOT_STATE.WALKING_RIGHT, ANIM.mrrobot_walk_right.name());
-                } else if(!mrRobotIsFalling() && !mrRobotIsSliding()) {
+                } else if(!mrRobotIsFalling() && !mrRobotIsSlidingDown()) {
                     stopMrRobot();
                 }
             }
@@ -182,10 +206,6 @@ public class MrRobot {
             if(!mrRobotIsClimbing()) {
                 tryClimbingDown();
             }
-        } else if(Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            if(!mrRobotIsFalling() && !mrRobotIsSliding() && !mrRobotIsClimbing() && !mrRobotIsJumping()) {
-                tryJumping();
-            }
         } else {
             if(mrRobotIsClimbing() || mrRobotIsWalking()) {
                 // Stop movement
@@ -193,9 +213,15 @@ public class MrRobot {
             }
         }
 
+        if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
+            if (!mrRobotIsFalling() && !mrRobotIsSlidingDown() && !mrRobotIsClimbing() && !mrRobotIsJumping()) {
+                tryJumping();
+            }
+        }
+
         if(intendedMovement.mrrobot_state != null) {
             // Mr. Roobot can only move around if he isn't currently falling down
-            if(!mrRobotIsFalling() && !mrRobotIsSliding()) {
+            if(!mrRobotIsFalling() && !mrRobotIsSlidingDown()) {
                 setState(intendedMovement.mrrobot_state);
             }
         }
@@ -212,11 +238,17 @@ public class MrRobot {
             xTarget = xTarget * -1;
             setState(MRROBOT_STATE.JUMP_UP_LEFT);
         }
-        JPlayTweenManager.instance().killTarget(this.getSprite());
-        Tween.to(this.getSprite(), SpriteTweenAccessor.POSITION, 1f)
-                .target(getX() + xTarget, getY() + 22)
-                .ease(TweenEquations.easeNone)
-                .start(JPlayTweenManager.instance());
+        getSprite().moveTo(getX() + xTarget, getY() + 24, 0.6f,
+                Interpolation.linear, this);
+    }
+
+    @Override
+    public void updated(SpriteEvent event) {
+        if(mrRobotState.isFacingRight()) {
+            setState(MRROBOT_STATE.FALL_RIGHT);
+        } else {
+            setState(MRROBOT_STATE.FALL_LEFT);
+        }
     }
 
     /**
@@ -227,7 +259,7 @@ public class MrRobot {
         if(mrRobotIsOnLadder()) {
             setState(MRROBOT_STATE.STANDING_ON_LADDER);
         } else {
-            if(mrRobotState.isFacingRight) {
+            if(mrRobotState.isFacingRight()) {
                 if(mrRobotState != MRROBOT_STATE.STANDING_RIGHT) {
                     setState(MRROBOT_STATE.STANDING_RIGHT);
                 }
@@ -245,7 +277,7 @@ public class MrRobot {
      * @param animationName
      */
     private void tryMovingSideways(MRROBOT_STATE intendedState, String animationName) {
-        if(!mrRobotIsFalling() && !mrRobotIsSliding()) {
+        if(!mrRobotIsFalling() && !mrRobotIsSlidingDown()) {
             intendedMovement.animationName = animationName;
             intendedMovement.mrrobot_state = intendedState;
         }
@@ -307,7 +339,13 @@ public class MrRobot {
         } else if (mrRobotState == MRROBOT_STATE.WALKING_LEFT) {
             x -= WALK_SPEED * delta;
             y = alignMrRobotVertically();
-        } else if (mrRobotState == MRROBOT_STATE.FALLING_RIGHT || mrRobotState == MRROBOT_STATE.FALLING_LEFT
+        } else if (mrRobotState == MRROBOT_STATE.FALL_RIGHT) {
+            x += WALK_SPEED * delta;
+            y -= DOWN_SPEED * delta;
+        } else if (mrRobotState == MRROBOT_STATE.FALL_LEFT) {
+            x -= WALK_SPEED * delta;
+            y -= DOWN_SPEED * delta;
+        } else if (mrRobotState == MRROBOT_STATE.DROP_RIGHT || mrRobotState == MRROBOT_STATE.DROP_LEFT
                 || mrRobotState == MRROBOT_STATE.SLIDING_LEFT || mrRobotState == MRROBOT_STATE.SLIDING_RIGHT) {
             y -= DOWN_SPEED * delta;
         } else if (mrRobotState == MRROBOT_STATE.CLIMBING_UP) {
@@ -319,11 +357,12 @@ public class MrRobot {
         if(x < -5) {
             x = -5;
             if(mrRobotIsFalling()) {
-                // TODO - REVERSE DIRECTION
+                setState(mrRobotState.getReverse());
             }
             // TODO - CONSTANT FOR MR.ROBOT SPRITE WIDTH
         } else if(x > MrRobotGame.VIRTUAL_WIDTH - 19) {
             x = MrRobotGame.VIRTUAL_WIDTH - 19;
+            setState(mrRobotState.getReverse());
         }
 
         setPosition(x, y);
@@ -342,9 +381,9 @@ public class MrRobot {
      */
     public void mrRobotStartsFalling() {
         if(mrRobotState.isFacingRight()) {
-            setState(MRROBOT_STATE.FALLING_RIGHT);
+            setState(MRROBOT_STATE.DROP_RIGHT);
         } else {
-            setState(MRROBOT_STATE.FALLING_LEFT);
+            setState(MRROBOT_STATE.DROP_LEFT);
         }
     }
 
@@ -384,13 +423,14 @@ public class MrRobot {
      * @return True if Mr. Robot is falling
      */
     public boolean mrRobotIsFalling() {
-        return mrRobotState == MRROBOT_STATE.FALLING_LEFT || mrRobotState == MRROBOT_STATE.FALLING_RIGHT;
+        return mrRobotState == MRROBOT_STATE.DROP_LEFT || mrRobotState == MRROBOT_STATE.DROP_RIGHT
+                || mrRobotState == MRROBOT_STATE.FALL_LEFT || mrRobotState == MRROBOT_STATE.FALL_RIGHT;
     }
 
     /**
      * @return True if Mr. Robot is sliding down
      */
-    public boolean mrRobotIsSliding() {
+    public boolean mrRobotIsSlidingDown() {
         return mrRobotState == MRROBOT_STATE.SLIDING_LEFT || mrRobotState == MRROBOT_STATE.SLIDING_RIGHT;
     }
 
@@ -407,10 +447,10 @@ public class MrRobot {
         float line = (y / 8f) - 1f;
 
         if(tileBelowId == NO_TILE) {
-            if (!mrRobotIsFalling()) {
+            if (!mrRobotIsFalling() && !mrRobotIsJumping()) {
                 mrRobotStartsFalling();
             }
-        } else if(mrRobotIsFalling() || mrRobotIsSliding()) {
+        } else if(mrRobotIsFalling() || mrRobotIsSlidingDown()) {
             // TODO - CHECK ONLY FOR SOLID BLOCKS TO STAND ON, NOT DOWNWARD PIPES OR LADDERS
             if (tileBelowId != NO_TILE && tileBelowId != TILE_SLIDER
                     && tileBelowId != TILE_LADDER_LEFT && tileBelowId != TILE_LADDER_RIGHT) {
@@ -446,7 +486,8 @@ public class MrRobot {
         }
 
         if(line > 0) {
-            if(tileFurtherBelowId == TILE_SLIDER && !mrRobotIsSliding()) {
+            if(tileFurtherBelowId == TILE_SLIDER && !mrRobotIsSlidingDown()
+                    && !mrRobotIsJumping() && !mrRobotIsFalling()) {
                 mrRobotStartsSliding();
             }
         }

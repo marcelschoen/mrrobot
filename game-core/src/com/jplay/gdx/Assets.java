@@ -15,11 +15,10 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.jplay.gdx.sprites.Animated2DSprite;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import ch.marcelschoen.aseprite.Animated2DSprite;
 
 /**
  * Handles loading / caching and accessing game assets, such as

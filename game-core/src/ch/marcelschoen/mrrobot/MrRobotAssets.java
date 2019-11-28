@@ -16,7 +16,7 @@ import com.jplay.gdx.music.MusicWrapper;
 import java.util.Map;
 import java.util.Properties;
 
-import ch.marcelschoen.aseprite.Aseprite;
+import ch.marcelschoen.libgdx.aseprite.Aseprite;
 
 public class MrRobotAssets extends Assets {
 

@@ -1,4 +1,4 @@
-package ch.marcelschoen.aseprite;
+package ch.marcelschoen.libgdx.aseprite;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;

@@ -9,8 +9,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-
-import ch.marcelschoen.aseprite.Animated2DSprite;
+import com.jplay.gdx.sprites.Animated2DSprite;
 
 import static ch.marcelschoen.mrrobot.Tiles.TILE_FLAME;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_MR_ROBOT;

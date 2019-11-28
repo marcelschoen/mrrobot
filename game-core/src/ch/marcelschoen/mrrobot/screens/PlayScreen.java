@@ -36,6 +36,7 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
     }
 
     public void handleInput(float delta) {
+        /*
         if(Gdx.input.isTouched()) {
             camera.position.x += 100 * delta;
         } else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
@@ -47,6 +48,7 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
                 camera.position.x -= 100 * delta;
             }
         }
+         */
         if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             ScreenUtil.dispose();
             System.exit(-1);

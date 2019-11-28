@@ -3,11 +3,10 @@ package ch.marcelschoen.mrrobot;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.jplay.gdx.Assets;
+import com.jplay.gdx.sprites.Animated2DSprite;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import ch.marcelschoen.aseprite.Animated2DSprite;
 
 import static ch.marcelschoen.mrrobot.Tiles.NO_TILE;
 

@@ -404,6 +404,7 @@
    { "name": "mrrobot_stand_on_ladder", "from": 17, "to": 17, "direction": "forward" },
    { "name": "mrrobot_jump_right", "from": 19, "to": 19, "direction": "forward" },
    { "name": "mrrobot_jump_left", "from": 20, "to": 20, "direction": "forward" },
+   { "name": "mrrobot_stand", "from": 27, "to": 28, "direction": "forward" },
    { "name": "flame_left", "from": 29, "to": 32, "direction": "forward" },
    { "name": "flame_right", "from": 33, "to": 36, "direction": "forward" }
   ],

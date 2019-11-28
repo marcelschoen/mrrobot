@@ -16,7 +16,6 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.jplay.gdx.joypad.ButtonID;
 import com.jplay.gdx.joypad.DpadDirection;
 import com.jplay.gdx.joypad.IController;
@@ -38,9 +37,6 @@ public abstract class AbstractBaseScreen implements Screen, InputProcessor {
 	/** Caches the sprite batch reference. */
 	protected SpriteBatch batch = null;
 
-	/** Caches the shape renderer reference. */
-	protected ShapeRenderer shapeRenderer = null;
-	
 	/** Caches the camera reference. */
 	protected Camera camera = null;
 
@@ -56,15 +52,28 @@ public abstract class AbstractBaseScreen implements Screen, InputProcessor {
 	 * @param game
 	 * @param previousScreen
 	 */
+	public AbstractBaseScreen(Game game, Screen previousScreen, Color backgroundColor) {
+		initialize(game, previousScreen, backgroundColor);
+	}
+
+	/**
+	 * Creates a screen.
+	 *
+	 * @param game
+	 * @param previousScreen
+	 */
 	public AbstractBaseScreen(Game game, Screen previousScreen) {
+		initialize(game, previousScreen, Color.BLACK);
+	}
+
+	private void initialize(Game game, Screen previousScreen, Color backgroundColor) {
 		this.game = game;
 		this.camera = ScreenUtil.getCamera();
 		this.batch = ScreenUtil.getBatch();
 		this.batch.setProjectionMatrix(this.camera.combined);
-		this.shapeRenderer = ScreenUtil.getShapeRenderer();
 		this.previousScreen = previousScreen;
 	}
-	
+
 	/**
 	 * @return the game
 	 */
