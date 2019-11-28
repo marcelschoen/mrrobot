@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.Vector2;
 import com.jplay.gdx.Assets;
 import com.jplay.gdx.sprites.Animated2DSprite;
 import com.jplay.gdx.sprites.SpriteEvent;
@@ -211,6 +212,14 @@ public class MrRobot implements SpriteListener  {
                 // Stop movement
                 stopMrRobot();
             }
+        }
+
+        if(Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            Vector2[] points = new Vector2[3];
+            points[0] = new Vector2(getX(), getY() - 20);
+            points[1] = new Vector2(getX()+30, getY() - 40);
+            points[2] = new Vector2(getX()+50, getY() - 80);
+            getSprite().moveAlongSpline(points);
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {

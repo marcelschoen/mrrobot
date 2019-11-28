@@ -10,7 +10,9 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.CatmullRomSpline;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.Vector2;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -86,6 +88,26 @@ public class Animated2DSprite extends Sprite {
 		this.listener = completionCallback;
 	}
 
+
+	private boolean moveSpline = false;
+	private int splineFidelity = 100; //increase splineFidelity for more splineFidelity to the spline
+	private Vector2[] points = new Vector2[splineFidelity];
+	float splineMoveSpeed = 0.15f;
+	float current = 0;
+
+	public void moveAlongSpline(Vector2[] dataSet) {
+		if(moveSpline) {
+			return;
+		}
+		CatmullRomSpline<Vector2> myCatmull = new CatmullRomSpline<Vector2>(dataSet, true);
+		for(int i = 0; i < splineFidelity; ++i) {
+			points[i] = new Vector2();
+			myCatmull.valueAt(points[i], ((float)i)/((float) splineFidelity -1));
+		}
+		moveSpline = true;
+	}
+
+
 	/**
 	 * Draws the sprite into a given spriteBatch at the current position.
 	 *
@@ -93,7 +115,23 @@ public class Animated2DSprite extends Sprite {
 	 * @param delta The time in seconds since last refresh.
 	 */
 	public void draw(SpriteBatch batch, float delta) {
-		if(movementTimer > 0) {
+
+		if(moveSpline) {
+			current += delta * splineMoveSpeed;
+			if(current >= 1)
+				current -= 1;
+			float place = current * splineFidelity;
+			Vector2 first = points[(int)place];
+			Vector2 second;
+			if(((int)place+1) >= splineFidelity) {
+				moveSpline = false;
+			} else {
+				second = points[(int)place+1];
+				float t = place - ((int)place); //the decimal part of place
+				setX(first.x + (second.x - first.x) * t);
+				setY(first.y + (second.y - first.y) * t);
+			}
+		} else if(movementTimer > 0) {
 			float state = 1f - (movementTimer / movementDuration);
 			setX(interpolation.apply(startX, targetX, state));
 			if(interpolation2 != null) {
