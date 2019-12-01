@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Interpolation;
+import com.jplay.gdx.DebugOutput;
 import com.jplay.gdx.sprites.AnimatedSprite;
 import com.jplay.gdx.sprites.Sprites;
 import com.jplay.gdx.sprites.action.Action;
@@ -164,13 +165,13 @@ public class MrRobot implements ActionListener {
     }
 
     public void draw(SpriteBatch batch, float delta) {
-        this.mrrobotSprite.draw(batch, delta);
-        /*
+        /////this.mrrobotSprite.draw(batch, delta);
+
         DebugOutput.log("y: " + getY(), 40, 75);
         DebugOutput.log("behind: " + tileBehindId, 40, 60);
         DebugOutput.log("below: " + tileBelowId, 40, 46);
         DebugOutput.log("below 2: " + tileFurtherBelowId, 40, 32);
-         */
+
     }
 
     public AnimatedSprite getMrrobotSprite() {
@@ -200,7 +201,7 @@ public class MrRobot implements ActionListener {
         intendedMovement.clear();
 
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT)
-                && !mrRobotIsJumping() && !mrRobotIsFalling() && !mrRobotIsSlidingDown()) {
+                && !mrRobotIsJumping() && !mrRobotIsFalling() && !mrRobotIsSlidingDown() && !mrRobotIsRisingUp()) {
             if(mrRobotState != MRROBOT_STATE.WALKING_LEFT) {
                 boolean tryMoveLeft = false;
                 if(mrRobotIsOnLadder()) {
@@ -221,7 +222,7 @@ public class MrRobot implements ActionListener {
                 }
             }
         } else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)
-                && !mrRobotIsJumping() && !mrRobotIsFalling() && !mrRobotIsSlidingDown()) {
+                && !mrRobotIsJumping() && !mrRobotIsFalling() && !mrRobotIsSlidingDown() && !mrRobotIsRisingUp()) {
             if(mrRobotState != MRROBOT_STATE.WALKING_RIGHT) {
                 boolean tryMoveRight = false;
                 if(mrRobotIsOnLadder()) {
@@ -544,6 +545,13 @@ public class MrRobot implements ActionListener {
             // TODO - CHECK ONLY FOR SOLID BLOCKS TO STAND ON, NOT DOWNWARD PIPES OR LADDERS
             if (tileBelowId != NO_TILE && tileBelowId != TILE_SLIDER
                     && tileBelowId != TILE_LADDER_LEFT && tileBelowId != TILE_LADDER_RIGHT) {
+                if (mrRobotIsNearlyAlignedVertically()) {
+                    mrRobotLands();
+                    setPosition(mrrobotSprite.getX(), line * 8f);
+                }
+            }
+        } else if(mrRobotIsRisingUp()) {
+            if (tileBelowId != TILE_ELEVATOR) {
                 if (mrRobotIsNearlyAlignedVertically()) {
                     mrRobotLands();
                     setPosition(mrrobotSprite.getX(), line * 8f);

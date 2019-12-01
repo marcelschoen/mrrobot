@@ -81,7 +81,7 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
 
         // Draw Mr. Robot
         Sprites.drawSprites(batch, delta);
-////////////        this.mrRobot.draw(batch, delta);
+        this.mrRobot.draw(batch, delta);
 
         // Draw all flames
         for(Flame flame : Flame.flames) {
