@@ -15,6 +15,7 @@ import java.util.List;
 
 import static ch.marcelschoen.mrrobot.Tiles.NO_TILE;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_DOT;
+import static ch.marcelschoen.mrrobot.Tiles.TILE_ELEVATOR;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_LADDER_LEFT;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_LADDER_RIGHT;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_ROLL_LEFT_1;
@@ -36,11 +37,14 @@ public class MrRobot implements ActionListener {
         mrrobot_jump_right,
         mrrobot_jump_left,
         mrrobot_fall,
-        mrrobot_stand_on_ladder
+        mrrobot_stand_on_ladder,
+        mrrobot_downfall,
+        mrrobot_shield
     };
 
     private static final float WALK_SPEED = 32;
     private static final float DOWN_SPEED = 32;
+    private static final float RISING_SPEED = 10;
     private static final float ROLLING_SPEED = 26;
 
     private AnimatedSprite mrrobotSprite = null;
@@ -55,6 +59,8 @@ public class MrRobot implements ActionListener {
     public enum MRROBOT_STATE {
         JUMP_RIGHT(true, ANIM.mrrobot_jump_right.name()),
         JUMP_LEFT(false, ANIM.mrrobot_jump_left.name()),
+        JUMPUP_RIGHT(true, ANIM.mrrobot_jump_right.name()),
+        JUMPUP_LEFT(false, ANIM.mrrobot_jump_left.name()),
         CLIMBING_UP(true, ANIM.mrrobot_climb.name()),
         CLIMBING_DOWN(true, ANIM.mrrobot_climb.name()),
         SLIDING_RIGHT(true, ANIM.mrrobot_stand_right.name()),
@@ -64,6 +70,8 @@ public class MrRobot implements ActionListener {
         DROP_RIGHT(true, ANIM.mrrobot_fall.name()),
         DROP_LEFT(false, ANIM.mrrobot_fall.name()),
         STANDING_ON_LADDER(true, ANIM.mrrobot_stand_on_ladder.name()),
+        RISING_RIGHT(true, ANIM.mrrobot_stand_right.name()),
+        RISING_LEFT(false, ANIM.mrrobot_stand_left.name()),
         STANDING_RIGHT(true, ANIM.mrrobot_stand_right.name()),
         STANDING_LEFT(false, ANIM.mrrobot_stand_left.name()),
         WALKING_RIGHT(true, ANIM.mrrobot_walk_right.name()),
@@ -105,6 +113,7 @@ public class MrRobot implements ActionListener {
     /** Pre-defined actions. */
     private Action jumpRightAction = null;
     private Action jumpLeftAction = null;
+    private Action jumpUpAction = null;
 
     /**
      */
@@ -134,12 +143,19 @@ public class MrRobot implements ActionListener {
         this.mrrobotSprite = Sprites.createSprite(animationNames);
         this.mrrobotSprite.setVisible(true);
 
+        this.shieldSprite = Sprites.createSprite(ANIM.mrrobot_shield.name());
+        this.shieldSprite.setVisible(false);
+        this.shieldSprite.attachToSprite(this.mrrobotSprite, 0, 0);
+
         // Initialize pre-defined actions for Mr. Robot
         jumpRightAction = new ActionBuilder()
                 .moveTo(22, 24, 0.6f, Interpolation.linear)
                 .build();
         jumpLeftAction = new ActionBuilder()
                 .moveTo(-22, 24, 0.6f, Interpolation.linear)
+                .build();
+        jumpUpAction = new ActionBuilder()
+                .moveTo(0, 18, 0.6f, Interpolation.circleOut)
                 .build();
     }
 
@@ -249,8 +265,12 @@ public class MrRobot implements ActionListener {
         }
 */
         if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-            if (!mrRobotIsFalling() && !mrRobotIsSlidingDown() && !mrRobotIsClimbing() && !mrRobotIsJumping()) {
-                tryJumping();
+            if (!mrRobotIsFalling() && !mrRobotIsSlidingDown() && !mrRobotIsClimbing() && !mrRobotIsJumping() && !mrRobotIsRisingUp()) {
+                if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+                    tryJumping();
+                } else {
+                    tryJumpingUp();
+                }
             }
         }
 
@@ -263,6 +283,15 @@ public class MrRobot implements ActionListener {
 
         moveMrRobot(delta);
         checkMrRobot(delta);
+    }
+
+    private void tryJumpingUp() {
+        if(mrRobotState.isFacingRight()) {
+            setState(MRROBOT_STATE.JUMPUP_RIGHT);
+        } else {
+            setState(MRROBOT_STATE.JUMPUP_LEFT);
+        }
+        getMrrobotSprite().startAction(jumpUpAction, this);
     }
 
     private void tryJumping() {
@@ -283,6 +312,12 @@ public class MrRobot implements ActionListener {
                 setState(MRROBOT_STATE.FALL_RIGHT);
             } else {
                 setState(MRROBOT_STATE.FALL_LEFT);
+            }
+        } else if(firstAction == jumpUpAction) {
+            if(mrRobotState.isFacingRight()) {
+                setState(MRROBOT_STATE.DROP_RIGHT);
+            } else {
+                setState(MRROBOT_STATE.DROP_LEFT);
             }
         }
     }
@@ -384,6 +419,8 @@ public class MrRobot implements ActionListener {
         } else if (mrRobotState == MRROBOT_STATE.DROP_RIGHT || mrRobotState == MRROBOT_STATE.DROP_LEFT
                 || mrRobotState == MRROBOT_STATE.SLIDING_LEFT || mrRobotState == MRROBOT_STATE.SLIDING_RIGHT) {
             y -= DOWN_SPEED * delta;
+        } else if (mrRobotState == MRROBOT_STATE.RISING_RIGHT || mrRobotState == MRROBOT_STATE.RISING_LEFT) {
+            y += RISING_SPEED * delta;
         } else if (mrRobotState == MRROBOT_STATE.CLIMBING_UP) {
             y += WALK_SPEED * delta;
         } else if (mrRobotState == MRROBOT_STATE.CLIMBING_DOWN) {
@@ -434,6 +471,14 @@ public class MrRobot implements ActionListener {
         }
     }
 
+    public void mrRobotStartsRisingUp() {
+        if(mrRobotState.isFacingRight()) {
+            setState(MRROBOT_STATE.RISING_RIGHT);
+        } else {
+            setState(MRROBOT_STATE.RISING_LEFT);
+        }
+    }
+
     /**
      * @return true if Mr. Robot is climbing
      */
@@ -443,7 +488,9 @@ public class MrRobot implements ActionListener {
     }
 
     public boolean mrRobotIsJumping() {
-        return mrRobotState == MRROBOT_STATE.JUMP_LEFT
+        return mrRobotState == MRROBOT_STATE.JUMPUP_LEFT
+                || mrRobotState == MRROBOT_STATE.JUMPUP_RIGHT
+                || mrRobotState == MRROBOT_STATE.JUMP_LEFT
                 || mrRobotState == MRROBOT_STATE.JUMP_RIGHT;
     }
 
@@ -468,6 +515,13 @@ public class MrRobot implements ActionListener {
      */
     public boolean mrRobotIsSlidingDown() {
         return mrRobotState == MRROBOT_STATE.SLIDING_LEFT || mrRobotState == MRROBOT_STATE.SLIDING_RIGHT;
+    }
+
+    /**
+     * @return True if Mr. Robot is rising up on an elevator.
+     */
+    public boolean mrRobotIsRisingUp() {
+        return mrRobotState == MRROBOT_STATE.RISING_LEFT || mrRobotState == MRROBOT_STATE.RISING_RIGHT;
     }
 
     /**
@@ -518,6 +572,8 @@ public class MrRobot implements ActionListener {
                 setPosition(mrrobotSprite.getX() - ROLLING_SPEED * delta, mrrobotSprite.getY());
             } else if(tileBelowId == TILE_ROLL_RIGHT_1 || tileBelowId == TILE_ROLL_RIGHT_2) {
                 setPosition(mrrobotSprite.getX() + ROLLING_SPEED * delta, mrrobotSprite.getY());
+            } else if(tileBelowId == TILE_ELEVATOR && tileBehindId == TILE_ELEVATOR && !mrRobotIsRisingUp()) {
+                mrRobotStartsRisingUp();
             }
         }
 

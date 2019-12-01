@@ -41,10 +41,20 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	/** Points to action currently being executed. */
 	private Action currentAction = null;
 
+	private AnimatedSprite attachedToSprite = null;
+	private float xOffsetAttachement = 0;
+	private float yOffsetAttachement = 0;
+
 	/**
 	 * Creates a sprite with a certain animation.
 	 */
 	public AnimatedSprite() {
+	}
+
+	public void attachToSprite(AnimatedSprite otherSprite, float xOffset, float yOffset) {
+		attachedToSprite = otherSprite;
+		xOffsetAttachement = xOffset;
+		yOffsetAttachement = yOffset;
 	}
 
 	/**
@@ -111,7 +121,13 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	 * @param delta The time in seconds since last refresh.
 	 */
 	public void draw(SpriteBatch batch, float delta) {
-		draw(batch, getX(), getY(), delta);
+		float x = getX();
+		float y = getY();
+		if(attachedToSprite != null) {
+			x = attachedToSprite.getX();
+			y = attachedToSprite.getY();
+		}
+		draw(batch, x, y, delta);
 	}
 
 	/**

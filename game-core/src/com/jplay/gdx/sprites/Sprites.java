@@ -48,6 +48,7 @@ public class Sprites {
     public static AnimatedSprite createSprite(String animationName) {
         AnimatedSprite sprite = new AnimatedSprite();
         addAnimationToSprite(sprite, animationName);
+                        sprite.showAnimation(animationName);
         sprites.add(sprite);
         return sprite;
     }
