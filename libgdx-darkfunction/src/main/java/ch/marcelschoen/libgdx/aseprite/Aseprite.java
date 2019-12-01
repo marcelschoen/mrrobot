@@ -13,6 +13,10 @@ import java.util.HashMap;
 /**
  * Helper for loading AseSprites.
  *
+ * NOTE: This class was "ripped" from this Github project:
+ *
+ * https://github.com/DaanVanYperen/artemis-odb-contrib
+ *
  * @author Daan van Yperen
  */
 

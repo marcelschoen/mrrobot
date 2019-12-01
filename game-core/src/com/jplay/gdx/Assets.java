@@ -15,7 +15,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.jplay.gdx.sprites.Animated2DSprite;
+import com.jplay.gdx.sprites.AnimatedSprite;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,7 +43,7 @@ public abstract class Assets {
 
 	private Map<String, Animation<TextureRegion>> animationHashMap = null;
 
-	private static HashMap<String, Animated2DSprite> spriteCache = new HashMap<>();
+	private static HashMap<String, AnimatedSprite> spriteCache = new HashMap<>();
 
 	/**
 	 * Returns the singleton assets instance.

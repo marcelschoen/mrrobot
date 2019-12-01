@@ -204,7 +204,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
     "sourceSize": { "w": 24, "h": 24 },
-    "duration": 100
+    "duration": 250
    },
    {
     "filename": "mrrobot_sprites 23.ase",
@@ -390,7 +390,6 @@
  "meta": {
   "app": "http://www.aseprite.org/",
   "version": "1.2.15-x64",
-  "image": "mrrobot_sprites.png",
   "format": "I8",
   "size": { "w": 1032, "h": 24 },
   "scale": "1",
@@ -404,9 +403,13 @@
    { "name": "mrrobot_stand_on_ladder", "from": 17, "to": 17, "direction": "forward" },
    { "name": "mrrobot_jump_right", "from": 19, "to": 19, "direction": "forward" },
    { "name": "mrrobot_jump_left", "from": 20, "to": 20, "direction": "forward" },
+   { "name": "mrrobot_dies", "from": 21, "to": 21, "direction": "forward" },
+   { "name": "mrrobot_downfall", "from": 22, "to": 23, "direction": "forward" },
    { "name": "mrrobot_stand", "from": 27, "to": 28, "direction": "forward" },
    { "name": "flame_left", "from": 29, "to": 32, "direction": "forward" },
-   { "name": "flame_right", "from": 33, "to": 36, "direction": "forward" }
+   { "name": "flame_right", "from": 33, "to": 36, "direction": "forward" },
+   { "name": "mrrobot_shield", "from": 37, "to": 41, "direction": "forward" },
+   { "name": "flame_blue", "from": 42, "to": 42, "direction": "forward" }
   ],
   "layers": [
    { "name": "Sprite Sheet", "opacity": 255, "blendMode": "normal" }

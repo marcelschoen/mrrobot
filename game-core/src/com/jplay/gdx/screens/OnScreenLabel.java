@@ -54,14 +54,14 @@ public class OnScreenLabel {
 	}
 
 	/**
-	 * @return the targetX
+	 * @return the xOffset
 	 */
 	public float getTargetX() {
 		return targetX;
 	}
 
 	/**
-	 * @param targetX the targetX to set
+	 * @param targetX the xOffset to set
 	 * @return This object (for method chaining)
 	 */
 	public OnScreenLabel setTargetX(float targetX) {
@@ -70,14 +70,14 @@ public class OnScreenLabel {
 	}
 
 	/**
-	 * @return the targetY
+	 * @return the yOffset
 	 */
 	public float getTargetY() {
 		return targetY;
 	}
 
 	/**
-	 * @param targetY the targetY to set
+	 * @param targetY the yOffset to set
 	 * @return This object (for method chaining)
 	 */
 	public OnScreenLabel setTargetY(float targetY) {

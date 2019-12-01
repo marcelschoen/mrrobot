@@ -15,7 +15,7 @@ import com.badlogic.gdx.Game;
 public class TestGame extends Game {
 
 	/* (non-Javadoc)
-	 * @see com.badlogic.gdx.ApplicationListener#create()
+	 * @see com.badlogic.gdx.ApplicationListener#build()
 	 */
 	@Override
 	public void create() {

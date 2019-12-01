@@ -9,7 +9,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.jplay.gdx.sprites.Animated2DSprite;
+import com.jplay.gdx.sprites.AnimatedSprite;
 
 import static ch.marcelschoen.mrrobot.Tiles.TILE_FLAME;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_MR_ROBOT;
@@ -107,10 +107,10 @@ public class TileMap {
     }
 
     public int getTileMapTile(CELL_TYPE type) {
-        return getTileMapTile(mrRobot.getSprite(), type);
+        return getTileMapTile(mrRobot.getMrrobotSprite(), type);
     }
 
-    public int getTileMapTile(Animated2DSprite sprite, CELL_TYPE type) {
+    public int getTileMapTile(AnimatedSprite sprite, CELL_TYPE type) {
         TiledMapTileLayer.Cell cell = getTileMapCell(sprite, type);
         if(cell == null || cell.getTile() == null) {
             return -1;
@@ -118,7 +118,7 @@ public class TileMap {
         return cell.getTile().getId();
     }
 
-    public TiledMapTileLayer.Cell getTileMapCell(Animated2DSprite entity, CELL_TYPE type) {
+    public TiledMapTileLayer.Cell getTileMapCell(AnimatedSprite entity, CELL_TYPE type) {
         float x = mrRobot.getX() + 12f;
         float y = mrRobot.getY();
 
@@ -133,7 +133,7 @@ public class TileMap {
     }
 
     public TiledMapTileLayer.Cell getTileMapCell(CELL_TYPE type) {
-        return getTileMapCell(mrRobot.getSprite(), type);
+        return getTileMapCell(mrRobot.getMrrobotSprite(), type);
     }
 
     public TiledMapTileLayer.Cell getCell(int col, int line) {

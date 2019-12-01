@@ -2,14 +2,16 @@ package ch.marcelschoen.mrrobot;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.math.Vector2;
-import com.jplay.gdx.Assets;
-import com.jplay.gdx.sprites.Animated2DSprite;
-import com.jplay.gdx.sprites.SpriteEvent;
-import com.jplay.gdx.sprites.SpriteListener;
+import com.jplay.gdx.sprites.AnimatedSprite;
+import com.jplay.gdx.sprites.Sprites;
+import com.jplay.gdx.sprites.action.Action;
+import com.jplay.gdx.sprites.action.ActionBuilder;
+import com.jplay.gdx.sprites.action.ActionListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static ch.marcelschoen.mrrobot.Tiles.NO_TILE;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_DOT;
@@ -21,7 +23,7 @@ import static ch.marcelschoen.mrrobot.Tiles.TILE_ROLL_RIGHT_1;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_ROLL_RIGHT_2;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_SLIDER;
 
-public class MrRobot implements SpriteListener  {
+public class MrRobot implements ActionListener {
 
     private IntendedMovement intendedMovement = new IntendedMovement();
 
@@ -41,18 +43,18 @@ public class MrRobot implements SpriteListener  {
     private static final float DOWN_SPEED = 32;
     private static final float ROLLING_SPEED = 26;
 
-    private Animated2DSprite sprite = new Animated2DSprite();
+    private AnimatedSprite mrrobotSprite = null;
+    private AnimatedSprite shieldSprite = null;
 
     private int tileBehindId = NO_TILE;
     private int tileBelowId = NO_TILE;
     private int tileFurtherBelowId = NO_TILE;
 
-    private Camera camera;
     private TileMap tileMap;
 
     public enum MRROBOT_STATE {
-        JUMP_UP_RIGHT(true, ANIM.mrrobot_jump_right.name()),
-        JUMP_UP_LEFT(false, ANIM.mrrobot_jump_left.name()),
+        JUMP_RIGHT(true, ANIM.mrrobot_jump_right.name()),
+        JUMP_LEFT(false, ANIM.mrrobot_jump_left.name()),
         CLIMBING_UP(true, ANIM.mrrobot_climb.name()),
         CLIMBING_DOWN(true, ANIM.mrrobot_climb.name()),
         SLIDING_RIGHT(true, ANIM.mrrobot_stand_right.name()),
@@ -77,7 +79,15 @@ public class MrRobot implements SpriteListener  {
         }
 
         public MRROBOT_STATE getReverse() {
+            if(reverse == null) {
+                throw new IllegalStateException("No reverse state defined for: " + name());
+            }
             return reverse;
+        }
+
+        @Override
+        public String toString() {
+            return "[state:" + name() + "/anim:" + getAnimationName() + "]";
         }
 
         public void setReverse(MRROBOT_STATE state) {
@@ -92,8 +102,13 @@ public class MrRobot implements SpriteListener  {
     }
     private MRROBOT_STATE mrRobotState = MRROBOT_STATE.STANDING_RIGHT;
 
-    public MrRobot(Camera camera) {
-        this.camera = camera;
+    /** Pre-defined actions. */
+    private Action jumpRightAction = null;
+    private Action jumpLeftAction = null;
+
+    /**
+     */
+    public MrRobot() {
         for(MRROBOT_STATE state : MRROBOT_STATE.values()) {
             for(MRROBOT_STATE state2 : MRROBOT_STATE.values()) {
                 if(state != state2 && state.name().contains("_") && state2.name().contains("_")) {
@@ -112,9 +127,20 @@ public class MrRobot implements SpriteListener  {
             }
         }
 
+        List<String> animationNames = new ArrayList<>();
         for(ANIM animation : ANIM.values()) {
-            this.sprite.addAnimation(animation.name(), Assets.instance().getAnimation(animation.name()));
+            animationNames.add(animation.name());
         }
+        this.mrrobotSprite = Sprites.createSprite(animationNames);
+        this.mrrobotSprite.setVisible(true);
+
+        // Initialize pre-defined actions for Mr. Robot
+        jumpRightAction = new ActionBuilder()
+                .moveTo(22, 24, 0.6f, Interpolation.linear)
+                .build();
+        jumpLeftAction = new ActionBuilder()
+                .moveTo(-22, 24, 0.6f, Interpolation.linear)
+                .build();
     }
 
     public void setTileMap(TileMap tileMap) {
@@ -122,7 +148,7 @@ public class MrRobot implements SpriteListener  {
     }
 
     public void draw(SpriteBatch batch, float delta) {
-        this.sprite.draw(batch, delta);
+        this.mrrobotSprite.draw(batch, delta);
         /*
         DebugOutput.log("y: " + getY(), 40, 75);
         DebugOutput.log("behind: " + tileBehindId, 40, 60);
@@ -131,12 +157,12 @@ public class MrRobot implements SpriteListener  {
          */
     }
 
-    public Animated2DSprite getSprite() {
-        return this.sprite;
+    public AnimatedSprite getMrrobotSprite() {
+        return this.mrrobotSprite;
     }
 
     public void setPosition(float x, float y) {
-        this.sprite.setPosition(x, y);
+        this.mrrobotSprite.setPosition(x, y);
         tileBehindId = tileMap.getTileMapTile(TileMap.CELL_TYPE.BEHIND);
         tileBelowId = tileMap.getTileMapTile(TileMap.CELL_TYPE.BELOW);
         tileFurtherBelowId = tileMap.getTileMapTile(TileMap.CELL_TYPE.FURTHER_BELOW);
@@ -144,14 +170,14 @@ public class MrRobot implements SpriteListener  {
 
     public void setState(MRROBOT_STATE state) {
         this.mrRobotState = state;
-        this.sprite.setAnimation(state.getAnimationName());
+        this.mrrobotSprite.showAnimation(state.getAnimationName());
     }
 
     public float getX() {
-        return this.sprite.getX();
+        return this.mrrobotSprite.getX();
     }
     public float getY() {
-        return this.sprite.getY();
+        return this.mrrobotSprite.getY();
     }
 
     public void handleInput(float delta) {
@@ -213,15 +239,15 @@ public class MrRobot implements SpriteListener  {
                 stopMrRobot();
             }
         }
-
+/*
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             Vector2[] points = new Vector2[3];
             points[0] = new Vector2(getX(), getY() - 20);
             points[1] = new Vector2(getX()+30, getY() - 40);
             points[2] = new Vector2(getX()+50, getY() - 80);
-            getSprite().moveAlongSpline(points);
+            getMrrobotSprite().moveAlongSpline(points);
         }
-
+*/
         if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
             if (!mrRobotIsFalling() && !mrRobotIsSlidingDown() && !mrRobotIsClimbing() && !mrRobotIsJumping()) {
                 tryJumping();
@@ -240,23 +266,24 @@ public class MrRobot implements SpriteListener  {
     }
 
     private void tryJumping() {
-        float xTarget = 22f;
         if(mrRobotState.isFacingRight()) {
-            setState(MRROBOT_STATE.JUMP_UP_RIGHT);
+            setState(MRROBOT_STATE.JUMP_RIGHT);
+            getMrrobotSprite().startAction(jumpRightAction, this);
         } else {
-            xTarget = xTarget * -1;
-            setState(MRROBOT_STATE.JUMP_UP_LEFT);
+            setState(MRROBOT_STATE.JUMP_LEFT);
+            getMrrobotSprite().startAction(jumpLeftAction, this);
         }
-        getSprite().moveTo(getX() + xTarget, getY() + 24, 0.6f,
-                Interpolation.linear, this);
     }
 
     @Override
-    public void updated(SpriteEvent event) {
-        if(mrRobotState.isFacingRight()) {
-            setState(MRROBOT_STATE.FALL_RIGHT);
-        } else {
-            setState(MRROBOT_STATE.FALL_LEFT);
+    public void completed(Action action) {
+        Action firstAction = action.getFirstActionInChain();
+        if(firstAction == jumpRightAction || firstAction == jumpLeftAction) {
+            if(mrRobotState.isFacingRight()) {
+                setState(MRROBOT_STATE.FALL_RIGHT);
+            } else {
+                setState(MRROBOT_STATE.FALL_LEFT);
+            }
         }
     }
 
@@ -340,8 +367,8 @@ public class MrRobot implements SpriteListener  {
      * @param delta
      */
     public void moveMrRobot(float delta) {
-        float x = sprite.getX();
-        float y = sprite.getY();
+        float x = mrrobotSprite.getX();
+        float y = mrrobotSprite.getY();
         if (mrRobotState == MRROBOT_STATE.WALKING_RIGHT) {
             x += WALK_SPEED * delta;
             y = alignMrRobotVertically();
@@ -416,8 +443,8 @@ public class MrRobot implements SpriteListener  {
     }
 
     public boolean mrRobotIsJumping() {
-        return mrRobotState == MRROBOT_STATE.JUMP_UP_LEFT
-                || mrRobotState == MRROBOT_STATE.JUMP_UP_RIGHT;
+        return mrRobotState == MRROBOT_STATE.JUMP_LEFT
+                || mrRobotState == MRROBOT_STATE.JUMP_RIGHT;
     }
 
     public boolean mrRobotIsOnLadder() {
@@ -449,8 +476,8 @@ public class MrRobot implements SpriteListener  {
      * @param delta Time delta.
      */
     public void checkMrRobot(float delta) {
-        float x = sprite.getX() + 12f;
-        float y = sprite.getY()+ 7f;
+        float x = mrrobotSprite.getX() + 12f;
+        float y = mrrobotSprite.getY()+ 7f;
 
         float col = x / 8f;
         float line = (y / 8f) - 1f;
@@ -465,7 +492,7 @@ public class MrRobot implements SpriteListener  {
                     && tileBelowId != TILE_LADDER_LEFT && tileBelowId != TILE_LADDER_RIGHT) {
                 if (mrRobotIsNearlyAlignedVertically()) {
                     mrRobotLands();
-                    setPosition(sprite.getX(), line * 8f);
+                    setPosition(mrrobotSprite.getX(), line * 8f);
                 }
             }
         } else if(mrRobotIsClimbing()) {
@@ -488,9 +515,9 @@ public class MrRobot implements SpriteListener  {
                 Hud.addScore(1);
             }
             if(tileBelowId == TILE_ROLL_LEFT_1 || tileBelowId == TILE_ROLL_LEFT_2) {
-                setPosition(sprite.getX() - ROLLING_SPEED * delta, sprite.getY());
+                setPosition(mrrobotSprite.getX() - ROLLING_SPEED * delta, mrrobotSprite.getY());
             } else if(tileBelowId == TILE_ROLL_RIGHT_1 || tileBelowId == TILE_ROLL_RIGHT_2) {
-                setPosition(sprite.getX() + ROLLING_SPEED * delta, sprite.getY());
+                setPosition(mrrobotSprite.getX() + ROLLING_SPEED * delta, mrrobotSprite.getY());
             }
         }
 
@@ -503,37 +530,37 @@ public class MrRobot implements SpriteListener  {
     }
 
     public boolean mrRobotIsNearlyAlignedVertically() {
-        float y = sprite.getY();
+        float y = mrrobotSprite.getY();
         int row = (int)(y / 8f);
         float diff = y - (row * 8f);
         return Math.abs(diff) < 1.5f;
     }
 
     public boolean mrRobotIsNearlyAlignedVerticallyAtTop() {
-        float y = sprite.getY();
+        float y = mrrobotSprite.getY();
         int row = (int)(y / 8f);
         float diff = y - (row * 8f);
         return diff > 1.5f;
     }
 
     public float alignMrRobotVertically() {
-        float y = sprite.getY() + 12;
+        float y = mrrobotSprite.getY() + 12;
         int row = (int)(y / 8f) - 1;
-        setPosition(sprite.getX(), row * 8f);
-        return sprite.getY();
+        setPosition(mrrobotSprite.getX(), row * 8f);
+        return mrrobotSprite.getY();
     }
 
     public void alignMrRobotHorizontally(boolean alignLeftTile) {
-        float x = sprite.getX() + 12;
+        float x = mrrobotSprite.getX() + 12;
         int col = (int)(x / 8f) - 2;
         if(alignLeftTile) {
             col --;
         }
-        setPosition(col * 8f + 11, sprite.getY());
+        setPosition(col * 8f + 11, mrrobotSprite.getY());
     }
 
     public boolean mrRobotIsNearlyAlignedHorizontally() {
-        float x = sprite.getX() + 6f;
+        float x = mrrobotSprite.getX() + 6f;
         int col = (int)(x / 8f) + 1;
         float diff = x - (col * 8f);
         return Math.abs(diff) < 8f;
