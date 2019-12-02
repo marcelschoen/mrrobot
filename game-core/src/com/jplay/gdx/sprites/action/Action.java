@@ -110,7 +110,7 @@ public abstract class Action {
     private void completed() {
         running = false;
         completed = true;
-        if(followUpAction == null) {
+        if(followUpAction == null && listener != null) {
             listener.completed(this);
         }
     }

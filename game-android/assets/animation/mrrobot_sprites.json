@@ -405,6 +405,7 @@
    { "name": "mrrobot_jump_left", "from": 20, "to": 20, "direction": "forward" },
    { "name": "mrrobot_dies", "from": 21, "to": 21, "direction": "forward" },
    { "name": "mrrobot_downfall", "from": 22, "to": 23, "direction": "forward" },
+   { "name": "mrrobot_teleport", "from": 25, "to": 26, "direction": "forward" },
    { "name": "mrrobot_stand", "from": 27, "to": 28, "direction": "forward" },
    { "name": "flame_left", "from": 29, "to": 32, "direction": "forward" },
    { "name": "flame_right", "from": 33, "to": 36, "direction": "forward" },

@@ -20,6 +20,36 @@ public class ActionBuilder {
     public ActionBuilder() {
     }
 
+    public ActionBuilder setAnimation(String animationName) {
+        SetAnimationAction newAction = (SetAnimationAction)addAction(new SetAnimationAction());
+        newAction.setAnimation(animationName);
+        return this;
+    }
+
+    public ActionBuilder stayPut(String animationName, float secDuration){
+        StayPutAction newAction = (StayPutAction)addAction(new StayPutAction());
+        newAction.stayPut(animationName, secDuration);
+        return this;
+    }
+
+    public ActionBuilder stayPut(float secDuration){
+        StayPutAction newAction = (StayPutAction)addAction(new StayPutAction());
+        newAction.stayPut(secDuration);
+        return this;
+    }
+
+    public ActionBuilder setPosition(float x, float y) {
+        SetPositionAction newAction = (SetPositionAction)addAction(new SetPositionAction());
+        newAction.setPosition(x, y);
+        return this;
+    }
+
+    public ActionBuilder custom(SpriteAction customAction) {
+        CustomAction newAction = (CustomAction)addAction(new CustomAction());
+        newAction.setCustomAction(customAction);
+        return this;
+    }
+
     /**
      * Moves the sprite to a position relative to its current one. The movement happens within the
      * specified duration time, so the speed of the movement depends on the distance and the specified
@@ -40,9 +70,8 @@ public class ActionBuilder {
      */
     public ActionBuilder moveTo(float xOffset, float yOffset, float secDuration,
                                 Interpolation xInterpolation, Interpolation yInterpolation){
-        MoveToAction newAction = new MoveToAction();
+        MoveToAction newAction = (MoveToAction)addAction(new MoveToAction());
         newAction.moveTo(xOffset, yOffset, secDuration, xInterpolation, yInterpolation);
-        addAction(newAction);
         return this;
     }
 
@@ -60,9 +89,8 @@ public class ActionBuilder {
      */
     public ActionBuilder moveTo(float xOffset, float yOffset, float secDuration,
                                 Interpolation interpolation){
-        MoveToAction newAction = new MoveToAction();
+        MoveToAction newAction = (MoveToAction)addAction(new MoveToAction());
         newAction.moveTo(xOffset, yOffset, secDuration, interpolation);
-        addAction(newAction);
         return this;
     }
 
@@ -78,7 +106,7 @@ public class ActionBuilder {
         return firstAction;
     }
 
-    private void addAction(Action newAction) {
+    private Action addAction(Action newAction) {
         if(firstAction == null) {
             firstAction = newAction;
         }
@@ -87,5 +115,6 @@ public class ActionBuilder {
             newAction.precedingAction = action;
         }
         action = newAction;
+        return newAction;
     }
 }

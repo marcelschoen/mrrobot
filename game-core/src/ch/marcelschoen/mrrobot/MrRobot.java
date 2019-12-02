@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Interpolation;
-import com.jplay.gdx.DebugOutput;
 import com.jplay.gdx.sprites.AnimatedSprite;
 import com.jplay.gdx.sprites.Sprites;
 import com.jplay.gdx.sprites.action.Action;
@@ -40,10 +39,11 @@ public class MrRobot implements ActionListener {
         mrrobot_fall,
         mrrobot_stand_on_ladder,
         mrrobot_downfall,
+        mrrobot_teleport,
         mrrobot_shield
     };
 
-    private static final float WALK_SPEED = 32;
+    private static final float WALK_SPEED = 40;
     private static final float DOWN_SPEED = 32;
     private static final float RISING_SPEED = 10;
     private static final float ROLLING_SPEED = 26;
@@ -75,6 +75,7 @@ public class MrRobot implements ActionListener {
         RISING_LEFT(false, ANIM.mrrobot_stand_left.name()),
         STANDING_RIGHT(true, ANIM.mrrobot_stand_right.name()),
         STANDING_LEFT(false, ANIM.mrrobot_stand_left.name()),
+        TELEPORTING(false, ANIM.mrrobot_teleport.name()),
         WALKING_RIGHT(true, ANIM.mrrobot_walk_right.name()),
         WALKING_LEFT(false, ANIM.mrrobot_walk_left.name());
 
@@ -115,6 +116,7 @@ public class MrRobot implements ActionListener {
     private Action jumpRightAction = null;
     private Action jumpLeftAction = null;
     private Action jumpUpAction = null;
+    private Action teleportAction = null;
 
     /**
      */
@@ -158,6 +160,11 @@ public class MrRobot implements ActionListener {
         jumpUpAction = new ActionBuilder()
                 .moveTo(0, 18, 0.6f, Interpolation.circleOut)
                 .build();
+        teleportAction = new ActionBuilder()
+                .setAnimation(ANIM.mrrobot_teleport.name())
+                .custom(new TeleportAction(this))
+                .custom(new TeleportCompletedAction(this))
+                .build();
     }
 
     public void setTileMap(TileMap tileMap) {
@@ -166,12 +173,12 @@ public class MrRobot implements ActionListener {
 
     public void draw(SpriteBatch batch, float delta) {
         /////this.mrrobotSprite.draw(batch, delta);
-
+/*
         DebugOutput.log("y: " + getY(), 40, 75);
         DebugOutput.log("behind: " + tileBehindId, 40, 60);
         DebugOutput.log("below: " + tileBelowId, 40, 46);
         DebugOutput.log("below 2: " + tileFurtherBelowId, 40, 32);
-
+*/
     }
 
     public AnimatedSprite getMrrobotSprite() {
@@ -247,7 +254,9 @@ public class MrRobot implements ActionListener {
                 tryClimbingUp();
             }
         } else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-            if(!mrRobotIsClimbing()) {
+            if(tileBelowId == Tiles.TILE_TELEPORTER) {
+                mrrobotSprite.startAction(teleportAction, null);
+            } else if(!mrRobotIsClimbing()) {
                 tryClimbingDown();
             }
         } else {
@@ -327,7 +336,7 @@ public class MrRobot implements ActionListener {
      *
      * @return
      */
-    private void stopMrRobot() {
+    public void stopMrRobot() {
         if(mrRobotIsOnLadder()) {
             setState(MRROBOT_STATE.STANDING_ON_LADDER);
         } else {

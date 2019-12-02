@@ -10,9 +10,11 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.jplay.gdx.sprites.AnimatedSprite;
+import com.jplay.gdx.sprites.Sprites;
 
 import static ch.marcelschoen.mrrobot.Tiles.TILE_FLAME;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_MR_ROBOT;
+import static ch.marcelschoen.mrrobot.Tiles.TILE_SHIELD;
 
 /**
  * Encapsulates tilemap-related functionality.
@@ -69,19 +71,21 @@ public class TileMap {
                         } else {
                             TiledMapTile tile = tiledMapTileLayer.getCell(colCt, lineCt).getTile();
                             line += tile.getId();
+                            float x = (colCt * 8) - 8;
+                            float y = lineCt * 8;
                             if(tile.getId() == TILE_MR_ROBOT) {
                                 tiledMapTileLayer.setCell(colCt, lineCt, null);
                                 // Placement of Mr. Robot starting position
-                                float x = (colCt * 8) - 8;
-                                float y = lineCt * 8;
                                 mrRobot.setTileMap(this);
                                 mrRobot.setPosition(x, y);
                                 mrRobot.setState(MrRobot.MRROBOT_STATE.STANDING_RIGHT);
+                            } else if(tile.getId() == TILE_SHIELD) {
+                                tiledMapTileLayer.setCell(colCt, lineCt, null);
+                                AnimatedSprite shield = Sprites.createSprite(MrRobot.ANIM.mrrobot_shield.name());
+                                shield.setPosition(x, y);
                             } else if(tile.getId() == TILE_FLAME) {
                                 tiledMapTileLayer.setCell(colCt, lineCt, null);
                                 // Placement of flame starting position
-                                float x = (colCt * 8) - 8;
-                                float y = lineCt * 8;
                                 Flame flame = new Flame(camera);
                                 Flame.flames.add(flame);
                                 flame.setTileMap(this);
