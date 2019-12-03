@@ -64,34 +64,44 @@ public class MrRobot implements ActionListener {
     private TileMap tileMap;
 
     public enum MRROBOT_STATE {
-        JUMP_RIGHT(true, ANIM.mrrobot_jump_right.name()),
-        JUMP_LEFT(false, ANIM.mrrobot_jump_left.name()),
-        JUMPUP_RIGHT(true, ANIM.mrrobot_jump_right.name()),
-        JUMPUP_LEFT(false, ANIM.mrrobot_jump_left.name()),
-        CLIMBING_UP(true, ANIM.mrrobot_climb.name()),
-        CLIMBING_DOWN(true, ANIM.mrrobot_climb.name()),
-        SLIDING_RIGHT(true, ANIM.mrrobot_stand_right.name()),
-        SLIDING_LEFT(false, ANIM.mrrobot_stand_left.name()),
-        FALL_RIGHT(true, ANIM.mrrobot_jump_right.name()),
-        FALL_LEFT(false, ANIM.mrrobot_jump_left.name()),
-        DROP_RIGHT(true, ANIM.mrrobot_fall.name()),
-        DROP_LEFT(false, ANIM.mrrobot_fall.name()),
-        STANDING_ON_LADDER(true, ANIM.mrrobot_stand_on_ladder.name()),
-        RISING_RIGHT(true, ANIM.mrrobot_stand_right.name()),
-        RISING_LEFT(false, ANIM.mrrobot_stand_left.name()),
-        STANDING_RIGHT(true, ANIM.mrrobot_stand_right.name()),
-        STANDING_LEFT(false, ANIM.mrrobot_stand_left.name()),
-        TELEPORTING(false, ANIM.mrrobot_teleport.name()),
-        WALKING_RIGHT(true, ANIM.mrrobot_walk_right.name()),
-        WALKING_LEFT(false, ANIM.mrrobot_walk_left.name());
+        JUMP_RIGHT(true, ANIM.mrrobot_jump_right.name(), true),
+        JUMP_LEFT(false, ANIM.mrrobot_jump_left.name(), true),
+        JUMPUP_RIGHT(true, ANIM.mrrobot_jump_right.name(), true),
+        JUMPUP_LEFT(false, ANIM.mrrobot_jump_left.name(), true),
+        CLIMBING_UP(true, ANIM.mrrobot_climb.name(), false),
+        CLIMBING_DOWN(true, ANIM.mrrobot_climb.name(), false),
+        SLIDING_RIGHT(true, ANIM.mrrobot_stand_right.name(), true),
+        SLIDING_LEFT(false, ANIM.mrrobot_stand_left.name(), true),
+        FALL_RIGHT(true, ANIM.mrrobot_jump_right.name(), true),
+        FALL_LEFT(false, ANIM.mrrobot_jump_left.name(), true),
+        DROP_RIGHT(true, ANIM.mrrobot_fall.name(), true),
+        DROP_LEFT(false, ANIM.mrrobot_fall.name(), true),
+        STANDING_ON_LADDER(true, ANIM.mrrobot_stand_on_ladder.name(), false),
+        RISING_RIGHT(true, ANIM.mrrobot_stand_right.name(), true),
+        RISING_LEFT(false, ANIM.mrrobot_stand_left.name(), true),
+        STANDING_RIGHT(true, ANIM.mrrobot_stand_right.name(), false),
+        STANDING_LEFT(false, ANIM.mrrobot_stand_left.name(), false),
+        TELEPORTING(false, ANIM.mrrobot_teleport.name(), true),
+        WALKING_RIGHT(true, ANIM.mrrobot_walk_right.name(), false),
+        WALKING_LEFT(false, ANIM.mrrobot_walk_left.name(), false);
 
         private boolean isFacingRight = true;
         private String animationName = null;
         private MRROBOT_STATE reverse;
+        /** During some states, all input is completely ignored. */
+        private boolean isInputBlocked = false;
 
-        MRROBOT_STATE(boolean isFacingRight, String animationName) {
+        MRROBOT_STATE(boolean isFacingRight, String animationName, boolean isInputBlocked) {
             this.isFacingRight = isFacingRight;
             this.animationName = animationName;
+            this.isInputBlocked = isInputBlocked;
+        }
+
+        /**
+         * @return True if input must be ignored during this state.
+         */
+        public boolean isInputBlocked() {
+            return this.isInputBlocked;
         }
 
         public MRROBOT_STATE getReverse() {
@@ -212,10 +222,14 @@ public class MrRobot implements ActionListener {
     }
 
     public void handleInput(float delta) {
+        if(mrRobotState.isInputBlocked()) {
+            return;
+        }
+
         intendedMovement.clear();
 
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)
-                && !mrRobotIsJumping() && !mrRobotIsFalling() && !mrRobotIsSlidingDown() && !mrRobotIsRisingUp()) {
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+////                && !mrRobotIsJumping() && !mrRobotIsFalling() && !mrRobotIsSlidingDown() && !mrRobotIsRisingUp()) {
             if(mrRobotState != MRROBOT_STATE.WALKING_LEFT) {
                 boolean tryMoveLeft = false;
                 if(mrRobotIsOnLadder()) {
@@ -231,12 +245,13 @@ public class MrRobot implements ActionListener {
                 if(tryMoveLeft) {
                     alignMrRobotVertically();
                     tryMovingSideways(MRROBOT_STATE.WALKING_LEFT, ANIM.mrrobot_walk_left.name());
-                } else if(!mrRobotIsFalling() && !mrRobotIsSlidingDown()) {
+/////                } else if(!mrRobotIsFalling() && !mrRobotIsSlidingDown()) {
+                } else {
                     stopMrRobot();
                 }
             }
-        } else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)
-                && !mrRobotIsJumping() && !mrRobotIsFalling() && !mrRobotIsSlidingDown() && !mrRobotIsRisingUp()) {
+        } else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+////                && !mrRobotIsJumping() && !mrRobotIsFalling() && !mrRobotIsSlidingDown() && !mrRobotIsRisingUp()) {
             if(mrRobotState != MRROBOT_STATE.WALKING_RIGHT) {
                 boolean tryMoveRight = false;
                 if(mrRobotIsOnLadder()) {
@@ -252,7 +267,8 @@ public class MrRobot implements ActionListener {
                 if(tryMoveRight) {
                     alignMrRobotVertically();
                     tryMovingSideways(MRROBOT_STATE.WALKING_RIGHT, ANIM.mrrobot_walk_right.name());
-                } else if(!mrRobotIsFalling() && !mrRobotIsSlidingDown()) {
+////                } else if(!mrRobotIsFalling() && !mrRobotIsSlidingDown()) {
+                } else {
                     stopMrRobot();
                 }
             }
@@ -282,13 +298,13 @@ public class MrRobot implements ActionListener {
         }
 */
         if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-            if (!mrRobotIsFalling() && !mrRobotIsSlidingDown() && !mrRobotIsClimbing() && !mrRobotIsJumping() && !mrRobotIsRisingUp()) {
+////            if (!mrRobotIsFalling() && !mrRobotIsSlidingDown() && !mrRobotIsClimbing() && !mrRobotIsJumping() && !mrRobotIsRisingUp()) {
                 if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-                    tryJumping();
+                    jumpSideways();
                 } else {
-                    tryJumpingUp();
+                    jumpUp();
                 }
-            }
+////            }
         }
 
         if(intendedMovement.mrrobot_state != null) {
@@ -302,7 +318,7 @@ public class MrRobot implements ActionListener {
         checkMrRobot(delta);
     }
 
-    private void tryJumpingUp() {
+    private void jumpUp() {
         if(mrRobotState.isFacingRight()) {
             setState(MRROBOT_STATE.JUMPUP_RIGHT);
         } else {
@@ -311,7 +327,7 @@ public class MrRobot implements ActionListener {
         getMrrobotSprite().startAction(jumpUpAction, this);
     }
 
-    private void tryJumping() {
+    private void jumpSideways() {
         if(mrRobotState.isFacingRight()) {
             setState(MRROBOT_STATE.JUMP_RIGHT);
             getMrrobotSprite().startAction(jumpRightAction, this);
@@ -322,8 +338,8 @@ public class MrRobot implements ActionListener {
     }
 
     @Override
-    public void completed(Action action) {
-        Action firstAction = action.getFirstActionInChain();
+    public void completed(Action completedAction) {
+        Action firstAction = completedAction.getFirstActionInChain();
         if(firstAction == jumpRightAction || firstAction == jumpLeftAction) {
             if(mrRobotState.isFacingRight()) {
                 setState(MRROBOT_STATE.FALL_RIGHT);
@@ -365,10 +381,10 @@ public class MrRobot implements ActionListener {
      * @param animationName
      */
     private void tryMovingSideways(MRROBOT_STATE intendedState, String animationName) {
-        if(!mrRobotIsFalling() && !mrRobotIsSlidingDown()) {
+////        if(!mrRobotIsFalling() && !mrRobotIsSlidingDown()) {
             intendedMovement.animationName = animationName;
             intendedMovement.mrrobot_state = intendedState;
-        }
+////        }
     }
 
     /**
