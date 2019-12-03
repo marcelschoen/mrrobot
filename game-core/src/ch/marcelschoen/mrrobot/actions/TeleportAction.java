@@ -1,6 +1,6 @@
 package ch.marcelschoen.mrrobot.actions;
 
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.jplay.gdx.sprites.AnimatedSprite;
 import com.jplay.gdx.sprites.action.SpriteAction;
@@ -32,8 +32,8 @@ public class TeleportAction implements SpriteAction {
         timer -= delta;
         if(timer <= 0.4f && !teleported) {
             teleported = true;
-            TiledMapTile tileBelowMrRobot = mrRobot.getTileBelow();
-            Vector2 targetPosition = Teleporter.getTeleportTarget(tileBelowMrRobot);
+            TiledMapTileLayer.Cell cellBelowMrRobot = mrRobot.getCellBelow();
+            Vector2 targetPosition = Teleporter.getTeleportTarget(cellBelowMrRobot);
             mrRobot.setPosition(targetPosition.x, targetPosition.y);
         }
     }

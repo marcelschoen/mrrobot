@@ -3,7 +3,7 @@ package ch.marcelschoen.mrrobot;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Interpolation;
 import com.jplay.gdx.sprites.AnimatedSprite;
 import com.jplay.gdx.sprites.Sprites;
@@ -55,7 +55,7 @@ public class MrRobot implements ActionListener {
     private AnimatedSprite mrrobotSprite = null;
     private AnimatedSprite shieldSprite = null;
 
-    private TiledMapTile tileBelow = null;
+    private TiledMapTileLayer.Cell cellBelow = null;
 
     private int tileBehindId = NO_TILE;
     private int tileBelowId = NO_TILE;
@@ -203,7 +203,7 @@ public class MrRobot implements ActionListener {
 
     public void setPosition(float x, float y) {
         this.mrrobotSprite.setPosition(x, y);
-        tileBelow = tileMap.getTileMapCell(TileMap.CELL_TYPE.BELOW).getTile();
+        cellBelow = tileMap.getTileMapCell(TileMap.CELL_TYPE.BELOW);
         tileBehindId = tileMap.getTileMapTile(TileMap.CELL_TYPE.BEHIND);
         tileBelowId = tileMap.getTileMapTile(TileMap.CELL_TYPE.BELOW);
         tileFurtherBelowId = tileMap.getTileMapTile(TileMap.CELL_TYPE.FURTHER_BELOW);
@@ -646,8 +646,8 @@ public class MrRobot implements ActionListener {
         return mrrobotSprite.getY();
     }
 
-    public TiledMapTile getTileBelow() {
-        return tileBelow;
+    public TiledMapTileLayer.Cell getCellBelow() {
+        return cellBelow;
     }
 
     public void alignMrRobotHorizontally(boolean alignLeftTile) {

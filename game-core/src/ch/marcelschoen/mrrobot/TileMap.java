@@ -82,7 +82,7 @@ public class TileMap {
                                 mrRobot.setPosition(x, y);
                                 mrRobot.setState(MrRobot.MRROBOT_STATE.STANDING_RIGHT);
                             } else if(tile.getId() == TILE_TELEPORTER) {
-                                Teleporter.addTeleporter(tile, x, y);
+                                Teleporter.addTeleporter(cell, x, y);
                             } else if(tile.getId() == TILE_SHIELD) {
                                 tiledMapTileLayer.setCell(colCt, lineCt, null);
                                 AnimatedSprite shield = Sprites.createSprite(MrRobot.ANIM.mrrobot_shield.name());
@@ -98,10 +98,10 @@ public class TileMap {
                             }
                         }
                     }
-                    System.out.println("==>> " + lineCt + ": " + line);
+//                    System.out.println("==>> " + lineCt + ": " + line);
                 }
             }
-            System.out.println("-->> Objects in layer: " + this.map.getLayers().get(0).getObjects().getCount());
+//            System.out.println("-->> Objects in layer: " + this.map.getLayers().get(0).getObjects().getCount());
             this.tileMapRenderer = new OrthogonalTiledMapRenderer(map);
 
             for(MapObject obj : this.map.getLayers().get(0).getObjects()) {

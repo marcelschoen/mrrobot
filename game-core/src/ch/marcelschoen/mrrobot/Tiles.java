@@ -7,6 +7,9 @@ package ch.marcelschoen.mrrobot;
  */
 public class Tiles {
 
+    /** Tile size in pixels */
+    public static final int TILE_WIDTH = 8;
+
     public static final int NO_TILE = -1;
 
     public static final int TILE_DOT = 2;
