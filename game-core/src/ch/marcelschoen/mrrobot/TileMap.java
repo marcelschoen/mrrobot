@@ -82,7 +82,7 @@ public class TileMap {
                                 mrRobot.setPosition(x, y);
                                 mrRobot.setState(MrRobot.MRROBOT_STATE.STANDING_RIGHT);
                             } else if(tile.getId() == TILE_TELEPORTER) {
-                                Teleporter.addTeleporters(tile, x, y);
+                                Teleporter.addTeleporter(tile, x, y);
                             } else if(tile.getId() == TILE_SHIELD) {
                                 tiledMapTileLayer.setCell(colCt, lineCt, null);
                                 AnimatedSprite shield = Sprites.createSprite(MrRobot.ANIM.mrrobot_shield.name());
@@ -108,7 +108,7 @@ public class TileMap {
                 System.out.println("> obj: " + obj.getName() + " / " + obj.getClass().getName());
             }
         }
-        Teleporter.setTargets();
+        Teleporter.initializeTargets();
     }
 
     public void clearCell(TiledMapTileLayer.Cell cell) {

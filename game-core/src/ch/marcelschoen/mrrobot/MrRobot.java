@@ -14,6 +14,9 @@ import com.jplay.gdx.sprites.action.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.marcelschoen.mrrobot.actions.TeleportAction;
+import ch.marcelschoen.mrrobot.actions.TeleportCompletedAction;
+
 import static ch.marcelschoen.mrrobot.Tiles.NO_TILE;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_DOT;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_ELEVATOR;
@@ -52,7 +55,7 @@ public class MrRobot implements ActionListener {
     private AnimatedSprite mrrobotSprite = null;
     private AnimatedSprite shieldSprite = null;
 
-    private static TiledMapTile tileBelow = null;
+    private TiledMapTile tileBelow = null;
 
     private int tileBehindId = NO_TILE;
     private int tileBelowId = NO_TILE;
@@ -627,7 +630,7 @@ public class MrRobot implements ActionListener {
         return mrrobotSprite.getY();
     }
 
-    public static TiledMapTile getTileBelow() {
+    public TiledMapTile getTileBelow() {
         return tileBelow;
     }
 

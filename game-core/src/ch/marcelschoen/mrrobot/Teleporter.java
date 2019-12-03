@@ -35,7 +35,7 @@ public class Teleporter {
      * @param x The x-coordinate on screen in pixels.
      * @param y The y-coordinate on screen in pixels.
      */
-    public static void addTeleporters(TiledMapTile tile, float x, float y) {
+    public static void addTeleporter(TiledMapTile tile, float x, float y) {
         tempMap.put(tile, new Vector2(x, y));
         selectedTeleporter.put(tile, 0);
     }
@@ -43,7 +43,7 @@ public class Teleporter {
     /**
      * 3. Finalize level initialization be creating teleporter target maps.
      */
-    public static void setTargets() {
+    public static void initializeTargets() {
         int numberOfTargets = tempMap.size() - 1;
         for(TiledMapTile tile : tempMap.keySet()) {
             Array<Vector2> targets = new Array<>(numberOfTargets);
