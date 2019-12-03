@@ -15,6 +15,7 @@ import com.jplay.gdx.sprites.Sprites;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_FLAME;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_MR_ROBOT;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_SHIELD;
+import static ch.marcelschoen.mrrobot.Tiles.TILE_TELEPORTER;
 
 /**
  * Encapsulates tilemap-related functionality.
@@ -50,6 +51,7 @@ public class TileMap {
     public TileMap(String filename, MrRobot mrRobot, Camera camera) {
         this.mrRobot = mrRobot;
         Flame.flames.clear();
+        Teleporter.startLevel();
         this.loader = new TmxMapLoader();
         this.map = loader.load("map/level16.tmx");
 
@@ -79,6 +81,8 @@ public class TileMap {
                                 mrRobot.setTileMap(this);
                                 mrRobot.setPosition(x, y);
                                 mrRobot.setState(MrRobot.MRROBOT_STATE.STANDING_RIGHT);
+                            } else if(tile.getId() == TILE_TELEPORTER) {
+                                Teleporter.addTeleporters(tile, x, y);
                             } else if(tile.getId() == TILE_SHIELD) {
                                 tiledMapTileLayer.setCell(colCt, lineCt, null);
                                 AnimatedSprite shield = Sprites.createSprite(MrRobot.ANIM.mrrobot_shield.name());
@@ -104,6 +108,7 @@ public class TileMap {
                 System.out.println("> obj: " + obj.getName() + " / " + obj.getClass().getName());
             }
         }
+        Teleporter.setTargets();
     }
 
     public void clearCell(TiledMapTileLayer.Cell cell) {

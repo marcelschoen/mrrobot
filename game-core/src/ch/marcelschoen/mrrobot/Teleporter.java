@@ -7,6 +7,12 @@ import com.badlogic.gdx.utils.Array;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Handles teleporters in a tile-map, and manages their
+ * target teleport locations.
+ *
+ * @author Marcel Schoen
+ */
 public class Teleporter {
 
     private static Map<TiledMapTile, Array<Vector2>> teleporterTargets = null;
@@ -40,7 +46,7 @@ public class Teleporter {
     public static void setTargets() {
         int numberOfTargets = tempMap.size() - 1;
         for(TiledMapTile tile : tempMap.keySet()) {
-            Array<Vector2> targets = new Array<>();
+            Array<Vector2> targets = new Array<>(numberOfTargets);
             teleporterTargets.put(tile, targets);
             for(TiledMapTile tile2 : tempMap.keySet()) {
                 if(tile2 != tile) {
@@ -50,7 +56,11 @@ public class Teleporter {
         }
     }
 
-    public static Vector2 teleport(TiledMapTile fromTeleporter) {
+    /**
+     * @param fromTeleporter The teleporter tile which Mr. Robot is standing on
+     * @return The target teleporting position.
+     */
+    public static Vector2 getTeleportTarget(TiledMapTile fromTeleporter) {
         Array<Vector2> targets = teleporterTargets.get(fromTeleporter);
         int currentTarget = selectedTeleporter.get(fromTeleporter) + 1;
         if(currentTarget >= targets.size) {
