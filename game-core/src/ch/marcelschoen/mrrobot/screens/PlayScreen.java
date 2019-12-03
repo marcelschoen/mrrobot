@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.jplay.gdx.DebugOutput;
 import com.jplay.gdx.screens.AbstractBaseScreen;
 import com.jplay.gdx.screens.ScreenUtil;
+import com.jplay.gdx.sprites.Sprites;
 import com.jplay.gdx.tween.JPlayTweenManager;
 
 import ch.marcelschoen.mrrobot.Flame;
@@ -28,7 +29,7 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
         super(game, null);
 
         DebugOutput.setPlayScreen(this);
-        this.mrRobot = new MrRobot(this.camera);
+        this.mrRobot = new MrRobot();
         this.tileMap = new TileMap("map/level16.tmx", this.mrRobot, this.camera);
 //        this.mrRobot.setTileMap(this.tileMap);
 
@@ -79,6 +80,7 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
         batch.begin();
 
         // Draw Mr. Robot
+        Sprites.drawSprites(batch, delta);
         this.mrRobot.draw(batch, delta);
 
         // Draw all flames

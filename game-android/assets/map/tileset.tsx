@@ -62,6 +62,11 @@
    <property name="solid" type="bool" value="true"/>
    <property name="type" type="int" value="12"/>
   </properties>
+  <animation>
+   <frame tileid="9" duration="80"/>
+   <frame tileid="41" duration="80"/>
+   <frame tileid="73" duration="80"/>
+  </animation>
  </tile>
  <tile id="10">
   <properties>
