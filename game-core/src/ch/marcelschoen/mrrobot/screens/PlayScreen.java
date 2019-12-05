@@ -3,6 +3,7 @@ package ch.marcelschoen.mrrobot.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.jplay.gdx.DebugOutput;
+import com.jplay.gdx.collision.Collision;
 import com.jplay.gdx.screens.AbstractBaseScreen;
 import com.jplay.gdx.screens.ScreenUtil;
 import com.jplay.gdx.sprites.Sprites;
@@ -55,6 +56,8 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
             System.exit(-1);
         }
         mrRobot.handleInput(delta);
+        mrRobot.moveMrRobot(delta);
+        mrRobot.checkMrRobot(delta);
     }
 
     @Override
@@ -81,12 +84,15 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
 
         // Draw Mr. Robot
         Sprites.drawSprites(batch, delta);
-        this.mrRobot.draw(batch, delta);
 
         // Draw all flames
         for(Flame flame : Flame.flames) {
             flame.draw(batch, delta);
         }
+
+        // TODO: MOVE INTO "Sprites" CONTROLLER
+        Collision.checkForCollisions();
+
         // print debug stuff on screen
         // TODO: Enable only in testing / debug mode
         DebugOutput.draw(batch);

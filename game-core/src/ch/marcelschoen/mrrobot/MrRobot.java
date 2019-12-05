@@ -2,9 +2,13 @@ package ch.marcelschoen.mrrobot;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.Rectangle;
+import com.jplay.gdx.DebugOutput;
+import com.jplay.gdx.collision.Collision;
+import com.jplay.gdx.collision.CollisionListener;
 import com.jplay.gdx.sprites.AnimatedSprite;
 import com.jplay.gdx.sprites.Sprites;
 import com.jplay.gdx.sprites.action.Action;
@@ -28,7 +32,12 @@ import static ch.marcelschoen.mrrobot.Tiles.TILE_ROLL_RIGHT_1;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_ROLL_RIGHT_2;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_SLIDER;
 
-public class MrRobot implements ActionListener {
+/**
+ * Represents and handles the state and attributes of Mr. Robot.
+ *
+ * @author Marcel Schoen
+ */
+public class MrRobot implements ActionListener, CollisionListener {
 
     private IntendedMovement intendedMovement = new IntendedMovement();
 
@@ -63,6 +72,9 @@ public class MrRobot implements ActionListener {
 
     private TileMap tileMap;
 
+    /**
+     * All possible states of Mr. Robot
+     */
     public enum MRROBOT_STATE {
         JUMP_RIGHT(true, ANIM.mrrobot_jump_right.name(), true),
         JUMP_LEFT(false, ANIM.mrrobot_jump_left.name(), true),
@@ -102,6 +114,14 @@ public class MrRobot implements ActionListener {
          */
         public boolean isInputBlocked() {
             return this.isInputBlocked;
+        }
+
+        public MRROBOT_STATE changeFrom(MRROBOT_STATE oldState, MRROBOT_STATE targetState) {
+            MRROBOT_STATE result = targetState;
+            if(!(oldState.isFacingRight() && result.isFacingRight())) {
+                result = result.getReverse();
+            }
+            return result;
         }
 
         public MRROBOT_STATE getReverse() {
@@ -159,10 +179,10 @@ public class MrRobot implements ActionListener {
         for(ANIM animation : ANIM.values()) {
             animationNames.add(animation.name());
         }
-        this.mrrobotSprite = Sprites.createSprite(animationNames);
+        this.mrrobotSprite = Sprites.createSprite(animationNames, SpriteTypes.MR_ROBOT);
         this.mrrobotSprite.setVisible(true);
 
-        this.shieldSprite = Sprites.createSprite(ANIM.mrrobot_shield.name());
+        this.shieldSprite = Sprites.createSprite(ANIM.mrrobot_shield.name(), SpriteTypes.SHIELDS);
         this.shieldSprite.setVisible(false);
         this.shieldSprite.attachToSprite(this.mrrobotSprite, 0, 0);
 
@@ -181,26 +201,44 @@ public class MrRobot implements ActionListener {
                 .custom(new TeleportAction(this))
                 .custom(new TeleportCompletedAction(this))
                 .build();
+
+        Collision.addListener(this);
+        Collision.initialize();
     }
 
+    /**
+     * @param tileMap Sets the current tilemap instance.
+     */
     public void setTileMap(TileMap tileMap) {
         this.tileMap = tileMap;
     }
 
-    public void draw(SpriteBatch batch, float delta) {
-        /////this.mrrobotSprite.draw(batch, delta);
-/*
-        DebugOutput.log("y: " + getY(), 40, 75);
-        DebugOutput.log("behind: " + tileBehindId, 40, 60);
-        DebugOutput.log("below: " + tileBelowId, 40, 46);
-        DebugOutput.log("below 2: " + tileFurtherBelowId, 40, 32);
-*/
+    @Override
+    public void spritesCollided(AnimatedSprite spriteOne, AnimatedSprite spriteTwo, Rectangle overlapRectangle) {
+        if(spriteOne.getType() == SpriteTypes.MR_ROBOT || spriteTwo.getType() == SpriteTypes.MR_ROBOT) {
+            if(spriteOne.getType() == SpriteTypes.SHIELDS || spriteTwo.getType() == SpriteTypes.SHIELDS) {
+                DebugOutput.flicker(Color.YELLOW);
+                System.out.println(">>> PICK UP SHIELD");
+            }
+            if(spriteOne.getType() == SpriteTypes.FLAMES || spriteTwo.getType() == SpriteTypes.FLAMES) {
+                DebugOutput.flicker(Color.RED);
+            }
+        }
     }
 
+    /**
+     * @return The Mr. Robot sprite instance.
+     */
     public AnimatedSprite getMrrobotSprite() {
         return this.mrrobotSprite;
     }
 
+    /**
+     * Sets the position of Mr. Robot on screen.
+     *
+     * @param x The x-coordinate in pixels.
+     * @param y The y-coordinate in pixels.
+     */
     public void setPosition(float x, float y) {
         this.mrrobotSprite.setPosition(x, y);
         cellBelow = tileMap.getTileMapCell(TileMap.CELL_TYPE.BELOW);
@@ -209,19 +247,46 @@ public class MrRobot implements ActionListener {
         tileFurtherBelowId = tileMap.getTileMapTile(TileMap.CELL_TYPE.FURTHER_BELOW);
     }
 
+    private void changeState(MRROBOT_STATE state) {
+        this.mrRobotState = state.changeFrom(this.mrRobotState, state);
+        this.mrrobotSprite.showAnimation(mrRobotState.getAnimationName());
+    }
+
+    /**
+     * @param state Sets
+     */
     public void setState(MRROBOT_STATE state) {
         this.mrRobotState = state;
         this.mrrobotSprite.showAnimation(state.getAnimationName());
     }
 
+    /**
+     * @return The x-coordinate of the Mr. Robot sprite in pixels.
+     */
     public float getX() {
         return this.mrrobotSprite.getX();
     }
+
+    /**
+     * @return The y-coordinate of the Mr. Robot sprite in pixels.
+     */
     public float getY() {
         return this.mrrobotSprite.getY();
     }
 
+    /**
+     * Handles input for Mr. Robot movements.
+     *
+     * @param delta time since last screen refresh in seconds.
+     */
     public void handleInput(float delta) {
+/*
+        DebugOutput.log("y: " + getY(), 40, 75);
+        DebugOutput.log("behind: " + tileBehindId, 40, 60);
+        DebugOutput.log("below: " + tileBelowId, 40, 46);
+        DebugOutput.log("below 2: " + tileFurtherBelowId, 40, 32);
+*/
+
         if(mrRobotState.isInputBlocked()) {
             return;
         }
@@ -298,13 +363,11 @@ public class MrRobot implements ActionListener {
         }
 */
         if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-////            if (!mrRobotIsFalling() && !mrRobotIsSlidingDown() && !mrRobotIsClimbing() && !mrRobotIsJumping() && !mrRobotIsRisingUp()) {
                 if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
                     jumpSideways();
                 } else {
                     jumpUp();
                 }
-////            }
         }
 
         if(intendedMovement.mrrobot_state != null) {
@@ -314,25 +377,18 @@ public class MrRobot implements ActionListener {
             }
         }
 
-        moveMrRobot(delta);
-        checkMrRobot(delta);
     }
 
     private void jumpUp() {
-        if(mrRobotState.isFacingRight()) {
-            setState(MRROBOT_STATE.JUMPUP_RIGHT);
-        } else {
-            setState(MRROBOT_STATE.JUMPUP_LEFT);
-        }
+        changeState(MRROBOT_STATE.JUMPUP_RIGHT);
         getMrrobotSprite().startAction(jumpUpAction, this);
     }
 
     private void jumpSideways() {
+        changeState(MRROBOT_STATE.JUMP_RIGHT);
         if(mrRobotState.isFacingRight()) {
-            setState(MRROBOT_STATE.JUMP_RIGHT);
             getMrrobotSprite().startAction(jumpRightAction, this);
         } else {
-            setState(MRROBOT_STATE.JUMP_LEFT);
             getMrrobotSprite().startAction(jumpLeftAction, this);
         }
     }
@@ -341,17 +397,9 @@ public class MrRobot implements ActionListener {
     public void completed(Action completedAction) {
         Action firstAction = completedAction.getFirstActionInChain();
         if(firstAction == jumpRightAction || firstAction == jumpLeftAction) {
-            if(mrRobotState.isFacingRight()) {
-                setState(MRROBOT_STATE.FALL_RIGHT);
-            } else {
-                setState(MRROBOT_STATE.FALL_LEFT);
-            }
+            changeState(MRROBOT_STATE.FALL_RIGHT);
         } else if(firstAction == jumpUpAction) {
-            if(mrRobotState.isFacingRight()) {
-                setState(MRROBOT_STATE.DROP_RIGHT);
-            } else {
-                setState(MRROBOT_STATE.DROP_LEFT);
-            }
+            changeState(MRROBOT_STATE.DROP_RIGHT);
         }
     }
 
@@ -361,17 +409,9 @@ public class MrRobot implements ActionListener {
      */
     public void stopMrRobot() {
         if(mrRobotIsOnLadder()) {
-            setState(MRROBOT_STATE.STANDING_ON_LADDER);
+            changeState(MRROBOT_STATE.STANDING_ON_LADDER);
         } else {
-            if(mrRobotState.isFacingRight()) {
-                if(mrRobotState != MRROBOT_STATE.STANDING_RIGHT) {
-                    setState(MRROBOT_STATE.STANDING_RIGHT);
-                }
-            } else {
-                if(mrRobotState != MRROBOT_STATE.STANDING_LEFT) {
-                    setState(MRROBOT_STATE.STANDING_LEFT);
-                }
-            }
+            changeState(MRROBOT_STATE.STANDING_RIGHT);
         }
     }
 
@@ -381,10 +421,8 @@ public class MrRobot implements ActionListener {
      * @param animationName
      */
     private void tryMovingSideways(MRROBOT_STATE intendedState, String animationName) {
-////        if(!mrRobotIsFalling() && !mrRobotIsSlidingDown()) {
-            intendedMovement.animationName = animationName;
-            intendedMovement.mrrobot_state = intendedState;
-////        }
+        intendedMovement.animationName = animationName;
+        intendedMovement.mrrobot_state = intendedState;
     }
 
     /**
@@ -432,6 +470,68 @@ public class MrRobot implements ActionListener {
 
     /**
      *
+     */
+    private void mrRobotLands() {
+        alignMrRobotVertically();
+        stopMrRobot();
+    }
+
+    /**
+     * @return true if Mr. Robot is climbing
+     */
+    private boolean mrRobotIsClimbing() {
+        return mrRobotState == MRROBOT_STATE.CLIMBING_DOWN
+                || mrRobotState == MRROBOT_STATE.CLIMBING_UP;
+    }
+
+    /**
+     * @return True if Mr. Robot is jumping up or sideways
+     */
+    private boolean mrRobotIsJumping() {
+        return mrRobotState == MRROBOT_STATE.JUMPUP_LEFT
+                || mrRobotState == MRROBOT_STATE.JUMPUP_RIGHT
+                || mrRobotState == MRROBOT_STATE.JUMP_LEFT
+                || mrRobotState == MRROBOT_STATE.JUMP_RIGHT;
+    }
+
+    /**
+     * @return True if Mr. Robot is on a ladder
+     */
+    private boolean mrRobotIsOnLadder() {
+        return mrRobotState == MRROBOT_STATE.STANDING_ON_LADDER || mrRobotIsClimbing();
+    }
+
+    /**
+     * @return True if Mr. Robot is walking
+     */
+    private boolean mrRobotIsWalking() {
+        return mrRobotState == MRROBOT_STATE.WALKING_LEFT || mrRobotState == MRROBOT_STATE.WALKING_RIGHT;
+    }
+
+    /**
+     * @return True if Mr. Robot is falling
+     */
+    private boolean mrRobotIsFalling() {
+        return mrRobotState == MRROBOT_STATE.DROP_LEFT || mrRobotState == MRROBOT_STATE.DROP_RIGHT
+                || mrRobotState == MRROBOT_STATE.FALL_LEFT || mrRobotState == MRROBOT_STATE.FALL_RIGHT;
+    }
+
+    /**
+     * @return True if Mr. Robot is sliding down
+     */
+    private boolean mrRobotIsSlidingDown() {
+        return mrRobotState == MRROBOT_STATE.SLIDING_LEFT || mrRobotState == MRROBOT_STATE.SLIDING_RIGHT;
+    }
+
+    /**
+     * @return True if Mr. Robot is rising up on an elevator.
+     */
+    private boolean mrRobotIsRisingUp() {
+        return mrRobotState == MRROBOT_STATE.RISING_LEFT || mrRobotState == MRROBOT_STATE.RISING_RIGHT;
+    }
+
+    /**
+     *
      * @param delta
      */
     public void moveMrRobot(float delta) {
@@ -465,96 +565,12 @@ public class MrRobot implements ActionListener {
             if(mrRobotIsFalling()) {
                 setState(mrRobotState.getReverse());
             }
-            // TODO - CONSTANT FOR MR.ROBOT SPRITE WIDTH
         } else if(x > MrRobotGame.VIRTUAL_WIDTH - 19) {
             x = MrRobotGame.VIRTUAL_WIDTH - 19;
             setState(mrRobotState.getReverse());
         }
 
         setPosition(x, y);
-    }
-
-    /**
-     *
-     */
-    public void mrRobotLands() {
-        alignMrRobotVertically();
-        stopMrRobot();
-    }
-
-    /**
-     *
-     */
-    public void mrRobotStartsFalling() {
-        if(mrRobotState.isFacingRight()) {
-            setState(MRROBOT_STATE.DROP_RIGHT);
-        } else {
-            setState(MRROBOT_STATE.DROP_LEFT);
-        }
-    }
-
-    /**
-     *
-     */
-    public void mrRobotStartsSliding() {
-        if(mrRobotState.isFacingRight()) {
-            setState(MRROBOT_STATE.SLIDING_RIGHT);
-        } else {
-            setState(MRROBOT_STATE.SLIDING_LEFT);
-        }
-    }
-
-    public void mrRobotStartsRisingUp() {
-        if(mrRobotState.isFacingRight()) {
-            setState(MRROBOT_STATE.RISING_RIGHT);
-        } else {
-            setState(MRROBOT_STATE.RISING_LEFT);
-        }
-    }
-
-    /**
-     * @return true if Mr. Robot is climbing
-     */
-    public boolean mrRobotIsClimbing() {
-        return mrRobotState == MRROBOT_STATE.CLIMBING_DOWN
-                || mrRobotState == MRROBOT_STATE.CLIMBING_UP;
-    }
-
-    public boolean mrRobotIsJumping() {
-        return mrRobotState == MRROBOT_STATE.JUMPUP_LEFT
-                || mrRobotState == MRROBOT_STATE.JUMPUP_RIGHT
-                || mrRobotState == MRROBOT_STATE.JUMP_LEFT
-                || mrRobotState == MRROBOT_STATE.JUMP_RIGHT;
-    }
-
-    public boolean mrRobotIsOnLadder() {
-        return mrRobotState == MRROBOT_STATE.STANDING_ON_LADDER || mrRobotIsClimbing();
-    }
-
-    public boolean mrRobotIsWalking() {
-        return mrRobotState == MRROBOT_STATE.WALKING_LEFT || mrRobotState == MRROBOT_STATE.WALKING_RIGHT;
-    }
-
-    /**
-     * @return True if Mr. Robot is falling
-     */
-    public boolean mrRobotIsFalling() {
-        return mrRobotState == MRROBOT_STATE.DROP_LEFT || mrRobotState == MRROBOT_STATE.DROP_RIGHT
-                || mrRobotState == MRROBOT_STATE.FALL_LEFT || mrRobotState == MRROBOT_STATE.FALL_RIGHT;
-    }
-
-    /**
-     * @return True if Mr. Robot is sliding down
-     */
-    public boolean mrRobotIsSlidingDown() {
-        return mrRobotState == MRROBOT_STATE.SLIDING_LEFT || mrRobotState == MRROBOT_STATE.SLIDING_RIGHT;
-    }
-
-    /**
-     * @return True if Mr. Robot is rising up on an elevator.
-     */
-    public boolean mrRobotIsRisingUp() {
-        return mrRobotState == MRROBOT_STATE.RISING_LEFT || mrRobotState == MRROBOT_STATE.RISING_RIGHT;
     }
 
     /**
@@ -571,7 +587,7 @@ public class MrRobot implements ActionListener {
 
         if(tileBelowId == NO_TILE) {
             if (!mrRobotIsFalling() && !mrRobotIsJumping()) {
-                mrRobotStartsFalling();
+                changeState(MRROBOT_STATE.DROP_RIGHT);
             }
         } else if(mrRobotIsFalling() || mrRobotIsSlidingDown()) {
             // TODO - CHECK ONLY FOR SOLID BLOCKS TO STAND ON, NOT DOWNWARD PIPES OR LADDERS
@@ -592,13 +608,13 @@ public class MrRobot implements ActionListener {
         } else if(mrRobotIsClimbing()) {
             if(mrRobotState == MRROBOT_STATE.CLIMBING_UP) {
                 if(tileBehindId == NO_TILE && tileBelowId != TILE_LADDER_LEFT) {
-                    setState(MRROBOT_STATE.STANDING_RIGHT);
+                    changeState(MRROBOT_STATE.STANDING_RIGHT);
                     mrRobotLands();
                 }
             } else {
                 if(tileBehindId == TILE_LADDER_LEFT && tileBelowId != TILE_LADDER_LEFT) {
                     if(mrRobotIsNearlyAlignedVertically()) {
-                        setState(MRROBOT_STATE.STANDING_RIGHT);
+                        changeState(MRROBOT_STATE.STANDING_RIGHT);
                         mrRobotLands();
                     }
                 }
@@ -613,44 +629,26 @@ public class MrRobot implements ActionListener {
             } else if(tileBelowId == TILE_ROLL_RIGHT_1 || tileBelowId == TILE_ROLL_RIGHT_2) {
                 setPosition(mrrobotSprite.getX() + ROLLING_SPEED * delta, mrrobotSprite.getY());
             } else if(tileBelowId == TILE_ELEVATOR && tileBehindId == TILE_ELEVATOR && !mrRobotIsRisingUp()) {
-                mrRobotStartsRisingUp();
+                changeState(MRROBOT_STATE.RISING_RIGHT);
             }
         }
 
         if(line > 0) {
             if(tileFurtherBelowId == TILE_SLIDER && !mrRobotIsSlidingDown()
                     && !mrRobotIsJumping() && !mrRobotIsFalling()) {
-                mrRobotStartsSliding();
+                changeState(MRROBOT_STATE.SLIDING_RIGHT);
             }
         }
     }
 
-    public boolean mrRobotIsNearlyAlignedVertically() {
-        float y = mrrobotSprite.getY();
-        int row = (int)(y / 8f);
-        float diff = y - (row * 8f);
-        return Math.abs(diff) < 1.5f;
-    }
-
-    public boolean mrRobotIsNearlyAlignedVerticallyAtTop() {
-        float y = mrrobotSprite.getY();
-        int row = (int)(y / 8f);
-        float diff = y - (row * 8f);
-        return diff > 1.5f;
-    }
-
-    public float alignMrRobotVertically() {
-        float y = mrrobotSprite.getY() + 12;
-        int row = (int)(y / 8f) - 1;
-        setPosition(mrrobotSprite.getX(), row * 8f);
-        return mrrobotSprite.getY();
-    }
-
+    /**
+     * @return The TileMapTileLayer.Cell right below Mr. Robots feet.
+     */
     public TiledMapTileLayer.Cell getCellBelow() {
         return cellBelow;
     }
 
-    public void alignMrRobotHorizontally(boolean alignLeftTile) {
+    private void alignMrRobotHorizontally(boolean alignLeftTile) {
         float x = mrrobotSprite.getX() + 12;
         int col = (int)(x / 8f) - 2;
         if(alignLeftTile) {
@@ -659,7 +657,37 @@ public class MrRobot implements ActionListener {
         setPosition(col * 8f + 11, mrrobotSprite.getY());
     }
 
-    public boolean mrRobotIsNearlyAlignedHorizontally() {
+    private float alignMrRobotVertically() {
+        float y = mrrobotSprite.getY() + 12;
+        int row = (int)(y / 8f) - 1;
+        setPosition(mrrobotSprite.getX(), row * 8f);
+        return mrrobotSprite.getY();
+    }
+
+    /**
+     * @return True if Mr. Robot is nearly vertically aligned with his feet (lower sprite boundary).
+     */
+    private boolean mrRobotIsNearlyAlignedVertically() {
+        float y = mrrobotSprite.getY();
+        int row = (int)(y / 8f);
+        float diff = y - (row * 8f);
+        return Math.abs(diff) < 1.5f;
+    }
+
+    /**
+     * @return True if Mr. Robot is nearly vertically aligned with his head (upper sprite boundary).
+     */
+    private boolean mrRobotIsNearlyAlignedVerticallyAtTop() {
+        float y = mrrobotSprite.getY();
+        int row = (int)(y / 8f);
+        float diff = y - (row * 8f);
+        return diff > 1.5f;
+    }
+
+    /**
+     * @return True if Mr. Robot is nearly aligned horizontally (center of sprite).
+     */
+    private boolean mrRobotIsNearlyAlignedHorizontally() {
         float x = mrrobotSprite.getX() + 6f;
         int col = (int)(x / 8f) + 1;
         float diff = x - (col * 8f);

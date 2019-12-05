@@ -3,6 +3,7 @@ package ch.marcelschoen.mrrobot;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.jplay.gdx.Assets;
+import com.jplay.gdx.collision.Collision;
 import com.jplay.gdx.sprites.AnimatedSprite;
 
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class Flame {
     private static final float DOWN_SPEED = 40;
     private static final float ROLLING_SPEED = 26;
 
-    private AnimatedSprite sprite = new AnimatedSprite();
+    private AnimatedSprite sprite = new AnimatedSprite(SpriteTypes.FLAMES);
 
     private int tileBehindId = NO_TILE;
     private int tileBelowId = NO_TILE;
@@ -58,6 +59,8 @@ public class Flame {
 
     public Flame(Camera camera) {
         this.camera = camera;
+        Collision.addRectangles(this.sprite);
+
 
         for(ANIM animation : ANIM.values()) {
             this.sprite.addAnimation(animation.name(), Assets.instance().getAnimation(animation.name()));

@@ -10,7 +10,9 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+import com.jplay.gdx.collision.CollisionRectangle;
 import com.jplay.gdx.sprites.action.Action;
 import com.jplay.gdx.sprites.action.ActionListener;
 
@@ -19,12 +21,15 @@ import java.util.Map;
 
 /**
  * Wrapper for LIBGDX sprite. Holds animation state
- * information as well.
+ * information as well, handles execution of actions
+ * and collision detection.
  *
  * @author Marcel Schoen
  * @version $Revision: 1.1 $
  */
 public class AnimatedSprite extends Sprite implements Pool.Poolable {
+
+	private Array<CollisionRectangle> collisionBounds = null;
 
 	/** Visibility flag. */
 	private boolean visible = false;
@@ -41,6 +46,9 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	/** Points to action currently being executed. */
 	private Action currentAction = null;
 
+	/** Optional arbitrary type to assign to the sprite. */
+	private int type = 0;
+
 	private AnimatedSprite attachedToSprite = null;
 	private float xOffsetAttachement = 0;
 	private float yOffsetAttachement = 0;
@@ -49,12 +57,40 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	 * Creates a sprite with a certain animation.
 	 */
 	public AnimatedSprite() {
+		collisionBounds = new Array<>(2);
+		collisionBounds.add(new CollisionRectangle(this, CollisionRectangle.TYPE_DEFAULT));
+	}
+
+	public AnimatedSprite(int type) {
+		this();
+		this.type = type;
 	}
 
 	public void attachToSprite(AnimatedSprite otherSprite, float xOffset, float yOffset) {
 		attachedToSprite = otherSprite;
 		xOffsetAttachement = xOffset;
 		yOffsetAttachement = yOffset;
+	}
+
+	/**
+	 * Returns the type of this sprite (defaults to 0).
+	 *
+	 * @return the type.
+	 */
+	public int getType() {
+		return type;
+	}
+
+	/**
+	 * Allows to set a type. This is an arbitrary value you can use to easily distinguish different
+	 * types of sprites. For example, create an int constant "BULLET=1" which you then assign to
+	 * all bullet sprites, so you can easily determine which type of sprite it is in collision
+	 * handling logic.
+	 *
+	 * @param type The type value to set.
+	 */
+	public void setType(int type) {
+		this.type = type;
 	}
 
 	/**
@@ -130,6 +166,14 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 		draw(batch, x, y, delta);
 	}
 
+	public void addCollisionRectangle(CollisionRectangle collisionRectangle) {
+		this.collisionBounds.add(collisionRectangle);
+	}
+
+	public Array<CollisionRectangle> getCollisionBounds() {
+		return this.collisionBounds;
+	}
+
 	/**
 	 * Draws the sprite into a given spriteBatch.
 	 * 
@@ -161,6 +205,12 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 			throw new IllegalStateException("Animation not ready.");
 		}
 		TextureRegion keyFrame = this.animation.getKeyFrame(this.animationStateTime, true);
+		// Update default sprite bounds with values matching current animation frame
+		CollisionRectangle spriteBounds = collisionBounds.get(0);
+		spriteBounds.x = xPosition;
+		spriteBounds.y = yPosition;
+		spriteBounds.width = keyFrame.getRegionWidth();
+		spriteBounds.height = keyFrame.getRegionHeight();
 		batch.draw(keyFrame, xPosition, yPosition);
 	}
 }

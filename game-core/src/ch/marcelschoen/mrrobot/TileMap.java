@@ -9,6 +9,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.jplay.gdx.collision.Collision;
 import com.jplay.gdx.sprites.AnimatedSprite;
 import com.jplay.gdx.sprites.Sprites;
 
@@ -87,6 +88,8 @@ public class TileMap {
                                 tiledMapTileLayer.setCell(colCt, lineCt, null);
                                 AnimatedSprite shield = Sprites.createSprite(MrRobot.ANIM.mrrobot_shield.name());
                                 shield.setPosition(x, y);
+                                shield.setVisible(true);
+                                Collision.addRectangles(shield);
                             } else if(tile.getId() == TILE_FLAME) {
                                 tiledMapTileLayer.setCell(colCt, lineCt, null);
                                 // Placement of flame starting position

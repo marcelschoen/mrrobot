@@ -29,6 +29,10 @@ public class Sprites {
         }
     }
 
+    public static Array<AnimatedSprite> getSprites() {
+        return sprites;
+    }
+
     /**
      * Clears the list of sprites (freeing up all instances for garbage collection). After this
      * method is invoked, all sprite instances are gone and need to be created anew.
@@ -52,6 +56,11 @@ public class Sprites {
         sprites.add(sprite);
         return sprite;
     }
+    public static AnimatedSprite createSprite(String animationName, int type) {
+        AnimatedSprite sprite = createSprite(animationName);
+        sprite.setType(type);
+        return sprite;
+    }
 
     /**
      * Create single sprite with given animations (names are tags from Aseprite file).
@@ -64,10 +73,15 @@ public class Sprites {
     public static AnimatedSprite createSprite(List<String> animationNames) {
         AnimatedSprite sprite = new AnimatedSprite();
         for(String animationName : animationNames) {
-            System.out.println(">> ADD ANIMATION TO SPRITE: " + animationName);
             addAnimationToSprite(sprite, animationName);
         }
         sprites.add(sprite);
+        return sprite;
+    }
+
+    public static AnimatedSprite createSprite(List<String> animationNames, int type) {
+        AnimatedSprite sprite = createSprite(animationNames);
+        sprite.setType(type);
         return sprite;
     }
 
@@ -85,6 +99,12 @@ public class Sprites {
             addAnimationToSprite(sprite, animationName);
         }
         sprites.add(sprite);
+        return sprite;
+    }
+
+    public static AnimatedSprite createSprite(String[] animationNames, int type) {
+        AnimatedSprite sprite = createSprite(animationNames);
+        sprite.setType(type);
         return sprite;
     }
 
