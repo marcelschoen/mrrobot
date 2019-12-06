@@ -84,6 +84,21 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	}
 
 	/**
+	 * Sets the default collision bounds for this sprite. Collision detection is only possible for
+	 * the sprite until this method has been invoked.
+	 *
+	 * This method requires that at least one animation had been set before, as it will automatically
+	 * use the dimensions of the first frame of that animation for the collision bounds rectangle.
+	 */
+	public void setDefaultCollisionBounds() {
+		if(this.animationMap.size() > 0) {
+			Animation<TextureRegion> animation = this.animationMap.values().iterator().next();
+			TextureRegion frame = animation.getKeyFrame(0);
+			setDefaultCollisionBounds(0, 0, frame.getRegionWidth(), frame.getRegionHeight());
+		}
+	}
+
+	/**
 	 * Add an additional collision bounds rectangle to the sprite. For example, in a typical bullet hell
 	 * shooter, the regular outer bounds of the jet fighter sprite might be used only for collision detection
 	 * with power-up items, but for collisions with bullets, a smaller rectangle which covers only the
