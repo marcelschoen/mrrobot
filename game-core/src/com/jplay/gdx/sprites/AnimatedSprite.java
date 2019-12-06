@@ -19,6 +19,8 @@ import com.jplay.gdx.sprites.action.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.jplay.gdx.collision.CollisionRectangle.TYPE_DEFAULT;
+
 /**
  * Wrapper for LIBGDX sprite. Holds animation state
  * information as well, handles execution of actions
@@ -57,8 +59,6 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	 * Creates a sprite with a certain animation.
 	 */
 	public AnimatedSprite() {
-		collisionBounds = new Array<>(2);
-		collisionBounds.add(new CollisionRectangle(this, CollisionRectangle.TYPE_DEFAULT));
 	}
 
 	public AnimatedSprite(int type) {
@@ -66,10 +66,83 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 		this.type = type;
 	}
 
+	/**
+	 * Sets the default collision bounds for this sprite. Collision detection is only possible for
+	 * the sprite until this method has been invoked.
+	 *
+	 * Note that the screen coordinate system starts in the lower left corner, and positive x-axis
+	 * values are going to the right, and positive y-axis values upwards.
+	 *
+	 * @param xOffset The x-offset of the collision bounds rectangle, relative to the lower left corner of the sprite.
+	 * @param yOffset The y-offset of the collision bounds rectangle, relative to the lower left corner of the sprite.
+	 * @param width The width of the collision bounds rectangle.
+	 * @param height The height of the collision bounds rectangle.
+	 */
+	public void setDefaultCollisionBounds(float xOffset, float yOffset, float width, float height) {
+		collisionBounds = new Array<>(2);
+		collisionBounds.add(new CollisionRectangle(this, xOffset, yOffset, width, height, TYPE_DEFAULT));
+	}
+
+	/**
+	 * Add an additional collision bounds rectangle to the sprite. For example, in a typical bullet hell
+	 * shooter, the regular outer bounds of the jet fighter sprite might be used only for collision detection
+	 * with power-up items, but for collisions with bullets, a smaller rectangle which covers only the
+	 * cockpit would be used.
+	 *
+	 * So, in a sprite that has dimensions of 16x16 pixels, in order to create a collision bounds
+	 * rectangle which covers only the core 4x4 pixel area at the center of the sprite, the rectangle
+	 * would need the relative values 6 (x-offset), 6 (y-offset, 4 (width) and 4(height).
+	 *
+	 * @param xOffset The x-offset of the collision bounds rectangle, relative to the lower left corner of the sprite.
+	 * @param yOffset The y-offset of the collision bounds rectangle, relative to the lower left corner of the sprite.
+	 * @param width The width of the collision bounds rectangle.
+	 * @param height The height of the collision bounds rectangle.
+	 * @param type An arbitrary numeric type to assign this rectangle, so that in the logic which deals
+	 *             with the collision, it is possible to distinguish between the multiple collision rectangles
+	 *             of this sprite.
+	 */
+	public void addCollisionBounds(float xOffset, float yOffset, float width, float height, int type) {
+		for(int i = 0; i < collisionBounds.size; i++) {
+			CollisionRectangle rectangle = collisionBounds.get(i);
+			if(rectangle != null && rectangle.getType() == type) {
+				// If a bounds rectangle of this type already exists, just update its dimensions
+				rectangle.x = xOffset;
+				rectangle.y = yOffset;
+				rectangle.width = width;
+				rectangle.height = height;
+				return;
+			}
+		}
+		// Otherwise add a new collision bounds rectangle for the given type
+		collisionBounds.add(new CollisionRectangle(this, xOffset, yOffset, width, height, type));
+	}
+
+	/**
+	 * Attaches this sprite to another sprite, with a given x- and y-offset. The result is that
+	 * whenever the other sprite changes its position, this sprite will automatically have its
+	 * position updated accordingly.
+	 *
+	 * A typical use-case would be a sprite that shows a status effect on a game character after picking
+	 * up some power-up item. Or in a shooter like R-Type, when an extension to the player's ship is
+	 * picked up, it is visibly attached to the ship sprite.
+	 *
+	 * @param otherSprite The sprite to which to attach this sprite.
+	 * @param xOffset The x-offset relative to the position of the other sprite.
+	 * @param yOffset The y-offset relative to the position of the other sprite.
+	 */
 	public void attachToSprite(AnimatedSprite otherSprite, float xOffset, float yOffset) {
 		attachedToSprite = otherSprite;
 		xOffsetAttachement = xOffset;
 		yOffsetAttachement = yOffset;
+	}
+
+	/**
+	 * Detaches this sprite from the given other sprite, if it is attached to it.
+	 *
+	 * @param otherSprite The sprite from which to detach this one.
+	 */
+	public void detachFromSprite(AnimatedSprite otherSprite) {
+		attachedToSprite = null;
 	}
 
 	/**
@@ -164,10 +237,6 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 			y = attachedToSprite.getY();
 		}
 		draw(batch, x, y, delta);
-	}
-
-	public void addCollisionRectangle(CollisionRectangle collisionRectangle) {
-		this.collisionBounds.add(collisionRectangle);
 	}
 
 	public Array<CollisionRectangle> getCollisionBounds() {

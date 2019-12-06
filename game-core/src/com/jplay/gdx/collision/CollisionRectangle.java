@@ -29,7 +29,8 @@ public class CollisionRectangle extends Rectangle {
         this.type = type;
     }
 
-    public CollisionRectangle(AnimatedSprite sprite, int type) {
+    public CollisionRectangle(AnimatedSprite sprite, float x, float y, float width, float height, int type) {
+        super(x, y, width, height);
         this.sprite = sprite;
         this.type = type;
     }
