@@ -74,29 +74,30 @@ public class TileMap {
                         } else {
                             TiledMapTile tile = tiledMapTileLayer.getCell(colCt, lineCt).getTile();
                             line += tile.getId();
-                            float x = (colCt * 8) - 8;
+                            float x = colCt * 8;
                             float y = lineCt * 8;
                             if(tile.getId() == TILE_MR_ROBOT) {
                                 tiledMapTileLayer.setCell(colCt, lineCt, null);
                                 // Placement of Mr. Robot starting position
                                 mrRobot.setTileMap(this);
-                                mrRobot.setPosition(x, y);
+                                mrRobot.setPosition(x - 8, y);
                                 mrRobot.setState(MrRobot.MRROBOT_STATE.STANDING_RIGHT);
                             } else if(tile.getId() == TILE_TELEPORTER) {
-                                Teleporter.addTeleporter(cell, x, y);
+                                Teleporter.addTeleporter(cell, x - 8, y);
                             } else if(tile.getId() == TILE_SHIELD) {
                                 tiledMapTileLayer.setCell(colCt, lineCt, null);
-                                AnimatedSprite shield = Sprites.createSprite(MrRobot.ANIM.mrrobot_shield.name());
-                                shield.setPosition(x, y);
-                                shield.setVisible(true);
-                                Collision.addRectangles(shield);
+                                AnimatedSprite shieldItem = Sprites.createSprite(MrRobot.ANIM.shield_item.name());
+                                shieldItem.setPosition(x, y);
+                                shieldItem.setVisible(true);
+                                shieldItem.setDefaultCollisionBounds(0, 0, 8, 8);
+                                Collision.addRectangles(shieldItem);
                             } else if(tile.getId() == TILE_FLAME) {
                                 tiledMapTileLayer.setCell(colCt, lineCt, null);
                                 // Placement of flame starting position
                                 Flame flame = new Flame(camera);
                                 Flame.flames.add(flame);
                                 flame.setTileMap(this);
-                                flame.setPosition(x, y);
+                                flame.setPosition(x - 8, y);
                                 flame.setState(Flame.FLAME_STATE.WALKING_LEFT);
                             }
                         }

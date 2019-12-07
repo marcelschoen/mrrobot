@@ -31,7 +31,7 @@ import static com.jplay.gdx.collision.CollisionRectangle.TYPE_DEFAULT;
  */
 public class AnimatedSprite extends Sprite implements Pool.Poolable {
 
-	private Array<CollisionRectangle> collisionBounds = null;
+	private Array<CollisionRectangle> collisionBounds = new Array<>(0);
 
 	/** Visibility flag. */
 	private boolean visible = false;
@@ -290,11 +290,6 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 		}
 		TextureRegion keyFrame = this.animation.getKeyFrame(this.animationStateTime, true);
 		// Update default sprite bounds with values matching current animation frame
-		CollisionRectangle spriteBounds = collisionBounds.get(0);
-		spriteBounds.x = xPosition;
-		spriteBounds.y = yPosition;
-		spriteBounds.width = keyFrame.getRegionWidth();
-		spriteBounds.height = keyFrame.getRegionHeight();
 		batch.draw(keyFrame, xPosition, yPosition);
 	}
 }

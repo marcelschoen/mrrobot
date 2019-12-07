@@ -53,7 +53,8 @@ public class MrRobot implements ActionListener, CollisionListener {
         mrrobot_stand_on_ladder,
         mrrobot_downfall,
         mrrobot_teleport,
-        mrrobot_shield
+        mrrobot_shield,
+        shield_item
     };
 
     private static final float WALK_SPEED = 40;
@@ -180,6 +181,7 @@ public class MrRobot implements ActionListener, CollisionListener {
             animationNames.add(animation.name());
         }
         this.mrrobotSprite = Sprites.createSprite(animationNames, SpriteTypes.MR_ROBOT);
+        this.mrrobotSprite.setDefaultCollisionBounds(6, 0, 12, 24);
         this.mrrobotSprite.setVisible(true);
 
         this.shieldSprite = Sprites.createSprite(ANIM.mrrobot_shield.name(), SpriteTypes.SHIELDS);
@@ -215,9 +217,10 @@ public class MrRobot implements ActionListener, CollisionListener {
 
     @Override
     public void spritesCollided(AnimatedSprite spriteOne, AnimatedSprite spriteTwo, Rectangle overlapRectangle) {
+        System.out.println(">> SPRITE 1" + spriteOne + " / SPRITE 2: " + spriteTwo);
+        DebugOutput.flicker(Color.YELLOW);
         if(spriteOne.getType() == SpriteTypes.MR_ROBOT || spriteTwo.getType() == SpriteTypes.MR_ROBOT) {
             if(spriteOne.getType() == SpriteTypes.SHIELDS || spriteTwo.getType() == SpriteTypes.SHIELDS) {
-                DebugOutput.flicker(Color.YELLOW);
                 System.out.println(">>> PICK UP SHIELD");
             }
             if(spriteOne.getType() == SpriteTypes.FLAMES || spriteTwo.getType() == SpriteTypes.FLAMES) {

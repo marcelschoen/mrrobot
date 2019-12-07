@@ -15,12 +15,16 @@ public class Collision {
     private static Array<CollisionRectangle> rectangles = new Array<>(50);
 
     private static Rectangle overlapRectangle = new Rectangle();
+    private static CollisionRectangle checkOne = new CollisionRectangle();
+    private static CollisionRectangle checkTwo = new CollisionRectangle();
 
     public static void initialize() {
         Array<AnimatedSprite> sprites = Sprites.getSprites();
         rectangles = new Array<>(sprites.size);
         for(AnimatedSprite sprite : sprites) {
-            addRectangles(sprite);
+            if(sprite != null) {
+                addRectangles(sprite);
+            }
         }
     }
 
@@ -32,8 +36,12 @@ public class Collision {
         rectangles.add(rectangle);
     }
     public static void addRectangles(AnimatedSprite sprite) {
-        for(CollisionRectangle rectangle : sprite.getCollisionBounds()) {
-            addRectangle(rectangle);
+        Array<CollisionRectangle> rectangles = sprite.getCollisionBounds();
+        for(int i = 0; i < rectangles.size; i++) {
+            CollisionRectangle rectangle = rectangles.get(i);
+            if(rectangle != null) {
+                addRectangle(rectangle);
+            }
         }
     }
 
@@ -44,15 +52,32 @@ public class Collision {
     }
 
     public static void checkForCollisions() {
+        System.out.println("-------------- NUMBER OF RECTANGLES: " + rectangles.size + " ---------------");
         for(int i = 0; i < rectangles.size - 1; i++) {
             for(int u = i + 1; u < rectangles.size; u++) {
+
+                CollisionRectangle spriteOneRectangle = rectangles.get(i);
+                checkOne.setSprite(spriteOneRectangle.getSprite());
+                checkOne.x = spriteOneRectangle.getSprite().getX() + spriteOneRectangle.x;
+                checkOne.y = spriteOneRectangle.getSprite().getY() + spriteOneRectangle.y;
+                checkOne.width = spriteOneRectangle.width;
+                checkOne.height = spriteOneRectangle.height;
+
+                CollisionRectangle spriteTwoRectangle = rectangles.get(u);
+                checkTwo.setSprite(spriteTwoRectangle.getSprite());
+                checkTwo.x = spriteTwoRectangle.getSprite().getX() + spriteTwoRectangle.x;
+                checkTwo.y = spriteTwoRectangle.getSprite().getY() + spriteTwoRectangle.y;
+                checkTwo.width = spriteTwoRectangle.width;
+                checkTwo.height = spriteTwoRectangle.height;
+
                 // TODO: FILTER OUT DISABLED / INACTIVE SPRITES
-                checkRectangles(rectangles.get(i), rectangles.get(u));
+                checkRectangles(checkOne, checkTwo);
             }
         }
     }
 
     private static void checkRectangles(CollisionRectangle one, CollisionRectangle two) {
+        System.out.println("CHECK: " + one + " / " + two);
         if(Intersector.intersectRectangles(one, two, overlapRectangle)) {
             notifyListeners(one.getSprite(), two.getSprite(), overlapRectangle);
         }
