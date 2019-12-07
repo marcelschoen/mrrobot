@@ -86,7 +86,7 @@ public class TileMap {
                                 Teleporter.addTeleporter(cell, x - 8, y);
                             } else if(tile.getId() == TILE_SHIELD) {
                                 tiledMapTileLayer.setCell(colCt, lineCt, null);
-                                AnimatedSprite shieldItem = Sprites.createSprite(MrRobot.ANIM.shield_item.name());
+                                AnimatedSprite shieldItem = Sprites.createSprite(MrRobot.ANIM.shield_item.name(), SpriteTypes.SHIELDS);
                                 shieldItem.setPosition(x, y);
                                 shieldItem.setVisible(true);
                                 shieldItem.setDefaultCollisionBounds(0, 0, 8, 8);

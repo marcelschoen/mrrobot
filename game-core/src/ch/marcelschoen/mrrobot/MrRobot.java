@@ -217,11 +217,14 @@ public class MrRobot implements ActionListener, CollisionListener {
 
     @Override
     public void spritesCollided(AnimatedSprite spriteOne, AnimatedSprite spriteTwo, Rectangle overlapRectangle) {
-        System.out.println(">> SPRITE 1" + spriteOne + " / SPRITE 2: " + spriteTwo);
-        DebugOutput.flicker(Color.YELLOW);
         if(spriteOne.getType() == SpriteTypes.MR_ROBOT || spriteTwo.getType() == SpriteTypes.MR_ROBOT) {
             if(spriteOne.getType() == SpriteTypes.SHIELDS || spriteTwo.getType() == SpriteTypes.SHIELDS) {
-                System.out.println(">>> PICK UP SHIELD");
+                shieldSprite.setVisible(true);
+                if(spriteOne.getType() == SpriteTypes.SHIELDS) {
+                    spriteOne.setVisible(false);
+                } else if(spriteTwo.getType() == SpriteTypes.SHIELDS) {
+                    spriteTwo.setVisible(false);
+                }
             }
             if(spriteOne.getType() == SpriteTypes.FLAMES || spriteTwo.getType() == SpriteTypes.FLAMES) {
                 DebugOutput.flicker(Color.RED);
