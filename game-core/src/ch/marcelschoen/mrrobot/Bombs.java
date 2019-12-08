@@ -58,7 +58,7 @@ public class Bombs {
     }
 
     private void processBomb(Bomb bomb, float delta) {
-        if(bomb.state != BombState.DEFAULT) {
+        if(bomb != null && bomb.state != BombState.DEFAULT) {
             float timer = bomb.timer;
             // Ignition starts with 3.0
             if(timer > 2.5) {

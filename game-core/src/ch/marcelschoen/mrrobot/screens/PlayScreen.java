@@ -9,6 +9,7 @@ import com.jplay.gdx.screens.ScreenUtil;
 import com.jplay.gdx.sprites.Sprites;
 import com.jplay.gdx.tween.JPlayTweenManager;
 
+import ch.marcelschoen.mrrobot.Bombs;
 import ch.marcelschoen.mrrobot.Flame;
 import ch.marcelschoen.mrrobot.Hud;
 import ch.marcelschoen.mrrobot.MrRobot;
@@ -92,6 +93,8 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
 
         // TODO: MOVE INTO "Sprites" CONTROLLER
         Collision.checkForCollisions();
+
+        Bombs.getInstance().processBombs(delta);
 
         // print debug stuff on screen
         // TODO: Enable only in testing / debug mode
