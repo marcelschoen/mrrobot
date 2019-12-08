@@ -22,6 +22,11 @@ public class Tiles {
     public static final int TILE_TELEPORTER = 10;
     public static final int TILE_SHIELD = 9;
 
+    public static final int TILE_BOMB_IGNITING = 20;
+    public static final int TILE_BOMB_BURNING = 52;
+    public static final int TILE_BOMB_EXPLODING = 148;
+    public static final int TILE_BOMB = 21;
+
     public static final int TILE_MR_ROBOT = 18;
     public static final int TILE_FLAME = 19;
 

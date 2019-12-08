@@ -7,6 +7,7 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.jplay.gdx.collision.Collision;
@@ -48,6 +49,10 @@ public class TileMap {
         public float getyOffset() {
             return this.yOffset;
         }
+    }
+
+    public TiledMapTileSet getTileSet() {
+        return this.map.getTileSets().getTileSet(0);
     }
 
     public TileMap(String filename, MrRobot mrRobot, Camera camera) {
@@ -113,6 +118,7 @@ public class TileMap {
                 System.out.println("> obj: " + obj.getName() + " / " + obj.getClass().getName());
             }
         }
+        Bombs.getInstance().initialize(this);
         Teleporter.initializeTargets();
     }
 

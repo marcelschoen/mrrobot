@@ -28,6 +28,7 @@ import ch.marcelschoen.mrrobot.actions.TeleportCompletedAction;
 
 import static ch.marcelschoen.mrrobot.MrRobotState.STANDING_RIGHT;
 import static ch.marcelschoen.mrrobot.Tiles.NO_TILE;
+import static ch.marcelschoen.mrrobot.Tiles.TILE_BOMB;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_DOT;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_ELEVATOR;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_LADDER_LEFT;
@@ -532,6 +533,8 @@ public class MrRobot implements ActionListener, CollisionListener {
             if(tileBelowId == TILE_DOT) {
                 tileMap.clearCell(tileMap.getTileMapCell(TileMap.CELL_TYPE.BELOW));
                 Hud.addScore(1);
+            } else if(tileBelowId == TILE_BOMB && mrRobotIsNearlyAlignedVertically()) {
+                Bombs.getInstance().igniteBomb((int)col, (int)line);
             }
             if(tileBelowId == TILE_ROLL_LEFT_1 || tileBelowId == TILE_ROLL_LEFT_2) {
                 setPosition(mrrobotSprite.getX() - ROLLING_SPEED * delta, mrrobotSprite.getY());
