@@ -20,20 +20,32 @@ public abstract class Action {
      * Starts the action, with the given sprite and otpional listener.
      *
      * @param sprite The sprite for which to execute the action.
+     */
+    public final void start(AnimatedSprite sprite) {
+        start(sprite, null);
+    }
+
+    /**
+     * Starts the action, with the given sprite and otpional listener.
+     *
+     * @param sprite The sprite for which to execute the action.
      * @param listener The listener for action events (can be null).
      */
-    public void start(AnimatedSprite sprite, ActionListener listener) {
+    public final void start(AnimatedSprite sprite, ActionListener listener) {
         this.listener = listener;
         this.running = true;
         this.completed = false;
         this.sprite = sprite;
+        this.executionTimer = this.executionDuration;
         doStart();
     }
 
     /**
      * Performs initializations required to start the action, often based on properties of the sprite.
      */
-    abstract void doStart();
+    protected void doStart() {
+        // default does nothing
+    }
 
     /**
      * Checks if this action, and all follow-up actions (if there are any) are still running.
@@ -61,9 +73,13 @@ public abstract class Action {
     public void executeAction(float delta) {
         execute(delta);
         executionTimer -= delta;
-        if(isDone()) {
+        if(executionTimer <= 0f || isDone()) {
             completed();
         }
+    }
+
+    protected void setDuration(float duration) {
+        this.executionDuration = duration;
     }
 
     /**
@@ -90,12 +106,16 @@ public abstract class Action {
     }
 
     /**
-     * Must indicate if this action is done, e.g. has
-     * completed its work.
+     * Indicates if this action is done, e.g. has
+     * completed its work. Default implementation just
+     * returns false, so the action just runs until
+     * time timer has expired.
      *
      * @return True if the action is done.
      */
-    protected abstract boolean isDone();
+    protected boolean isDone() {
+        return false;
+    }
 
     /**
      * Must perform the actual work of the action.
@@ -108,6 +128,7 @@ public abstract class Action {
      * Sets running/completion flag and notifies the listener.
      */
     private void completed() {
+        System.out.println(">> COMPLETED ACTION: " + getClass().getName());
         running = false;
         completed = true;
         if(followUpAction == null && listener != null) {

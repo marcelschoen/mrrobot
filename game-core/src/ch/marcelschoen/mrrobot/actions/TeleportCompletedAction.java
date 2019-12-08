@@ -1,7 +1,6 @@
 package ch.marcelschoen.mrrobot.actions;
 
-import com.jplay.gdx.sprites.AnimatedSprite;
-import com.jplay.gdx.sprites.action.SpriteAction;
+import com.jplay.gdx.sprites.action.Action;
 
 import ch.marcelschoen.mrrobot.MrRobot;
 
@@ -10,7 +9,7 @@ import ch.marcelschoen.mrrobot.MrRobot;
  *
  * @author Marcel Schoen
  */
-public class TeleportCompletedAction implements SpriteAction {
+public class TeleportCompletedAction extends Action {
 
     private MrRobot mrRobot = null;
 
@@ -22,17 +21,13 @@ public class TeleportCompletedAction implements SpriteAction {
     }
 
     @Override
-    public void start(AnimatedSprite sprite) {
+    public void doStart() {
         mrRobot.stopMrRobot();
     }
 
     @Override
-    public void execute(AnimatedSprite sprite, float delta) {
-        // nothing to do
+    protected void execute(float delta) {
+        // do nothing
     }
 
-    @Override
-    public boolean isFinished(AnimatedSprite sprite) {
-        return true;
-    }
 }

@@ -154,6 +154,7 @@ public class MrRobot implements ActionListener, CollisionListener {
     private Action jumpLeftAction = null;
     private Action jumpUpAction = null;
     private Action teleportAction = null;
+    private Action shieldAction = null;
 
     /**
      */
@@ -203,6 +204,26 @@ public class MrRobot implements ActionListener, CollisionListener {
                 .custom(new TeleportAction(this))
                 .custom(new TeleportCompletedAction(this))
                 .build();
+        shieldAction = new ActionBuilder()
+                .setVisibility(true, 3f)
+                .setVisibility(false, 0.2f)
+                .setVisibility(true, 0.8f)
+                .setVisibility(false, 0.2f)
+                .setVisibility(true, 0.8f)
+                .setVisibility(false, 0.2f)
+                .setVisibility(true, 0.8f)
+                .setVisibility(false, 0.2f)
+                .setVisibility(true, 0.4f)
+                .setVisibility(false, 0.1f)
+                .setVisibility(true, 0.3f)
+                .setVisibility(false, 0.1f)
+                .setVisibility(true, 0.3f)
+                .setVisibility(false, 0.1f)
+                .setVisibility(true, 0.3f)
+                .setVisibility(false, 0.1f)
+                .setVisibility(true, 0.3f)
+                .setVisibility(false, 0.f)
+                .build();
 
         Collision.addListener(this);
         Collision.initialize();
@@ -219,7 +240,7 @@ public class MrRobot implements ActionListener, CollisionListener {
     public void spritesCollided(AnimatedSprite spriteOne, AnimatedSprite spriteTwo, Rectangle overlapRectangle) {
         if(spriteOne.getType() == SpriteTypes.MR_ROBOT || spriteTwo.getType() == SpriteTypes.MR_ROBOT) {
             if(spriteOne.getType() == SpriteTypes.SHIELDS || spriteTwo.getType() == SpriteTypes.SHIELDS) {
-                shieldSprite.setVisible(true);
+                shieldSprite.startAction(shieldAction, null);
                 if(spriteOne.getType() == SpriteTypes.SHIELDS) {
                     spriteOne.setVisible(false);
                 } else if(spriteTwo.getType() == SpriteTypes.SHIELDS) {

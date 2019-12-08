@@ -11,7 +11,7 @@ public class SetPositionAction extends Action {
     }
 
     @Override
-    void doStart() {
+    public void doStart() {
         super.sprite.setPosition(x, y);
     }
 

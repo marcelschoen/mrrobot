@@ -1,5 +1,6 @@
 package com.jplay.gdx.sprites.action;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 
 /**
@@ -20,9 +21,21 @@ public class ActionBuilder {
     public ActionBuilder() {
     }
 
+    public ActionBuilder flickerBackground(Color color) {
+        FlickerAction newAction = (FlickerAction)addAction(new FlickerAction());
+        newAction.flickerBackground(color);
+        return this;
+    }
+
     public ActionBuilder setAnimation(String animationName) {
         SetAnimationAction newAction = (SetAnimationAction)addAction(new SetAnimationAction());
         newAction.setAnimation(animationName);
+        return this;
+    }
+
+    public ActionBuilder setVisibility(boolean visible, float secDuration) {
+        SetVisibilityAction newAction = (SetVisibilityAction)addAction(new SetVisibilityAction());
+        newAction.setVisibility(visible, secDuration);
         return this;
     }
 
@@ -44,9 +57,8 @@ public class ActionBuilder {
         return this;
     }
 
-    public ActionBuilder custom(SpriteAction customAction) {
-        CustomAction newAction = (CustomAction)addAction(new CustomAction());
-        newAction.setCustomAction(customAction);
+    public ActionBuilder custom(Action customAction) {
+        addAction(customAction);
         return this;
     }
 

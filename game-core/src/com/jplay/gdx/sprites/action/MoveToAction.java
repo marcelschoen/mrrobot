@@ -64,7 +64,6 @@ class MoveToAction extends Action {
 
     @Override
     public void doStart() {
-        this.executionTimer = this.executionDuration;
         this.startX = super.sprite.getX();
         this.startY = super.sprite.getY();
         this.targetX = this.startX + xOffset;
@@ -82,13 +81,5 @@ class MoveToAction extends Action {
                 super.sprite.setY(interpolation.apply(startY, targetY, state));
             }
         }
-    }
-
-    @Override
-    protected boolean isDone() {
-        if(executionTimer <= 0f) {
-            return true;
-        }
-        return false;
     }
 }

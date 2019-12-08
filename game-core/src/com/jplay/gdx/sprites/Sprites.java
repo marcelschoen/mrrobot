@@ -125,6 +125,7 @@ public class Sprites {
      */
     public static void drawSprites(SpriteBatch batch, float delta) {
         for(AnimatedSprite sprite : sprites) {
+            sprite.executeCurrentAction(delta);
             if(sprite.isVisible()) {
                 sprite.draw(batch, delta);
             }

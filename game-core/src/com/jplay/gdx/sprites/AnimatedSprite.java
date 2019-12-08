@@ -49,7 +49,7 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	private Action currentAction = null;
 
 	/** Optional arbitrary type to assign to the sprite. */
-	private int type = 0;
+	private int type = -1;
 
 	private AnimatedSprite attachedToSprite = null;
 	private float xOffsetAttachement = 0;
@@ -178,6 +178,9 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	 * @param type The type value to set.
 	 */
 	public void setType(int type) {
+		if(type == 1) {
+			new RuntimeException("Sprite: " + this).printStackTrace();
+		}
 		this.type = type;
 	}
 
@@ -259,14 +262,11 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	}
 
 	/**
-	 * Draws the sprite into a given spriteBatch.
-	 * 
-	 * @param batch The target spriteBatch.
-	 * @param xPosition The x-coordinate (in pixels) within the spriteBatch.
-	 * @param yPosition The y-coordinate (in pixels) within the spriteBatch.
+	 * Executes the current actions, no matter if the sprite is visible or not.
+	 *
 	 * @param delta The time in seconds since last refresh.
 	 */
-	public void draw(SpriteBatch batch, float xPosition, float yPosition, float delta) {
+	public void executeCurrentAction(float delta) {
 		if(currentAction != null) {
 			if(currentAction.isRunning()) {
 				currentAction.executeAction(delta);
@@ -277,7 +277,17 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 				currentAction = null;
 			}
 		}
+	}
 
+	/**
+	 * Draws the sprite into a given spriteBatch.
+	 * 
+	 * @param batch The target spriteBatch.
+	 * @param xPosition The x-coordinate (in pixels) within the spriteBatch.
+	 * @param yPosition The y-coordinate (in pixels) within the spriteBatch.
+	 * @param delta The time in seconds since last refresh.
+	 */
+	public void draw(SpriteBatch batch, float xPosition, float yPosition, float delta) {
 		this.animationStateTime += delta;
 		if(this.animationStateTime > 1.0) {
 			this.animationStateTime -= 1f;

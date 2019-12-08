@@ -9,7 +9,7 @@ public class CustomAction extends Action {
     }
 
     @Override
-    void doStart() {
+    public void doStart() {
         this.customAction.start(super.sprite);
     }
 
