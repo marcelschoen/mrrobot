@@ -13,6 +13,7 @@ import com.jplay.gdx.collision.Collision;
 import com.jplay.gdx.sprites.AnimatedSprite;
 import com.jplay.gdx.sprites.Sprites;
 
+import static ch.marcelschoen.mrrobot.MrRobotState.STANDING_RIGHT;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_FLAME;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_MR_ROBOT;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_SHIELD;
@@ -81,7 +82,7 @@ public class TileMap {
                                 // Placement of Mr. Robot starting position
                                 mrRobot.setTileMap(this);
                                 mrRobot.setPosition(x - 8, y);
-                                mrRobot.setState(MrRobot.MRROBOT_STATE.STANDING_RIGHT);
+                                mrRobot.setState(STANDING_RIGHT);
                             } else if(tile.getId() == TILE_TELEPORTER) {
                                 Teleporter.addTeleporter(cell, x - 8, y);
                             } else if(tile.getId() == TILE_SHIELD) {

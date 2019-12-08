@@ -7,6 +7,8 @@ import com.jplay.gdx.sprites.action.Action;
 import ch.marcelschoen.mrrobot.MrRobot;
 import ch.marcelschoen.mrrobot.Teleporter;
 
+import static ch.marcelschoen.mrrobot.MrRobotState.TELEPORTING;
+
 /**
  * Teleports Mr. Robot to another teleporter.
  *
@@ -43,6 +45,6 @@ public class TeleportAction extends Action {
     @Override
     public void doStart() {
         teleported = false;
-        mrRobot.setState(MrRobot.MRROBOT_STATE.TELEPORTING);
+        mrRobot.setState(TELEPORTING);
     }
 }

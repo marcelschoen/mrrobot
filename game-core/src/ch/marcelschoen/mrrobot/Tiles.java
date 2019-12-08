@@ -28,4 +28,11 @@ public class Tiles {
     public static final int TILE_ROLL_LEFT_1 = 140;
     public static final int TILE_ROLL_LEFT_2 = 141;
 
+    public static final int TILE_MAGNET_LEFT = 26;
+    public static final int TILE_MAGNET_RIGHT = 27;
+
+    public static final int TILE_TRAMPOLINE_LEFT = 22;
+    public static final int TILE_TRAMPOLINE = 23;
+    public static final int TILE_TRAMPOLINE_RIGHT = 24;
+    public static final int TILE_TRAMPOLINE_BOUNCE = 28;
 }

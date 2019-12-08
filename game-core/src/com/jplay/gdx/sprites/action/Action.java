@@ -72,8 +72,12 @@ public abstract class Action {
      */
     public void executeAction(float delta) {
         execute(delta);
-        executionTimer -= delta;
-        if(executionTimer <= 0f || isDone()) {
+        if(executionDuration > 0) {
+            executionTimer -= delta;
+            if(executionTimer <= 0f || isDone()) {
+                completed();
+            }
+        } else if(isDone()) {
             completed();
         }
     }
@@ -128,7 +132,6 @@ public abstract class Action {
      * Sets running/completion flag and notifies the listener.
      */
     private void completed() {
-        System.out.println(">> COMPLETED ACTION: " + getClass().getName());
         running = false;
         completed = true;
         if(followUpAction == null && listener != null) {
