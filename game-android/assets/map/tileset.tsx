@@ -187,6 +187,14 @@
    <property name="type" type="int" value="15"/>
   </properties>
  </tile>
+ <tile id="27">
+  <animation>
+   <frame tileid="27" duration="80"/>
+   <frame tileid="59" duration="80"/>
+   <frame tileid="91" duration="80"/>
+   <frame tileid="59" duration="80"/>
+  </animation>
+ </tile>
  <tile id="32">
   <properties>
    <property name="pform" type="int" value="1"/>

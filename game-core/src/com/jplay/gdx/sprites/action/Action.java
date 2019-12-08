@@ -84,6 +84,7 @@ public abstract class Action {
 
     protected void setDuration(float duration) {
         this.executionDuration = duration;
+        this.executionTimer = duration;
     }
 
     /**

@@ -14,13 +14,13 @@ import com.jplay.gdx.sprites.Sprites;
 import com.jplay.gdx.sprites.action.Action;
 import com.jplay.gdx.sprites.action.ActionBuilder;
 import com.jplay.gdx.sprites.action.ActionListener;
-import com.jplay.gdx.sprites.action.MoveToAction;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ch.marcelschoen.mrrobot.actions.DropDownAction;
 import ch.marcelschoen.mrrobot.actions.FallDownAction;
+import ch.marcelschoen.mrrobot.actions.JumpSidewaysAction;
 import ch.marcelschoen.mrrobot.actions.RiseUpAction;
 import ch.marcelschoen.mrrobot.actions.SlideDownAction;
 import ch.marcelschoen.mrrobot.actions.TeleportAction;
@@ -80,7 +80,6 @@ public class MrRobot implements ActionListener, CollisionListener {
     private MrRobotState mrRobotState = STANDING_RIGHT;
 
     /** Pre-defined actions. */
-    private MoveToAction jumpMoveAction = null;
     private Action jumpSidewaysAction = null;
     private Action jumpUpAction = null;
     private Action teleportAction = null;
@@ -126,11 +125,8 @@ public class MrRobot implements ActionListener, CollisionListener {
 
         // we keep a specific reference to the movement action within the sideays jump, to be
         // able to set the direction at the time of commencing the jump
-        jumpMoveAction = (MoveToAction) new ActionBuilder()
-                .moveTo(22, 24, 0.6f, Interpolation.linear)
-                .build();
         jumpSidewaysAction = new ActionBuilder()
-                .custom(jumpMoveAction)
+                .custom(new JumpSidewaysAction(this))
                 .custom(new FallDownAction(this))
                 .build();
         jumpUpAction = new ActionBuilder()
@@ -334,7 +330,7 @@ public class MrRobot implements ActionListener, CollisionListener {
 */
         if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
                 if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-                    jumpSideways();
+                    getMrrobotSprite().startAction(jumpSidewaysAction, null);
                 } else {
                     changeState(MrRobotState.JUMPUP_RIGHT);
                     getMrrobotSprite().startAction(jumpUpAction, this);
@@ -348,16 +344,6 @@ public class MrRobot implements ActionListener, CollisionListener {
             }
         }
 
-    }
-
-    private void jumpSideways() {
-        changeState(MrRobotState.JUMP_RIGHT);
-        if(mrRobotState.isFacingRight()) {
-            jumpMoveAction.moveTo(22, 24, 0.6f, Interpolation.linear);
-        } else {
-            jumpMoveAction.moveTo(-22, 24, 0.6f, Interpolation.linear);
-        }
-        getMrrobotSprite().startAction(jumpSidewaysAction, null);
     }
 
     @Override
@@ -551,8 +537,7 @@ public class MrRobot implements ActionListener, CollisionListener {
                 setPosition(mrrobotSprite.getX() - ROLLING_SPEED * delta, mrrobotSprite.getY());
             } else if(tileBelowId == TILE_ROLL_RIGHT_1 || tileBelowId == TILE_ROLL_RIGHT_2) {
                 setPosition(mrrobotSprite.getX() + ROLLING_SPEED * delta, mrrobotSprite.getY());
-            } else if(tileBelowId == TILE_ELEVATOR && tileBehindId == TILE_ELEVATOR && !isRisingUp()) {
-                ////////changeState(MrRobotState.RISING_RIGHT);
+            } else if(tileBelowId == TILE_ELEVATOR && tileBehindId == TILE_ELEVATOR && !isRisingUp() && !isJumping()) {
                 mrrobotSprite.startAction(riseUpAction, null);
             }
         }
