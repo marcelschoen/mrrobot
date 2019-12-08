@@ -7,12 +7,24 @@ import com.jplay.gdx.sprites.action.Action;
 import ch.marcelschoen.mrrobot.MrRobot;
 import ch.marcelschoen.mrrobot.Teleporter;
 
+/**
+ * Teleports Mr. Robot to another teleporter.
+ *
+ * @author Marcel Schoen
+ */
 public class TeleportAction extends Action {
 
+    /** Reference to Mr. Robot */
     private MrRobot mrRobot = null;
 
+    /** Flag which indicates if teleportation has been done. */
     private boolean teleported = false;
 
+    /**
+     * Creates the teleport action.
+     *
+     * @param mrRobot The Mr. Robot instance.
+     */
     public TeleportAction(MrRobot mrRobot) {
         this.mrRobot = mrRobot;
         setDuration(0.8f);

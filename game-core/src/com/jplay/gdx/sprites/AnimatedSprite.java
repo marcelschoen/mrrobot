@@ -263,8 +263,11 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 
 	/**
 	 * Executes the current actions, no matter if the sprite is visible or not.
+	 * Invoke this method just right before invoking "draw()", if actions should
+	 * be executed. The "Sprites" class does this automatically.
 	 *
 	 * @param delta The time in seconds since last refresh.
+	 * @see {@link com.jplay.gdx.sprites.Sprites}
 	 */
 	public void executeCurrentAction(float delta) {
 		if(currentAction != null) {
@@ -280,12 +283,14 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	}
 
 	/**
-	 * Draws the sprite into a given spriteBatch.
+	 * Draws the sprite into a given spriteBatch. The "Sprites" class invokes this method
+	 * automatically for all registered sprites.
 	 * 
 	 * @param batch The target spriteBatch.
 	 * @param xPosition The x-coordinate (in pixels) within the spriteBatch.
 	 * @param yPosition The y-coordinate (in pixels) within the spriteBatch.
 	 * @param delta The time in seconds since last refresh.
+	 * @see {@link com.jplay.gdx.sprites.Sprites}
 	 */
 	public void draw(SpriteBatch batch, float xPosition, float yPosition, float delta) {
 		this.animationStateTime += delta;
