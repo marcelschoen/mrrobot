@@ -52,6 +52,7 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	private int type = 0;
 
 	private AnimatedSprite attachedToSprite = null;
+
 	private float xOffsetAttachement = 0;
 	private float yOffsetAttachement = 0;
 
@@ -131,6 +132,10 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 		// Otherwise add a new collision bounds rectangle for the given type
 		collisionBounds.add(new CollisionRectangle(this, xOffset, yOffset, width, height, type));
 	}
+
+    public Array<CollisionRectangle> getCollisionBounds() {
+        return this.collisionBounds;
+    }
 
 	/**
 	 * Attaches this sprite to another sprite, with a given x- and y-offset. The result is that
@@ -252,10 +257,6 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 			y = attachedToSprite.getY();
 		}
 		draw(batch, x, y, delta);
-	}
-
-	public Array<CollisionRectangle> getCollisionBounds() {
-		return this.collisionBounds;
 	}
 
 	/**

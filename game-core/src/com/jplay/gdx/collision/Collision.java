@@ -8,6 +8,11 @@ import com.badlogic.gdx.utils.Array;
 import com.jplay.gdx.sprites.AnimatedSprite;
 import com.jplay.gdx.sprites.Sprites;
 
+/**
+ * Manages collision detections between sprites etc. This class
+ *
+ * @author Marcel Schoen
+ */
 public class Collision {
 
     private static Array<CollisionListener> listeners = new Array<>(10);
@@ -16,6 +21,9 @@ public class Collision {
 
     private static Rectangle overlapRectangle = new Rectangle();
 
+    /**
+     *
+     */
     public static void initialize() {
         Array<AnimatedSprite> sprites = Sprites.getSprites();
         rectangles = new Array<>(sprites.size);
