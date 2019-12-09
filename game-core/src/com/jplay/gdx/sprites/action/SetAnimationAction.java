@@ -1,23 +1,34 @@
 package com.jplay.gdx.sprites.action;
 
+/**
+ * Sets a specific animation for the sprite which executes the action.
+ * NOTE: The given animation must have been added to the sprite before.
+ *
+ * @author Marcel Schoen
+ */
 public class SetAnimationAction extends Action {
 
+    /** The name of the animation to set (e.g. tag from Aseprite) */
     private String animationName = null;
-    private boolean done = false;
 
+    /**
+     * Sets the animation name. The animation for the sprite will
+     * be set once the action is executed.
+     *
+     * @param animationName Name of animation to show.
+     */
     public void setAnimation(String animationName) {
         this.animationName = animationName;
     }
 
     @Override
-    void doStart() {
+    public void doStart() {
         super.sprite.showAnimation(animationName);
-        done = true;
     }
 
     @Override
     protected boolean isDone() {
-        return done;
+        return true;
     }
 
     @Override

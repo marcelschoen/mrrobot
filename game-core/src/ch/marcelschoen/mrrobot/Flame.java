@@ -59,12 +59,10 @@ public class Flame {
 
     public Flame(Camera camera) {
         this.camera = camera;
-        Collision.addRectangles(this.sprite);
-
-
         for(ANIM animation : ANIM.values()) {
             this.sprite.addAnimation(animation.name(), Assets.instance().getAnimation(animation.name()));
         }
+        Collision.addRectangles(this.sprite);
     }
 
     public void setTileMap(TileMap tileMap) {

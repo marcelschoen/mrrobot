@@ -25,6 +25,9 @@ public class CollisionRectangle extends Rectangle {
     /** Optional sprite to which the rectangle belongs. */
     private AnimatedSprite sprite = null;
 
+    CollisionRectangle() {
+    }
+
     public CollisionRectangle(int type) {
         this.type = type;
     }
@@ -42,6 +45,10 @@ public class CollisionRectangle extends Rectangle {
 
     public CollisionRectangle(float x, float y, float width, float height) {
         super(x, y, width, height);
+    }
+
+    public void setSprite(AnimatedSprite sprite) {
+        this.sprite = sprite;
     }
 
     public AnimatedSprite getSprite() {

@@ -22,10 +22,22 @@ public class Tiles {
     public static final int TILE_TELEPORTER = 10;
     public static final int TILE_SHIELD = 9;
 
+    public static final int TILE_BOMB_IGNITING = 20;
+    public static final int TILE_BOMB_BURNING = 52;
+    public static final int TILE_BOMB_EXPLODING = 148;
+    public static final int TILE_BOMB = 21;
+
     public static final int TILE_MR_ROBOT = 18;
     public static final int TILE_FLAME = 19;
 
     public static final int TILE_ROLL_LEFT_1 = 140;
     public static final int TILE_ROLL_LEFT_2 = 141;
 
+    public static final int TILE_MAGNET_LEFT = 26;
+    public static final int TILE_MAGNET_RIGHT = 27;
+
+    public static final int TILE_TRAMPOLINE_LEFT = 22;
+    public static final int TILE_TRAMPOLINE = 23;
+    public static final int TILE_TRAMPOLINE_RIGHT = 24;
+    public static final int TILE_TRAMPOLINE_BOUNCE = 28;
 }

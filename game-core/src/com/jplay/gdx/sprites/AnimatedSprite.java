@@ -31,7 +31,7 @@ import static com.jplay.gdx.collision.CollisionRectangle.TYPE_DEFAULT;
  */
 public class AnimatedSprite extends Sprite implements Pool.Poolable {
 
-	private Array<CollisionRectangle> collisionBounds = null;
+	private Array<CollisionRectangle> collisionBounds = new Array<>(0);
 
 	/** Visibility flag. */
 	private boolean visible = false;
@@ -49,7 +49,7 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	private Action currentAction = null;
 
 	/** Optional arbitrary type to assign to the sprite. */
-	private int type = 0;
+	private int type = -1;
 
 	private AnimatedSprite attachedToSprite = null;
 
@@ -183,6 +183,9 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	 * @param type The type value to set.
 	 */
 	public void setType(int type) {
+		if(type == 1) {
+			new RuntimeException("Sprite: " + this).printStackTrace();
+		}
 		this.type = type;
 	}
 
@@ -260,14 +263,14 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	}
 
 	/**
-	 * Draws the sprite into a given spriteBatch.
-	 * 
-	 * @param batch The target spriteBatch.
-	 * @param xPosition The x-coordinate (in pixels) within the spriteBatch.
-	 * @param yPosition The y-coordinate (in pixels) within the spriteBatch.
+	 * Executes the current actions, no matter if the sprite is visible or not.
+	 * Invoke this method just right before invoking "draw()", if actions should
+	 * be executed. The "Sprites" class does this automatically.
+	 *
 	 * @param delta The time in seconds since last refresh.
+	 * @see {@link com.jplay.gdx.sprites.Sprites}
 	 */
-	public void draw(SpriteBatch batch, float xPosition, float yPosition, float delta) {
+	public void executeCurrentAction(float delta) {
 		if(currentAction != null) {
 			if(currentAction.isRunning()) {
 				currentAction.executeAction(delta);
@@ -278,7 +281,19 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 				currentAction = null;
 			}
 		}
+	}
 
+	/**
+	 * Draws the sprite into a given spriteBatch. The "Sprites" class invokes this method
+	 * automatically for all registered sprites.
+	 * 
+	 * @param batch The target spriteBatch.
+	 * @param xPosition The x-coordinate (in pixels) within the spriteBatch.
+	 * @param yPosition The y-coordinate (in pixels) within the spriteBatch.
+	 * @param delta The time in seconds since last refresh.
+	 * @see {@link com.jplay.gdx.sprites.Sprites}
+	 */
+	public void draw(SpriteBatch batch, float xPosition, float yPosition, float delta) {
 		this.animationStateTime += delta;
 		if(this.animationStateTime > 1.0) {
 			this.animationStateTime -= 1f;
@@ -291,11 +306,6 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 		}
 		TextureRegion keyFrame = this.animation.getKeyFrame(this.animationStateTime, true);
 		// Update default sprite bounds with values matching current animation frame
-		CollisionRectangle spriteBounds = collisionBounds.get(0);
-		spriteBounds.x = xPosition;
-		spriteBounds.y = yPosition;
-		spriteBounds.width = keyFrame.getRegionWidth();
-		spriteBounds.height = keyFrame.getRegionHeight();
 		batch.draw(keyFrame, xPosition, yPosition);
 	}
 }

@@ -1,20 +1,23 @@
 package ch.marcelschoen.mrrobot.actions;
 
-import com.jplay.gdx.sprites.AnimatedSprite;
-import com.jplay.gdx.sprites.action.SpriteAction;
+import com.jplay.gdx.sprites.action.Action;
 
 import ch.marcelschoen.mrrobot.MrRobot;
 
 /**
- * Last action in teleportation action chain - completes the teleportation process.
+ * Last action in teleportation action chain - completes the teleportation process
+ * (basically just stops the teleporting animation).
  *
  * @author Marcel Schoen
  */
-public class TeleportCompletedAction implements SpriteAction {
+public class TeleportCompletedAction extends Action {
 
+    /** Reference to Mr. Robot */
     private MrRobot mrRobot = null;
 
     /**
+     * Creates the teleport completed action.
+     *
      * @param mrRobot The Mr. Robot instance.
      */
     public TeleportCompletedAction(MrRobot mrRobot) {
@@ -22,17 +25,13 @@ public class TeleportCompletedAction implements SpriteAction {
     }
 
     @Override
-    public void start(AnimatedSprite sprite) {
+    public void doStart() {
         mrRobot.stopMrRobot();
     }
 
     @Override
-    public void execute(AnimatedSprite sprite, float delta) {
-        // nothing to do
+    protected void execute(float delta) {
+        // do nothing
     }
 
-    @Override
-    public boolean isFinished(AnimatedSprite sprite) {
-        return true;
-    }
 }

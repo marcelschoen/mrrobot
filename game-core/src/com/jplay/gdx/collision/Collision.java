@@ -20,6 +20,8 @@ public class Collision {
     private static Array<CollisionRectangle> rectangles = new Array<>(50);
 
     private static Rectangle overlapRectangle = new Rectangle();
+    private static CollisionRectangle checkOne = new CollisionRectangle();
+    private static CollisionRectangle checkTwo = new CollisionRectangle();
 
     /**
      *
@@ -28,7 +30,9 @@ public class Collision {
         Array<AnimatedSprite> sprites = Sprites.getSprites();
         rectangles = new Array<>(sprites.size);
         for(AnimatedSprite sprite : sprites) {
-            addRectangles(sprite);
+            if(sprite != null) {
+                addRectangles(sprite);
+            }
         }
     }
 
@@ -40,8 +44,12 @@ public class Collision {
         rectangles.add(rectangle);
     }
     public static void addRectangles(AnimatedSprite sprite) {
-        for(CollisionRectangle rectangle : sprite.getCollisionBounds()) {
-            addRectangle(rectangle);
+        Array<CollisionRectangle> rectangles = sprite.getCollisionBounds();
+        for(int i = 0; i < rectangles.size; i++) {
+            CollisionRectangle rectangle = rectangles.get(i);
+            if(rectangle != null) {
+                addRectangle(rectangle);
+            }
         }
     }
 
@@ -51,11 +59,36 @@ public class Collision {
         }
     }
 
+    /**
+     * Runs collision checks on all registered rectangles (e.g. all animated sprites created
+     * with the "Sprites" class). Invokes all registered collision listeners if a collision is detected.
+     */
     public static void checkForCollisions() {
         for(int i = 0; i < rectangles.size - 1; i++) {
             for(int u = i + 1; u < rectangles.size; u++) {
-                // TODO: FILTER OUT DISABLED / INACTIVE SPRITES
-                checkRectangles(rectangles.get(i), rectangles.get(u));
+
+                CollisionRectangle spriteOneRectangle = rectangles.get(i);
+                AnimatedSprite spriteOne = spriteOneRectangle.getSprite();
+
+                CollisionRectangle spriteTwoRectangle = rectangles.get(u);
+                AnimatedSprite spriteTwo = spriteTwoRectangle.getSprite();
+
+                if(spriteOne.isVisible() && spriteTwo.isVisible()) {
+                    checkOne.setSprite(spriteOne);
+                    checkOne.x = spriteOneRectangle.getSprite().getX() + spriteOneRectangle.x;
+                    checkOne.y = spriteOneRectangle.getSprite().getY() + spriteOneRectangle.y;
+                    checkOne.width = spriteOneRectangle.width;
+                    checkOne.height = spriteOneRectangle.height;
+
+                    checkTwo.setSprite(spriteTwo);
+                    checkTwo.x = spriteTwoRectangle.getSprite().getX() + spriteTwoRectangle.x;
+                    checkTwo.y = spriteTwoRectangle.getSprite().getY() + spriteTwoRectangle.y;
+                    checkTwo.width = spriteTwoRectangle.width;
+                    checkTwo.height = spriteTwoRectangle.height;
+
+                    // TODO: FILTER OUT DISABLED / INACTIVE SPRITES
+                    checkRectangles(checkOne, checkTwo);
+                }
             }
         }
     }

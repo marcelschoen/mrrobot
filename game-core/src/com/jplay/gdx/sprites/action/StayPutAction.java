@@ -1,33 +1,47 @@
 package com.jplay.gdx.sprites.action;
 
+/**
+ * Allows to set the animation of the sprite and / or
+ * just wait for a given duration.
+ *
+ * @author Marcel Schoen
+ */
 public class StayPutAction extends Action {
 
-    private float duration = 0;
+    /** The name of the animation to use. */
     private String animationName = null;
 
+    /**
+     * Sets the animation name. The animation for the sprite will
+     * be set once the action is executed.
+     * Also sets the duration for the time to wait.
+     *
+     * @param animationName The name of the animation (can be null).
+     * @param duration The time for the action; if set to 0 or smaller, it will be done immediately.
+     */
     public void stayPut(String animationName, float duration) {
         this.animationName = animationName;
-        this.duration = duration;
+        setDuration(duration);
     }
 
+    /**
+     * Sets the duration for the time to wait.
+     *
+     * @param duration The time for the action; if set to 0 or smaller, it will be done immediately.
+     */
     public void stayPut(float duration) {
-        this.duration = duration;
+        setDuration(duration);
     }
 
     @Override
-    void doStart() {
+    public void doStart() {
         if(animationName != null) {
             super.sprite.showAnimation(animationName);
         }
     }
 
     @Override
-    protected boolean isDone() {
-        return duration <= 0f;
-    }
-
-    @Override
     protected void execute(float delta) {
-        duration -= delta;
+        // nothing to do
     }
 }

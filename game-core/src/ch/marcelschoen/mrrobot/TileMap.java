@@ -7,12 +7,14 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.jplay.gdx.collision.Collision;
 import com.jplay.gdx.sprites.AnimatedSprite;
 import com.jplay.gdx.sprites.Sprites;
 
+import static ch.marcelschoen.mrrobot.MrRobotState.STANDING_RIGHT;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_FLAME;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_MR_ROBOT;
 import static ch.marcelschoen.mrrobot.Tiles.TILE_SHIELD;
@@ -49,6 +51,10 @@ public class TileMap {
         }
     }
 
+    public TiledMapTileSet getTileSet() {
+        return this.map.getTileSets().getTileSet(0);
+    }
+
     public TileMap(String filename, MrRobot mrRobot, Camera camera) {
         this.mrRobot = mrRobot;
         Flame.flames.clear();
@@ -74,29 +80,30 @@ public class TileMap {
                         } else {
                             TiledMapTile tile = tiledMapTileLayer.getCell(colCt, lineCt).getTile();
                             line += tile.getId();
-                            float x = (colCt * 8) - 8;
+                            float x = colCt * 8;
                             float y = lineCt * 8;
                             if(tile.getId() == TILE_MR_ROBOT) {
                                 tiledMapTileLayer.setCell(colCt, lineCt, null);
                                 // Placement of Mr. Robot starting position
                                 mrRobot.setTileMap(this);
-                                mrRobot.setPosition(x, y);
-                                mrRobot.setState(MrRobot.MRROBOT_STATE.STANDING_RIGHT);
+                                mrRobot.setPosition(x - 8, y);
+                                mrRobot.setState(STANDING_RIGHT);
                             } else if(tile.getId() == TILE_TELEPORTER) {
-                                Teleporter.addTeleporter(cell, x, y);
+                                Teleporter.addTeleporter(cell, x - 8, y);
                             } else if(tile.getId() == TILE_SHIELD) {
                                 tiledMapTileLayer.setCell(colCt, lineCt, null);
-                                AnimatedSprite shield = Sprites.createSprite(MrRobot.ANIM.mrrobot_shield.name());
-                                shield.setPosition(x, y);
-                                shield.setVisible(true);
-                                Collision.addRectangles(shield);
+                                AnimatedSprite shieldItem = Sprites.createSprite(MrRobot.ANIM.shield_item.name(), SpriteTypes.SHIELDS);
+                                shieldItem.setPosition(x, y);
+                                shieldItem.setVisible(true);
+                                shieldItem.setDefaultCollisionBounds(0, 0, 8, 8);
+                                Collision.addRectangles(shieldItem);
                             } else if(tile.getId() == TILE_FLAME) {
                                 tiledMapTileLayer.setCell(colCt, lineCt, null);
                                 // Placement of flame starting position
                                 Flame flame = new Flame(camera);
                                 Flame.flames.add(flame);
                                 flame.setTileMap(this);
-                                flame.setPosition(x, y);
+                                flame.setPosition(x - 8, y);
                                 flame.setState(Flame.FLAME_STATE.WALKING_LEFT);
                             }
                         }
@@ -111,6 +118,7 @@ public class TileMap {
                 System.out.println("> obj: " + obj.getName() + " / " + obj.getClass().getName());
             }
         }
+        Bombs.getInstance().initialize(this);
         Teleporter.initializeTargets();
     }
 

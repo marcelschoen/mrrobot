@@ -28,7 +28,7 @@ public class MoveAlongSplineAction extends Action {
     }
 
     @Override
-    void doStart() {
+    public void doStart() {
         moveSpline = true;
     }
 

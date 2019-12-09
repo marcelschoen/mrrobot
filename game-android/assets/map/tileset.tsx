@@ -152,13 +152,6 @@
    <frame tileid="19" duration="100"/>
    <frame tileid="51" duration="100"/>
    <frame tileid="83" duration="100"/>
-   <frame tileid="115" duration="100"/>
-   <frame tileid="147" duration="100"/>
-   <frame tileid="179" duration="100"/>
-   <frame tileid="211" duration="100"/>
-   <frame tileid="243" duration="100"/>
-   <frame tileid="275" duration="100"/>
-   <frame tileid="307" duration="100"/>
   </animation>
  </tile>
  <tile id="21">
@@ -186,6 +179,14 @@
   <properties>
    <property name="type" type="int" value="15"/>
   </properties>
+ </tile>
+ <tile id="27">
+  <animation>
+   <frame tileid="27" duration="80"/>
+   <frame tileid="59" duration="80"/>
+   <frame tileid="91" duration="80"/>
+   <frame tileid="59" duration="80"/>
+  </animation>
  </tile>
  <tile id="32">
   <properties>
@@ -367,6 +368,10 @@
    <property name="solid" value="true"/>
    <property name="type" value="9"/>
   </properties>
+  <animation>
+   <frame tileid="83" duration="80"/>
+   <frame tileid="115" duration="80"/>
+  </animation>
  </tile>
  <tile id="86">
   <properties>
@@ -512,6 +517,16 @@
    <property name="solid" value="true"/>
    <property name="type" value="9"/>
   </properties>
+  <animation>
+   <frame tileid="147" duration="80"/>
+   <frame tileid="179" duration="80"/>
+   <frame tileid="211" duration="80"/>
+   <frame tileid="243" duration="80"/>
+   <frame tileid="275" duration="80"/>
+   <frame tileid="243" duration="80"/>
+   <frame tileid="275" duration="80"/>
+   <frame tileid="307" duration="80"/>
+  </animation>
  </tile>
  <tile id="160">
   <properties>

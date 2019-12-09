@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Interpolation;
  *
  * @author Marcel Schoen
  */
-class MoveToAction extends Action {
+public class MoveToAction extends Action {
 
     protected Interpolation interpolation;
     protected Interpolation interpolation2;
@@ -26,7 +26,7 @@ class MoveToAction extends Action {
      * @param yOffset The vertical offset in pixels.
      * @param secDuration The duration of the movement in number of seconds.
      */
-    void moveTo(float xOffset, float yOffset, float secDuration) {
+    public void moveTo(float xOffset, float yOffset, float secDuration) {
         moveTo(xOffset, yOffset, secDuration, Interpolation.linear, null);
     }
 
@@ -36,7 +36,7 @@ class MoveToAction extends Action {
      * @param secDuration The duration of the movement in number of seconds.
      * @param interpolation The type of interpolation to use (instead of linear).
      */
-    void moveTo(float xOffset, float yOffset, float secDuration,
+    public void moveTo(float xOffset, float yOffset, float secDuration,
                        Interpolation interpolation) {
         moveTo(xOffset, yOffset, secDuration, interpolation, null);
     }
@@ -49,7 +49,7 @@ class MoveToAction extends Action {
      * @param interpolationX The type of interpolation to use for the X-coordinate (instead of linear).
      * @param interpolationY The type of interpolation to use for the Y-coordinate (instead of linear).
      */
-    void moveTo(float xOffset, float yOffset, float secDuration,
+    public void moveTo(float xOffset, float yOffset, float secDuration,
                        Interpolation interpolationX,
                        Interpolation interpolationY) {
         this.xOffset = xOffset;
@@ -64,7 +64,6 @@ class MoveToAction extends Action {
 
     @Override
     public void doStart() {
-        this.executionTimer = this.executionDuration;
         this.startX = super.sprite.getX();
         this.startY = super.sprite.getY();
         this.targetX = this.startX + xOffset;
@@ -82,13 +81,5 @@ class MoveToAction extends Action {
                 super.sprite.setY(interpolation.apply(startY, targetY, state));
             }
         }
-    }
-
-    @Override
-    protected boolean isDone() {
-        if(executionTimer <= 0f) {
-            return true;
-        }
-        return false;
     }
 }

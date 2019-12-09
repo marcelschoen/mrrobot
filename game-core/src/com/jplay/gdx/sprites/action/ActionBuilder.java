@@ -1,5 +1,6 @@
 package com.jplay.gdx.sprites.action;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 
 /**
@@ -8,6 +9,8 @@ import com.badlogic.gdx.math.Interpolation;
  * NOTE: Actions should be created during the initialization phase of the game and then be re-used.
  * NOTE 2: Actions are stateful, so if there are 10 sprites that must perform the same action, 10
  *         action instances must be created too, one for each sprite instance.
+ *
+ * @author Marcel Schoen
  */
 public class ActionBuilder {
 
@@ -20,9 +23,43 @@ public class ActionBuilder {
     public ActionBuilder() {
     }
 
+    /**
+     * Creates an action which lets the screen background flicker (works only with the
+     * PlayScreen class).
+     *
+     * @param color The color for the background.
+     * @return The same ActionBuilder instance.
+     */
+    public ActionBuilder flickerBackground(Color color) {
+        FlickerAction newAction = (FlickerAction)addAction(new FlickerAction());
+        newAction.flickerBackground(color);
+        return this;
+    }
+
+    /**
+     * Creates an action which sets a certain animation on the sprite which executes the action.
+     *
+     * @param animationName The name of the animation (must have been added to the sprite before).
+     * @return The same ActionBuilder instance.
+     */
     public ActionBuilder setAnimation(String animationName) {
         SetAnimationAction newAction = (SetAnimationAction)addAction(new SetAnimationAction());
         newAction.setAnimation(animationName);
+        return this;
+    }
+
+    /**
+     * Sets the visibility of the sprite. If there should be a delay after changing the visibility,
+     * set the duration to the required time - otherwise, just set it to 0 to complete the
+     * action instantly.
+
+     * @param visible True if the sprite should be visible, false if not.
+     * @param secDuration The duration for the action to take (wait after setting the visibility).
+     * @return The same ActionBuilder instance.
+     */
+    public ActionBuilder setVisibility(boolean visible, float secDuration) {
+        SetVisibilityAction newAction = (SetVisibilityAction)addAction(new SetVisibilityAction());
+        newAction.setVisibility(visible, secDuration);
         return this;
     }
 
@@ -44,9 +81,8 @@ public class ActionBuilder {
         return this;
     }
 
-    public ActionBuilder custom(SpriteAction customAction) {
-        CustomAction newAction = (CustomAction)addAction(new CustomAction());
-        newAction.setCustomAction(customAction);
+    public ActionBuilder custom(Action customAction) {
+        addAction(customAction);
         return this;
     }
 
