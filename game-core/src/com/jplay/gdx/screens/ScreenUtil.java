@@ -10,7 +10,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -26,7 +25,6 @@ public class ScreenUtil {
 
 	private static OrthographicCamera camera;
 	private static SpriteBatch batch;
-	private static ShapeRenderer shapeRenderer = new ShapeRenderer();
 	private static Viewport viewPort;
 
 	/** Offset and size of GL viewport. */
@@ -122,9 +120,6 @@ public class ScreenUtil {
 			batch = new SpriteBatch();
 			batch.setProjectionMatrix(camera.combined);
 
-			shapeRenderer = new ShapeRenderer();
-			shapeRenderer.setProjectionMatrix(camera.combined);
-			
 			float xRatio = (float)newDisplayWidth / (float) screenResolution.getWidth();
 			float yRatio = (float)newDisplayHeight / (float) screenResolution.getHeight();
 			

@@ -2,6 +2,7 @@ package ch.marcelschoen.mrrobot.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.jplay.gdx.DebugOutput;
 import com.jplay.gdx.collision.Collision;
 import com.jplay.gdx.screens.AbstractBaseScreen;
@@ -10,6 +11,7 @@ import com.jplay.gdx.sprites.Sprites;
 
 import ch.marcelschoen.mrrobot.Bombs;
 import ch.marcelschoen.mrrobot.Flame;
+import ch.marcelschoen.mrrobot.GamepadOverlay;
 import ch.marcelschoen.mrrobot.Hud;
 import ch.marcelschoen.mrrobot.MrRobot;
 import ch.marcelschoen.mrrobot.MrRobotAssets;
@@ -27,14 +29,15 @@ public class PlayScreen extends AbstractBaseScreen {
      * @param game
      */
     public PlayScreen(MrRobotGame game) {
-        super(game, null);
+        super(game, null, Color.BLUE);
 
         DebugOutput.setPlayScreen(this);
         this.mrRobot = new MrRobot();
         this.tileMap = new TileMap("map/level16.tmx", this.mrRobot, this.camera);
 //        this.mrRobot.setTileMap(this.tileMap);
-
         Hud.setScore(0);
+
+        GamepadOverlay.initialize();
     }
 
     public void handleInput(float delta) {
@@ -54,6 +57,9 @@ public class PlayScreen extends AbstractBaseScreen {
         if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             ScreenUtil.dispose();
             System.exit(-1);
+        }
+        if(Gdx.input.isTouched()) {
+            System.out.println("*TOUCH*" + Gdx.input.getX() + " / " + Gdx.input.getY());
         }
         mrRobot.handleInput(delta);
         mrRobot.moveMrRobot(delta);
@@ -101,5 +107,7 @@ public class PlayScreen extends AbstractBaseScreen {
         Hud.doRender(batch, delta);
 
         batch.end();
+
+        GamepadOverlay.draw();
     }
 }

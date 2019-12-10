@@ -141,9 +141,11 @@ public abstract class AbstractBaseScreen implements Screen, InputProcessor {
 	protected void baseRendering(float delta) {
 		DisplayMode displayMode = MrRobotGame.displayMode;
 		if(displayMode != null) {
-	        Gdx.gl.glViewport(ScreenUtil.viewPortX, ScreenUtil.viewPortY, ScreenUtil.viewPortWidth, ScreenUtil.viewPortHeight);
+///			System.out.println("---> SET VIEW PORT TO: ");
+//	        Gdx.gl.glViewport(ScreenUtil.viewPortX, ScreenUtil.viewPortY, ScreenUtil.viewPortWidth, ScreenUtil.viewPortHeight);
 		}
-		
+		Gdx.gl.glViewport(400, 0, ScreenUtil.viewPortWidth - 400 ,ScreenUtil.viewPortHeight - 400);
+
 		camera.update();
 
 		MusicPlayer.instance().update(delta);

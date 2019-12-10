@@ -56,6 +56,7 @@ public class MrRobotAssets extends Assets {
 
     /** IDs of textures. */
     public static enum TEXTURE_ID implements TextureID {
+        GAMEPAD_OVERLAY,
         TITLE,
         LOADING;
         public static TEXTURE_ID fromString(String name) {
@@ -93,6 +94,7 @@ public class MrRobotAssets extends Assets {
      */
     public void doLoadAssets() {
         // Load font for loading screen first
+        loadTexture("gamepad_overlay2.png", TEXTURE_ID.GAMEPAD_OVERLAY);
         loadTexture("loading.png", TEXTURE_ID.LOADING);
         loadTexture("mrrobot-title.png", TEXTURE_ID.TITLE);
         // Immediately start loading

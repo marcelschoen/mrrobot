@@ -62,6 +62,12 @@ public class MrRobotGame extends Game {
         setScreen(new LoadingScreen(this, titleScreen));
     }
 
+    @Override
+    public void resize (int width, int height) {
+        if (screen != null) screen.resize(width, height);
+        GamepadOverlay.resize(width, height);
+    }
+
     public void finishInitialization() {
         playScreen = new PlayScreen(this);
     }

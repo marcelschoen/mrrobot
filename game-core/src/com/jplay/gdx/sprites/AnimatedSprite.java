@@ -183,9 +183,6 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	 * @param type The type value to set.
 	 */
 	public void setType(int type) {
-		if(type == 1) {
-			new RuntimeException("Sprite: " + this).printStackTrace();
-		}
 		this.type = type;
 	}
 

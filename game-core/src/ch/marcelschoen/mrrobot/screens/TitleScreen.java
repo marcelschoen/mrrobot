@@ -43,7 +43,7 @@ public class TitleScreen extends AbstractBaseScreen {
 			batch.draw(this.titlePicture, 0, 0);
 		}
 		batch.end();
-		if(System.currentTimeMillis() - this.startTime > 15000) {
+		if(System.currentTimeMillis() - this.startTime > 5000) {
 			enterKey();
 		}
 	}
