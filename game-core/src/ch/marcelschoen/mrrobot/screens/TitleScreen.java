@@ -8,7 +8,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
 import com.jplay.gdx.Assets;
 import com.jplay.gdx.screens.AbstractBaseScreen;
-import com.jplay.gdx.tween.JPlayTweenManager;
 
 import ch.marcelschoen.mrrobot.MrRobotAssets;
 import ch.marcelschoen.mrrobot.MrRobotGame;
@@ -40,7 +39,6 @@ public class TitleScreen extends AbstractBaseScreen {
 	@Override
 	public void doRender(float arg0) {
 		batch.begin();
-		JPlayTweenManager.instance().update(arg0);
 		if (this.titlePicture != null) {
 			batch.draw(this.titlePicture, 0, 0);
 		}

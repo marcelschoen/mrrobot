@@ -7,7 +7,6 @@ import com.jplay.gdx.collision.Collision;
 import com.jplay.gdx.screens.AbstractBaseScreen;
 import com.jplay.gdx.screens.ScreenUtil;
 import com.jplay.gdx.sprites.Sprites;
-import com.jplay.gdx.tween.JPlayTweenManager;
 
 import ch.marcelschoen.mrrobot.Bombs;
 import ch.marcelschoen.mrrobot.Flame;
@@ -17,7 +16,7 @@ import ch.marcelschoen.mrrobot.MrRobotAssets;
 import ch.marcelschoen.mrrobot.MrRobotGame;
 import ch.marcelschoen.mrrobot.TileMap;
 
-public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ {
+public class PlayScreen extends AbstractBaseScreen {
 
     private TileMap tileMap = null;
     private MrRobot mrRobot = null;
@@ -71,8 +70,6 @@ public class PlayScreen extends AbstractBaseScreen /*implements TweenCallback*/ 
      */
     @Override
     public void doRender(float delta) {
-        // Update tween engine status
-        JPlayTweenManager.instance().update(delta);
 
         // Handle controls
         handleInput(delta);

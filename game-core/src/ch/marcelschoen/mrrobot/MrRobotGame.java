@@ -3,9 +3,7 @@ package ch.marcelschoen.mrrobot;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Graphics;
 import com.jplay.gdx.Assets;
-import com.jplay.gdx.screens.OnScreenLabelTweenAccessor;
 import com.jplay.gdx.screens.ScreenUtil;
-import com.jplay.gdx.tween.SpriteTweenAccessor;
 
 import ch.marcelschoen.mrrobot.screens.LoadingScreen;
 import ch.marcelschoen.mrrobot.screens.PlayScreen;
@@ -54,9 +52,6 @@ public class MrRobotGame extends Game {
             // enable interactive testing
             testing = true;
         }
-
-        SpriteTweenAccessor.register();
-        OnScreenLabelTweenAccessor.register();
 
         ScreenUtil.initialize(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
