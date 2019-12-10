@@ -27,6 +27,9 @@ import static ch.marcelschoen.mrrobot.Tiles.TILE_TELEPORTER;
  */
 public class TileMap {
 
+    public static final int COLUMNS = 40;
+    public static final int ROWS = 22;
+
     private TiledMapTileLayer tiledMapTileLayer;
     private TiledMapTile clearedFloor = null;
     private TiledMap map;
@@ -53,6 +56,10 @@ public class TileMap {
 
     public TiledMapTileSet getTileSet() {
         return this.map.getTileSets().getTileSet(0);
+    }
+
+    public TiledMapTileLayer getTiledMapTileLayer() {
+        return tiledMapTileLayer;
     }
 
     public TileMap(String filename, MrRobot mrRobot, Camera camera) {
