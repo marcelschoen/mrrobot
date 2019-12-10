@@ -368,6 +368,12 @@
    <property name="solid" value="true"/>
    <property name="type" value="9"/>
   </properties>
+  <animation>
+   <frame tileid="83" duration="80"/>
+   <frame tileid="115" duration="80"/>
+   <frame tileid="147" duration="80"/>
+   <frame tileid="115" duration="80"/>
+  </animation>
  </tile>
  <tile id="86">
   <properties>
@@ -453,10 +459,6 @@
    <property name="solid" value="true"/>
    <property name="type" value="9"/>
   </properties>
-  <animation>
-   <frame tileid="115" duration="80"/>
-   <frame tileid="147" duration="80"/>
-  </animation>
  </tile>
  <tile id="128">
   <properties>
