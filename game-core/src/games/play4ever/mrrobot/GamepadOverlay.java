@@ -29,6 +29,7 @@ public class GamepadOverlay {
     private static Vector3 touchPointRight = new Vector3();
     private static Vector3 touchPadCenter = new Vector3();
     private static Rectangle touchPadBounds = null;
+    private static Rectangle touchButtonBounds = null;
     private static boolean touchLeft = false;
     private static boolean touchRight = false;
 
@@ -36,8 +37,10 @@ public class GamepadOverlay {
     public static boolean isUpPressed = false;
     public static boolean isDownPressed = false;
     public static boolean isRightPressed = false;
+    public static boolean isJumpPressed = false;
 
     private static Texture gamepad_overlay = null;
+    private static Texture gamepad_overlay_button = null;
 
     private static SpriteBatch batch;
     private static OrthographicCamera camera;
@@ -58,7 +61,9 @@ public class GamepadOverlay {
         shapeRenderer = new ShapeRenderer();
 
         gamepad_overlay = Assets.instance().getTexture(MrRobotAssets.TEXTURE_ID.GAMEPAD_OVERLAY);
+        gamepad_overlay_button = Assets.instance().getTexture(MrRobotAssets.TEXTURE_ID.GAMEPAD_OVERLAY_BUTTON);
         touchPadBounds = new Rectangle(0, 0, gamepad_overlay.getWidth(), gamepad_overlay.getHeight());
+        touchButtonBounds = new Rectangle(ScreenUtil.getVirtualResolution().getWidth() - gamepad_overlay_button.getWidth(), 0, gamepad_overlay_button.getWidth(), gamepad_overlay_button.getHeight());
         touchPadCenter.set(gamepad_overlay.getWidth() / 2, gamepad_overlay.getHeight() / 2, 0);
         Table table = new Table();
         table.bottom();
@@ -67,6 +72,8 @@ public class GamepadOverlay {
             @Override
             public void draw(Batch batch, float parentAlpha) {
                 batch.draw(gamepad_overlay, 0, 0, gamepad_overlay.getWidth(), gamepad_overlay.getHeight());
+                batch.draw(gamepad_overlay_button, ScreenUtil.getVirtualResolution().getWidth() - gamepad_overlay_button.getWidth(),
+                        0, gamepad_overlay_button.getWidth(), gamepad_overlay_button.getHeight());
             }
         });
         stage.addActor(table);
@@ -79,8 +86,12 @@ public class GamepadOverlay {
         if(camera == null) {
             initialize();
         }
-        camera = new OrthographicCamera(OVERLAY_WIDTH, OVERLAY_WIDTH);
-        camera.setToOrtho(false, OVERLAY_WIDTH, OVERLAY_WIDTH);
+//        int camWidth = OVERLAY_WIDTH;
+//        int camHeight = OVERLAY_HEIGHT;
+        int camWidth = ScreenUtil.getVirtualResolution().getWidth();
+        int camHeight = ScreenUtil.getVirtualResolution().getHeight();
+        camera = new OrthographicCamera(camWidth, camHeight);
+        camera.setToOrtho(false, camWidth, camHeight);
         batch.setProjectionMatrix(camera.combined);
     }
 
@@ -89,18 +100,18 @@ public class GamepadOverlay {
         batch.setProjectionMatrix(stage.getCamera().combined);
         stage.draw();
 
-        if(touchLeft) {
+        if(isLeftPressed || isRightPressed || isUpPressed || isDownPressed) {
             shapeRenderer.setProjectionMatrix(camera.combined);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             shapeRenderer.setColor(Color.YELLOW);
             shapeRenderer.circle(touchPointLeft.x, touchPointLeft.y, 3);
             shapeRenderer.end();
         }
-        if(touchRight) {
+        if(isJumpPressed) {
             shapeRenderer.setProjectionMatrix(camera.combined);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             shapeRenderer.setColor(Color.RED);
-            shapeRenderer.circle(touchPointLeft.x, touchPointLeft.y, 3);
+            shapeRenderer.circle(touchPointRight.x, touchPointRight.y, 3);
             shapeRenderer.end();
         }
     }
@@ -120,6 +131,7 @@ public class GamepadOverlay {
         isRightPressed = false;
         isUpPressed = false;
         isDownPressed = false;
+        isJumpPressed = false;
         if(touchLeft && touchPointLeft.x < touchPadBounds.width && touchPointLeft.y < touchPadBounds.height) {
             float angle = getAngle(touchPointLeft, touchPadCenter);
             if((angle > 0 && angle < 46) || (angle > 315 && angle < 360)) {
@@ -132,9 +144,10 @@ public class GamepadOverlay {
                 isUpPressed = true;
             }
         }
-        if(touchRight) {
+        if(touchRight && touchPointRight.x > touchButtonBounds.x && touchPointRight.y < touchButtonBounds.height) {
             System.out.println("** JUMP BUTTON OVERLAY **");
             // TBD - BUTTON OVERLAY
+            isJumpPressed = true;
         }
     }
 

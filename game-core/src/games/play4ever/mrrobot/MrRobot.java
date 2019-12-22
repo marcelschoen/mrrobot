@@ -274,11 +274,11 @@ public class MrRobot implements ActionListener, CollisionListener {
             moveLeft();
         } else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || GamepadOverlay.isRightPressed) {
             moveRight();
-        } else if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
+        } else if(Gdx.input.isKeyPressed(Input.Keys.UP) || GamepadOverlay.isUpPressed) {
             if(!mrRobotIsClimbing()) {
                 tryClimbingUp();
             }
-        } else if(Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+        } else if(Gdx.input.isKeyPressed(Input.Keys.DOWN) || GamepadOverlay.isDownPressed) {
             if(tileBelowId == Tiles.TILE_TELEPORTER) {
                 mrrobotSprite.startAction(teleportAction, null);
             } else if(!mrRobotIsClimbing()) {
@@ -290,8 +290,9 @@ public class MrRobot implements ActionListener, CollisionListener {
                 stopMrRobot();
             }
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+        if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || GamepadOverlay.isJumpPressed) {
+                if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.LEFT)
+                || GamepadOverlay.isRightPressed || GamepadOverlay.isLeftPressed) {
                     getMrrobotSprite().startAction(jumpSidewaysAction, null);
                 } else {
                     changeState(MrRobotState.JUMPUP_RIGHT);
