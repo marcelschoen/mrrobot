@@ -46,6 +46,8 @@ import static games.play4ever.mrrobot.Tiles.TILE_SLIDER;
  */
 public class MrRobot implements ActionListener, CollisionListener {
 
+    public static MrRobot instance = null;
+
     private IntendedMovement intendedMovement = new IntendedMovement();
 
     public enum ANIM {
@@ -92,6 +94,10 @@ public class MrRobot implements ActionListener, CollisionListener {
     /**
      */
     public MrRobot() {
+        if(instance != null) {
+            throw new IllegalStateException("MrRobot must exist only once!");
+        }
+        instance = this;
         for(MrRobotState state : MrRobotState.values()) {
             for(MrRobotState state2 : MrRobotState.values()) {
                 if(state != state2 && state.name().contains("_") && state2.name().contains("_")) {
@@ -264,46 +270,10 @@ public class MrRobot implements ActionListener, CollisionListener {
 
         intendedMovement.clear();
 
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            if(mrRobotState != MrRobotState.WALKING_LEFT) {
-                boolean tryMoveLeft = false;
-                if(isOnLadder()) {
-                    if(tileBelowId != -1 && tileBelowId != TILE_LADDER_LEFT ) {
-                        tryMoveLeft = true;
-                    } else if(tileBehindId != -1 && tileBehindId != TILE_LADDER_LEFT
-                            && mrRobotIsNearlyAlignedVerticallyAtTop()) {
-                        tryMoveLeft = true;
-                    }
-                } else {
-                    tryMoveLeft = true;
-                }
-                if(tryMoveLeft) {
-                    alignMrRobotVertically();
-                    tryMovingSideways(MrRobotState.WALKING_LEFT, ANIM.mrrobot_walk_left.name());
-                } else {
-                    stopMrRobot();
-                }
-            }
-        } else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            if(mrRobotState != MrRobotState.WALKING_RIGHT) {
-                boolean tryMoveRight = false;
-                if(isOnLadder()) {
-                    if(tileBelowId != -1 && tileBelowId != TILE_LADDER_LEFT ) {
-                        tryMoveRight = true;
-                    } else if(tileBehindId != -1 && tileBehindId != TILE_LADDER_LEFT
-                                && mrRobotIsNearlyAlignedVerticallyAtTop()) {
-                        tryMoveRight = true;
-                    }
-                } else {
-                    tryMoveRight = true;
-                }
-                if(tryMoveRight) {
-                    alignMrRobotVertically();
-                    tryMovingSideways(MrRobotState.WALKING_RIGHT, ANIM.mrrobot_walk_right.name());
-                } else {
-                    stopMrRobot();
-                }
-            }
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || GamepadOverlay.isLeftPressed) {
+            moveLeft();
+        } else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || GamepadOverlay.isRightPressed) {
+            moveRight();
         } else if(Gdx.input.isKeyPressed(Input.Keys.UP)) {
             if(!mrRobotIsClimbing()) {
                 tryClimbingUp();
@@ -320,15 +290,6 @@ public class MrRobot implements ActionListener, CollisionListener {
                 stopMrRobot();
             }
         }
-/*
-        if(Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            Vector2[] points = new Vector2[3];
-            points[0] = new Vector2(getX(), getY() - 20);
-            points[1] = new Vector2(getX()+30, getY() - 40);
-            points[2] = new Vector2(getX()+50, getY() - 80);
-            getMrrobotSprite().moveAlongSpline(points);
-        }
-*/
         if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
                 if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
                     getMrrobotSprite().startAction(jumpSidewaysAction, null);
@@ -337,14 +298,58 @@ public class MrRobot implements ActionListener, CollisionListener {
                     getMrrobotSprite().startAction(jumpUpAction, this);
                 }
         }
+        completeMovement();
+    }
 
+    public void moveRight() {
+        if(mrRobotState != MrRobotState.WALKING_RIGHT) {
+            boolean tryMoveRight = false;
+            if(isOnLadder()) {
+                if(tileBelowId != -1 && tileBelowId != TILE_LADDER_LEFT ) {
+                    tryMoveRight = true;
+                } else if(tileBehindId != -1 && tileBehindId != TILE_LADDER_LEFT
+                        && mrRobotIsNearlyAlignedVerticallyAtTop()) {
+                    tryMoveRight = true;
+                }
+            } else {
+                tryMoveRight = true;
+            }
+            if(tryMoveRight) {
+                alignMrRobotVertically();
+                tryMovingSideways(MrRobotState.WALKING_RIGHT, ANIM.mrrobot_walk_right.name());
+            } else {
+                stopMrRobot();
+            }
+        }
+    }
+    public void moveLeft() {
+        if(mrRobotState != MrRobotState.WALKING_LEFT) {
+            boolean tryMoveLeft = false;
+            if(isOnLadder()) {
+                if(tileBelowId != -1 && tileBelowId != TILE_LADDER_LEFT ) {
+                    tryMoveLeft = true;
+                } else if(tileBehindId != -1 && tileBehindId != TILE_LADDER_LEFT
+                        && mrRobotIsNearlyAlignedVerticallyAtTop()) {
+                    tryMoveLeft = true;
+                }
+            } else {
+                tryMoveLeft = true;
+            }
+            if(tryMoveLeft) {
+                alignMrRobotVertically();
+                tryMovingSideways(MrRobotState.WALKING_LEFT, ANIM.mrrobot_walk_left.name());
+            } else {
+                stopMrRobot();
+            }
+        }
+    }
+    public void completeMovement() {
         if(intendedMovement.MrRobotState != null) {
             // Mr. Roobot can only move around if he isn't currently falling down
             if(!isFalling() && !isSlidingDown()) {
                 setState(intendedMovement.MrRobotState);
             }
         }
-
     }
 
     @Override

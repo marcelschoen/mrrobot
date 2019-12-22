@@ -1,10 +1,15 @@
 package games.play4ever.mrrobot;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -20,8 +25,17 @@ public class GamepadOverlay {
     public static final int OVERLAY_HEIGHT = 230;
 
     public static Stage stage;
+    private static Vector3 touchPointLeft = new Vector3();
+    private static Vector3 touchPointRight = new Vector3();
+    private static Vector3 touchPadCenter = new Vector3();
+    private static Rectangle touchPadBounds = null;
+    private static boolean touchLeft = false;
+    private static boolean touchRight = false;
 
-
+    public static boolean isLeftPressed = false;
+    public static boolean isUpPressed = false;
+    public static boolean isDownPressed = false;
+    public static boolean isRightPressed = false;
 
     private static Texture gamepad_overlay = null;
 
@@ -40,9 +54,12 @@ public class GamepadOverlay {
         viewport = new FitViewport(width, height, camera);
         stage = new Stage(viewport, batch);
         //viewport = new ScalingViewport(Scaling.none, OVERLAY_WIDTH, OVERLAY_HEIGHT, camera);
-        gamepad_overlay = Assets.instance().getTexture(MrRobotAssets.TEXTURE_ID.GAMEPAD_OVERLAY);
+
         shapeRenderer = new ShapeRenderer();
 
+        gamepad_overlay = Assets.instance().getTexture(MrRobotAssets.TEXTURE_ID.GAMEPAD_OVERLAY);
+        touchPadBounds = new Rectangle(0, 0, gamepad_overlay.getWidth(), gamepad_overlay.getHeight());
+        touchPadCenter.set(gamepad_overlay.getWidth() / 2, gamepad_overlay.getHeight() / 2, 0);
         Table table = new Table();
         table.bottom();
         table.setFillParent(true);
@@ -68,7 +85,74 @@ public class GamepadOverlay {
     }
 
     public static void draw() {
+        handleInput();
         batch.setProjectionMatrix(stage.getCamera().combined);
         stage.draw();
+
+        if(touchLeft) {
+            shapeRenderer.setProjectionMatrix(camera.combined);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            shapeRenderer.setColor(Color.YELLOW);
+            shapeRenderer.circle(touchPointLeft.x, touchPointLeft.y, 3);
+            shapeRenderer.end();
+        }
+        if(touchRight) {
+            shapeRenderer.setProjectionMatrix(camera.combined);
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            shapeRenderer.setColor(Color.RED);
+            shapeRenderer.circle(touchPointLeft.x, touchPointLeft.y, 3);
+            shapeRenderer.end();
+        }
+    }
+
+    private static void handleInput() {
+        if(MrRobot.instance.getState().isInputBlocked()) {
+            return;
+        }
+        touchLeft = false;
+        touchRight = false;
+        for(int finger=0; finger<2; finger++) {
+            if (Gdx.input.isTouched(finger)) {
+                transformTouchCoordinates(Gdx.input.getX(finger), Gdx.input.getY(finger), camera);
+            }
+        }
+        isLeftPressed = false;
+        isRightPressed = false;
+        isUpPressed = false;
+        isDownPressed = false;
+        if(touchLeft && touchPointLeft.x < touchPadBounds.width && touchPointLeft.y < touchPadBounds.height) {
+            float angle = getAngle(touchPointLeft, touchPadCenter);
+            if((angle > 0 && angle < 46) || (angle > 315 && angle < 360)) {
+                isLeftPressed = true;
+            } else if(angle > 45 && angle < 136) {
+                isDownPressed = true;
+            } else if(angle > 135 && angle < 226) {
+                isRightPressed = true;
+            } else if(angle > 225 && angle < 315) {
+                isUpPressed = true;
+            }
+        }
+        if(touchRight) {
+            System.out.println("** JUMP BUTTON OVERLAY **");
+            // TBD - BUTTON OVERLAY
+        }
+    }
+
+    private static void transformTouchCoordinates(int screenX, int screenY, Camera camera) {
+        if(screenX < ScreenUtil.getScreenResolution().getWidth() / 2) {
+            touchLeft = true;
+            touchPointLeft = camera.unproject(touchPointLeft.set(screenX, screenY, 0));
+        } else {
+            touchRight = true;
+            touchPointRight = camera.unproject(touchPointRight.set(screenX, screenY, 0));
+        }
+    }
+
+    private static float getAngle(Vector3 source, Vector3 target) {
+        float angle = (float) Math.toDegrees(Math.atan2(target.y - source.y, target.x - source.x));
+        if(angle < 0){
+            angle += 360;
+        }
+        return angle;
     }
 }

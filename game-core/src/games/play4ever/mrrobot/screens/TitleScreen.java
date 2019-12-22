@@ -5,6 +5,8 @@
 package games.play4ever.mrrobot.screens;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 
 import games.play4ever.libgdx.Assets;
@@ -44,8 +46,16 @@ public class TitleScreen extends AbstractBaseScreen {
 		}
 		batch.end();
 		if(System.currentTimeMillis() - this.startTime > 5000) {
-			enterKey();
+			beginGame();
 		}
+		if(Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
+			beginGame();
+		}
+	}
+
+	private void beginGame() {
+		MrRobotAssets.playMenuMusic();
+		MrRobotGame.instance().setScreen(MrRobotGame.instance().playScreen);
 	}
 
 	/* (non-Javadoc)
@@ -56,14 +66,5 @@ public class TitleScreen extends AbstractBaseScreen {
 		super.show();
 		this.startTime = System.currentTimeMillis();
 		this.titlePicture = Assets.instance().getTexture(MrRobotAssets.TEXTURE_ID.TITLE);
-	}
-
-	/* (non-Javadoc)
-	 * @see com.jplay.gdx.screens.AbstractBaseScreen#enterKey()
-	 */
-	@Override
-	public void enterKey() {
-		MrRobotAssets.playMenuMusic();
-		MrRobotGame.instance().setScreen(MrRobotGame.instance().playScreen);
 	}
 }
