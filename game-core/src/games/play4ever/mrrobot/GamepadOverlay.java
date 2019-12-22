@@ -77,17 +77,12 @@ public class GamepadOverlay {
             }
         });
         stage.addActor(table);
-
-
-//        Gdx.input.setInputProcessor();
     }
 
     public static void resize(int width, int height) {
         if(camera == null) {
             initialize();
         }
-//        int camWidth = OVERLAY_WIDTH;
-//        int camHeight = OVERLAY_HEIGHT;
         int camWidth = ScreenUtil.getVirtualResolution().getWidth();
         int camHeight = ScreenUtil.getVirtualResolution().getHeight();
         camera = new OrthographicCamera(camWidth, camHeight);
@@ -145,8 +140,6 @@ public class GamepadOverlay {
             }
         }
         if(touchRight && touchPointRight.x > touchButtonBounds.x && touchPointRight.y < touchButtonBounds.height) {
-            System.out.println("** JUMP BUTTON OVERLAY **");
-            // TBD - BUTTON OVERLAY
             isJumpPressed = true;
         }
     }
