@@ -1,6 +1,7 @@
 package games.play4ever.mrrobot;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -47,7 +48,16 @@ public class GamepadOverlay {
     private static Viewport viewport;
     private static ShapeRenderer shapeRenderer;
 
+    private static boolean active = false;
+
     public static void initialize() {
+        if(Gdx.input.isPeripheralAvailable(Input.Peripheral.HardwareKeyboard)) {
+            return;
+        }
+        if(System.getProperty("desktop") != null) {
+            return;
+        }
+        active = true;
         int width = ScreenUtil.getVirtualResolution().getWidth();
         int height = ScreenUtil.getVirtualResolution().getHeight();
         camera = new OrthographicCamera(width, height);
@@ -80,6 +90,9 @@ public class GamepadOverlay {
     }
 
     public static void resize(int width, int height) {
+        if(!active) {
+            return;
+        }
         if(camera == null) {
             initialize();
         }
@@ -91,6 +104,10 @@ public class GamepadOverlay {
     }
 
     public static void draw() {
+        if(!active) {
+            return;
+        }
+
         handleInput();
         batch.setProjectionMatrix(stage.getCamera().combined);
         stage.draw();

@@ -21,6 +21,7 @@ public class DesktopLauncher {
 		if(args != null && args.length > 0 && args[0].equalsIgnoreCase("fullscreen")) {
 			cfg.fullscreen = true;
 		}
+		System.setProperty("desktop", "true");
 
 		if(cfg.fullscreen) {
 			Graphics.DisplayMode displayMode = findMatchingMode(cfg.width, cfg.height);
