@@ -1,20 +1,20 @@
 package games.play4ever.mrrobot;
 
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import games.play4ever.libgdx.Assets;
 import games.play4ever.libgdx.collision.Collision;
 import games.play4ever.libgdx.sprites.AnimatedSprite;
+import games.play4ever.libgdx.sprites.Sprites;
 
 import static games.play4ever.mrrobot.Tiles.NO_TILE;
 
 public class Flame {
 
     private IntendedMovement intendedMovement = new IntendedMovement();
+
 
     public enum ANIM {
         flame_right,
@@ -60,9 +60,13 @@ public class Flame {
 
     public Flame(Camera camera) {
         this.camera = camera;
+        List<String> animationNames = new ArrayList<>();
         for(ANIM animation : ANIM.values()) {
-            this.sprite.addAnimation(animation.name(), Assets.instance().getAnimation(animation.name()));
+            animationNames.add(animation.name());
         }
+        this.sprite = Sprites.createSprite(animationNames, SpriteTypes.FLAMES);
+        this.sprite.setVisible(true);
+        this.sprite.setDefaultCollisionBounds(0, 0, 18, 24);
         Collision.addRectangles(this.sprite);
     }
 
@@ -70,8 +74,13 @@ public class Flame {
         this.tileMap = tileMap;
     }
 
-    public void draw(SpriteBatch batch, float delta) {
-        this.sprite.draw(batch, delta);
+    /**
+     * Makes the flame move around.
+     *
+     * @param delta
+     */
+    public void move(float delta) {
+
     }
 
     public void setPosition(float x, float y) {

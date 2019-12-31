@@ -123,6 +123,7 @@ public class MrRobot implements ActionListener, CollisionListener {
         this.mrrobotSprite = Sprites.createSprite(animationNames, SpriteTypes.MR_ROBOT);
         this.mrrobotSprite.setDefaultCollisionBounds(6, 0, 12, 24);
         this.mrrobotSprite.setVisible(true);
+        Collision.addRectangles(this.mrrobotSprite);
 
         this.shieldSprite = Sprites.createSprite(ANIM.mrrobot_shield.name(), SpriteTypes.SHIELDS);
         this.shieldSprite.setVisible(false);
@@ -188,6 +189,7 @@ public class MrRobot implements ActionListener, CollisionListener {
 
     @Override
     public void spritesCollided(AnimatedSprite spriteOne, AnimatedSprite spriteTwo, Rectangle overlapRectangle) {
+        System.out.println("Collision! Sprite one: " + spriteOne.getType() + ", sprite two: " + spriteTwo.getType());
         if(spriteOne.getType() == SpriteTypes.MR_ROBOT || spriteTwo.getType() == SpriteTypes.MR_ROBOT) {
             if(spriteOne.getType() == SpriteTypes.SHIELDS || spriteTwo.getType() == SpriteTypes.SHIELDS) {
                 shieldSprite.startAction(shieldAction, null);
@@ -199,6 +201,7 @@ public class MrRobot implements ActionListener, CollisionListener {
             }
             if(spriteOne.getType() == SpriteTypes.FLAMES || spriteTwo.getType() == SpriteTypes.FLAMES) {
                 DebugOutput.flicker(Color.RED);
+                System.out.println("* FLAME HIT *");
             }
         }
     }

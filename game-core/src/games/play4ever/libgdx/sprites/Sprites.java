@@ -57,6 +57,9 @@ public class Sprites {
         sprites.add(sprite);
         return sprite;
     }
+    public static void addSprite(AnimatedSprite sprite) {
+        sprites.add(sprite);
+}
     public static AnimatedSprite createSprite(String animationName, int type) {
         AnimatedSprite sprite = createSprite(animationName);
         sprite.setType(type);

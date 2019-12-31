@@ -76,6 +76,10 @@ public class PlayScreen extends AbstractBaseScreen {
         // Handle controls
         handleInput(delta);
 
+        for(Flame flame : Flame.flames) {
+            flame.move(delta);
+        }
+
         this.camera.update();
 
         // Update tilemap
@@ -87,11 +91,6 @@ public class PlayScreen extends AbstractBaseScreen {
 
         // Draw Mr. Robot
         Sprites.drawSprites(batch, delta);
-
-        // Draw all flames
-        for(Flame flame : Flame.flames) {
-            flame.draw(batch, delta);
-        }
 
         // TODO: MOVE INTO "Sprites" CONTROLLER
         Collision.checkForCollisions();

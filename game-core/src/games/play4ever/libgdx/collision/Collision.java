@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 import games.play4ever.libgdx.sprites.AnimatedSprite;
-import games.play4ever.libgdx.sprites.Sprites;
 
 /**
  * Manages collision detections between sprites etc. This class
@@ -28,22 +27,25 @@ public class Collision {
      *
      */
     public static void initialize() {
-        Array<AnimatedSprite> sprites = Sprites.getSprites();
+        /*
         rectangles = new Array<>(sprites.size);
+        Array<AnimatedSprite> sprites = Sprites.getSprites();
         for(AnimatedSprite sprite : sprites) {
             if(sprite != null) {
                 addRectangles(sprite);
             }
         }
+         */
     }
 
     public static void addListener(CollisionListener listener) {
         listeners.add(listener);
     }
 
-    public static void addRectangle(CollisionRectangle rectangle) {
+    private static void addRectangle(CollisionRectangle rectangle) {
         rectangles.add(rectangle);
     }
+
     public static void addRectangles(AnimatedSprite sprite) {
         Array<CollisionRectangle> rectangles = sprite.getCollisionBounds();
         for(int i = 0; i < rectangles.size; i++) {
@@ -73,7 +75,6 @@ public class Collision {
 
                 CollisionRectangle spriteTwoRectangle = rectangles.get(u);
                 AnimatedSprite spriteTwo = spriteTwoRectangle.getSprite();
-
                 if(spriteOne.isVisible() && spriteTwo.isVisible()) {
                     checkOne.setSprite(spriteOne);
                     checkOne.x = spriteOneRectangle.getSprite().getX() + spriteOneRectangle.x;
