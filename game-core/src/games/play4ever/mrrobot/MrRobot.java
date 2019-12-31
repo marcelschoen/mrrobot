@@ -2,7 +2,6 @@ package games.play4ever.mrrobot;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
@@ -10,7 +9,6 @@ import com.badlogic.gdx.math.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
-import games.play4ever.libgdx.DebugOutput;
 import games.play4ever.libgdx.collision.Collision;
 import games.play4ever.libgdx.collision.CollisionListener;
 import games.play4ever.libgdx.sprites.AnimatedSprite;
@@ -90,6 +88,7 @@ public class MrRobot implements ActionListener, CollisionListener {
     private Action slideDownAction = null;
     private Action dropDownAction = null;
     private Action riseUpAction = null;
+    private Action killFlameAction = null;
 
     /**
      */
@@ -176,6 +175,11 @@ public class MrRobot implements ActionListener, CollisionListener {
                 .setVisibility(false, 0.f)
                 .build();
 
+        killFlameAction = new ActionBuilder()
+
+                .setVisibility(false, 0f)
+                .build();
+
         Collision.addListener(this);
         Collision.initialize();
     }
@@ -189,21 +193,24 @@ public class MrRobot implements ActionListener, CollisionListener {
 
     @Override
     public void spritesCollided(AnimatedSprite spriteOne, AnimatedSprite spriteTwo, Rectangle overlapRectangle) {
-        System.out.println("Collision! Sprite one: " + spriteOne.getType() + ", sprite two: " + spriteTwo.getType());
-        if(spriteOne.getType() == SpriteTypes.MR_ROBOT || spriteTwo.getType() == SpriteTypes.MR_ROBOT) {
-            if(spriteOne.getType() == SpriteTypes.SHIELDS || spriteTwo.getType() == SpriteTypes.SHIELDS) {
+        AnimatedSprite mrRobotSprite = spriteOne;
+        AnimatedSprite otherSprite = spriteTwo;
+        if(spriteOne.getType() != SpriteTypes.MR_ROBOT) {
+            mrRobotSprite = spriteTwo;
+            otherSprite = spriteOne;
+        }
+            if(otherSprite.getType() == SpriteTypes.SHIELDS) {
                 shieldSprite.startAction(shieldAction, null);
-                if(spriteOne.getType() == SpriteTypes.SHIELDS) {
-                    spriteOne.setVisible(false);
-                } else if(spriteTwo.getType() == SpriteTypes.SHIELDS) {
-                    spriteTwo.setVisible(false);
+                otherSprite.setVisible(false);
+            }
+            if(otherSprite.getType() == SpriteTypes.FLAMES) {
+                if(shieldSprite.isVisible()) {
+                    // Mr. Robot vanquishes flame with shield
+                    otherSprite.startAction(killFlameAction, null);
+                } else {
+                    // Mr. Robot dies
                 }
             }
-            if(spriteOne.getType() == SpriteTypes.FLAMES || spriteTwo.getType() == SpriteTypes.FLAMES) {
-                DebugOutput.flicker(Color.RED);
-                System.out.println("* FLAME HIT *");
-            }
-        }
     }
 
     /**
