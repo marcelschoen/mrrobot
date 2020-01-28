@@ -1,6 +1,7 @@
 package games.play4ever.mrrobot;
 
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.math.Interpolation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.List;
 import games.play4ever.libgdx.collision.Collision;
 import games.play4ever.libgdx.sprites.AnimatedSprite;
 import games.play4ever.libgdx.sprites.Sprites;
+import games.play4ever.libgdx.sprites.action.Action;
+import games.play4ever.libgdx.sprites.action.ActionBuilder;
 
 import static games.play4ever.mrrobot.Tiles.NO_TILE;
 
@@ -15,10 +18,12 @@ public class Flame {
 
     private IntendedMovement intendedMovement = new IntendedMovement();
 
+    private Action killFlameAction;
 
     public enum ANIM {
         flame_right,
         flame_left,
+        flame_blue
     };
 
     private static final float WALK_SPEED = 32;
@@ -37,6 +42,7 @@ public class Flame {
     public static List<Flame> flames = new ArrayList<>();
 
     public enum FLAME_STATE {
+        DYING(true, ANIM.flame_blue.name()),
         CLIMBING_UP(true, ANIM.flame_right.name()),
         CLIMBING_DOWN(true, ANIM.flame_left.name()),
         WALKING_RIGHT(true, ANIM.flame_right.name()),
@@ -58,6 +64,8 @@ public class Flame {
     }
     private FLAME_STATE flameState = FLAME_STATE.WALKING_RIGHT;
 
+    private boolean dying = false;
+
     public Flame(Camera camera) {
         this.camera = camera;
         List<String> animationNames = new ArrayList<>();
@@ -68,10 +76,26 @@ public class Flame {
         this.sprite.setVisible(true);
         this.sprite.setDefaultCollisionBounds(0, 0, 18, 24);
         Collision.addRectangles(this.sprite);
+
+        killFlameAction = new ActionBuilder()
+                .setAnimation(Flame.ANIM.flame_blue.name())
+                .moveTo(4, 5, 0.2f, Interpolation.bounce)
+                .moveTo(2, -200, 1.5f, Interpolation.slowFast)
+                .setVisibility(false, 0f)
+                .build();
     }
 
     public void setTileMap(TileMap tileMap) {
         this.tileMap = tileMap;
+    }
+
+    public static Flame getFlameOfSprite(AnimatedSprite sprite) {
+        for(Flame flame : flames) {
+            if(flame.getSprite() == sprite) {
+                return flame;
+            }
+        }
+        return null;
     }
 
     /**
@@ -81,6 +105,17 @@ public class Flame {
      */
     public void move(float delta) {
 
+    }
+
+    public void die() {
+        if(!dying) {
+            dying = true;
+            this.sprite.startAction(killFlameAction, null);
+        }
+    }
+
+    public AnimatedSprite getSprite() {
+        return this.sprite;
     }
 
     public void setPosition(float x, float y) {

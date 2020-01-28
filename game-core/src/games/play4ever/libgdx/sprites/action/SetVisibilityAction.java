@@ -24,6 +24,11 @@ public class SetVisibilityAction extends Action {
     }
 
     @Override
+    public boolean isDone() {
+        return true;
+    }
+
+    @Override
     public void doStart() {
         super.sprite.setVisible(visible);
     }

@@ -16,6 +16,7 @@ public enum MrRobotState {
     CLIMBING_DOWN(true, MrRobot.ANIM.mrrobot_climb.name(), false),
     SLIDING_RIGHT(true, MrRobot.ANIM.mrrobot_stand_right.name(), true),
     SLIDING_LEFT(false, MrRobot.ANIM.mrrobot_stand_left.name(), true),
+    DYING(true, MrRobot.ANIM.mrrobot_dies.name(), true),
     FALL_RIGHT(true, MrRobot.ANIM.mrrobot_jump_right.name(), true),
     FALL_LEFT(false, MrRobot.ANIM.mrrobot_jump_left.name(), true),
     DROP_RIGHT(true, MrRobot.ANIM.mrrobot_fall.name(), true),

@@ -68,13 +68,18 @@ public class MoveToAction extends Action {
         this.startY = super.sprite.getY();
         this.targetX = this.startX + xOffset;
         this.targetY = this.startY + yOffset;
+
     }
 
     @Override
     protected void execute(float delta) {
         if(executionTimer > 0) {
             float state = 1f - (executionTimer / executionDuration);
-            super.sprite.setX(interpolation.apply(startX, targetX, state));
+            if(interpolation2 != null) {
+                super.sprite.setX(interpolation2.apply(startX, targetX, state));
+            } else {
+                super.sprite.setX(interpolation.apply(startX, targetX, state));
+            }
             if(interpolation2 != null) {
                 super.sprite.setY(interpolation2.apply(startY, targetY, state));
             } else {

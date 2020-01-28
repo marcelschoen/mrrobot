@@ -46,6 +46,8 @@ public class MrRobot implements ActionListener, CollisionListener {
 
     public static MrRobot instance = null;
 
+
+
     private IntendedMovement intendedMovement = new IntendedMovement();
 
     public enum ANIM {
@@ -59,6 +61,7 @@ public class MrRobot implements ActionListener, CollisionListener {
         mrrobot_fall,
         mrrobot_stand_on_ladder,
         mrrobot_downfall,
+        mrrobot_dies,
         mrrobot_teleport,
         mrrobot_shield,
         shield_item
@@ -66,6 +69,8 @@ public class MrRobot implements ActionListener, CollisionListener {
 
     private static final float WALK_SPEED = 40;
     private static final float ROLLING_SPEED = 26;
+
+    private boolean dying = false;
 
     private AnimatedSprite mrrobotSprite = null;
     private AnimatedSprite shieldSprite = null;
@@ -83,12 +88,12 @@ public class MrRobot implements ActionListener, CollisionListener {
     /** Pre-defined actions. */
     private Action jumpSidewaysAction = null;
     private Action jumpUpAction = null;
+    private Action dieByFlameAction = null;
     private Action teleportAction = null;
     private Action shieldAction = null;
     private Action slideDownAction = null;
     private Action dropDownAction = null;
     private Action riseUpAction = null;
-    private Action killFlameAction = null;
 
     /**
      */
@@ -174,9 +179,11 @@ public class MrRobot implements ActionListener, CollisionListener {
                 .setVisibility(true, 0.3f)
                 .setVisibility(false, 0.f)
                 .build();
-
-        killFlameAction = new ActionBuilder()
-
+        dieByFlameAction = new ActionBuilder()
+                .setAnimation(ANIM.mrrobot_dies.name())
+                .stayPut(0.3f)
+                .setAnimation(ANIM.mrrobot_downfall.name())
+                .moveTo(2, -120, 1.4f, Interpolation.slowFast)
                 .setVisibility(false, 0f)
                 .build();
 
@@ -200,17 +207,27 @@ public class MrRobot implements ActionListener, CollisionListener {
             otherSprite = spriteOne;
         }
             if(otherSprite.getType() == SpriteTypes.SHIELDS) {
+                Hud.addScore(100);
                 shieldSprite.startAction(shieldAction, null);
                 otherSprite.setVisible(false);
             }
             if(otherSprite.getType() == SpriteTypes.FLAMES) {
                 if(shieldSprite.isVisible()) {
                     // Mr. Robot vanquishes flame with shield
-                    otherSprite.startAction(killFlameAction, null);
+                    Flame.getFlameOfSprite(otherSprite).die();
                 } else {
                     // Mr. Robot dies
+                    die();
                 }
             }
+    }
+
+    public void die() {
+        if(!dying) {
+            dying = true;
+            setState(MrRobotState.DYING);
+            this.mrrobotSprite.startAction(dieByFlameAction, this);
+        }
     }
 
     /**
@@ -295,7 +312,7 @@ public class MrRobot implements ActionListener, CollisionListener {
                 tryClimbingDown();
             }
         } else {
-            if(mrRobotIsClimbing() || isWalking()) {
+            if((mrRobotIsClimbing() || isWalking()) && !dying) {
                 // Stop movement
                 stopMrRobot();
             }
@@ -357,14 +374,19 @@ public class MrRobot implements ActionListener, CollisionListener {
     public void completeMovement() {
         if(intendedMovement.MrRobotState != null) {
             // Mr. Roobot can only move around if he isn't currently falling down
-            if(!isFalling() && !isSlidingDown()) {
+            if(!isFalling() && !isSlidingDown() && !dying) {
                 setState(intendedMovement.MrRobotState);
             }
         }
     }
 
+    // ================== ActionListener =====================
+
     @Override
     public void completed(Action completedAction) {
+        if(completedAction.getFirstActionInChain() == dieByFlameAction) {
+            Hud.removeLive();
+        }
     }
 
     /**
@@ -528,7 +550,7 @@ public class MrRobot implements ActionListener, CollisionListener {
         float line = (y / 8f) - 1f;
 
         if(tileBelowId == NO_TILE) {
-            if (!isFalling() && !isJumping()) {
+            if (!isFalling() && !isJumping() && !dying) {
                 mrrobotSprite.startAction(dropDownAction, null);
             }
         } else if(mrRobotIsClimbing()) {
