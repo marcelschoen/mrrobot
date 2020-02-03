@@ -1,6 +1,5 @@
 package games.play4ever.mrrobot;
 
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Interpolation;
 
 import java.util.ArrayList;
@@ -36,7 +35,6 @@ public class Flame {
     private int tileBelowId = NO_TILE;
     private int tileFurtherBelowId = NO_TILE;
 
-    private Camera camera;
     private TileMap tileMap;
 
     public static List<Flame> flames = new ArrayList<>();
@@ -66,8 +64,7 @@ public class Flame {
 
     private boolean dying = false;
 
-    public Flame(Camera camera) {
-        this.camera = camera;
+    public Flame() {
         List<String> animationNames = new ArrayList<>();
         for(ANIM animation : ANIM.values()) {
             animationNames.add(animation.name());

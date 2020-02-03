@@ -16,7 +16,7 @@ public enum MrRobotState {
     CLIMBING_DOWN(true, MrRobot.ANIM.mrrobot_climb.name(), false),
     SLIDING_RIGHT(true, MrRobot.ANIM.mrrobot_stand_right.name(), true),
     SLIDING_LEFT(false, MrRobot.ANIM.mrrobot_stand_left.name(), true),
-    DYING(true, MrRobot.ANIM.mrrobot_dies.name(), true),
+    DYING(true, MrRobot.ANIM.mrrobot_dies.name(), true, true),
     FALL_RIGHT(true, MrRobot.ANIM.mrrobot_jump_right.name(), true),
     FALL_LEFT(false, MrRobot.ANIM.mrrobot_jump_left.name(), true),
     DROP_RIGHT(true, MrRobot.ANIM.mrrobot_fall.name(), true),
@@ -33,6 +33,7 @@ public enum MrRobotState {
     private boolean isFacingRight = true;
     private String animationName = null;
     private MrRobotState reverse;
+    private boolean dying = false;
 
     /** During some states, all input is completely ignored. */
     private boolean isInputBlocked = false;
@@ -51,6 +52,22 @@ public enum MrRobotState {
         }
         this.animationName = animationName;
         this.isInputBlocked = isInputBlocked;
+    }
+
+    /**
+     * Creates a state instance.
+     *
+     * @param isFacingRight True if that state means Mr. Robot is looking to the right side.
+     * @param animationName The name of the animation to use for that state (must not be null).
+     * @param isInputBlocked True if this state should ignore all player input.
+     */
+    MrRobotState(boolean isFacingRight, String animationName, boolean isInputBlocked, boolean isDying) {
+        this(isFacingRight, animationName, isInputBlocked);
+        this.dying = isDying;
+    }
+
+    public boolean isDying() {
+        return this.dying;
     }
 
     /**

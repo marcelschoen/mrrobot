@@ -119,7 +119,7 @@ public abstract class Action {
      * @return True if the action is done.
      */
     protected boolean isDone() {
-        return false;
+        return completed;
     }
 
     /**

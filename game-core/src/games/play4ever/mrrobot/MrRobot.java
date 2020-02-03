@@ -70,8 +70,6 @@ public class MrRobot implements ActionListener, CollisionListener {
     private static final float WALK_SPEED = 40;
     private static final float ROLLING_SPEED = 26;
 
-    private boolean dying = false;
-
     private AnimatedSprite mrrobotSprite = null;
     private AnimatedSprite shieldSprite = null;
 
@@ -184,7 +182,7 @@ public class MrRobot implements ActionListener, CollisionListener {
                 .stayPut(0.3f)
                 .setAnimation(ANIM.mrrobot_downfall.name())
                 .moveTo(2, -120, 1.4f, Interpolation.slowFast)
-                .setVisibility(false, 0f)
+                .setVisibility(false, 0.1f)
                 .build();
 
         Collision.addListener(this);
@@ -223,8 +221,7 @@ public class MrRobot implements ActionListener, CollisionListener {
     }
 
     public void die() {
-        if(!dying) {
-            dying = true;
+        if(!mrRobotState.isDying()) {
             setState(MrRobotState.DYING);
             this.mrrobotSprite.startAction(dieByFlameAction, this);
         }
@@ -312,7 +309,7 @@ public class MrRobot implements ActionListener, CollisionListener {
                 tryClimbingDown();
             }
         } else {
-            if((mrRobotIsClimbing() || isWalking()) && !dying) {
+            if((mrRobotIsClimbing() || isWalking()) && !mrRobotState.isDying()) {
                 // Stop movement
                 stopMrRobot();
             }
@@ -374,7 +371,7 @@ public class MrRobot implements ActionListener, CollisionListener {
     public void completeMovement() {
         if(intendedMovement.MrRobotState != null) {
             // Mr. Roobot can only move around if he isn't currently falling down
-            if(!isFalling() && !isSlidingDown() && !dying) {
+            if(!isFalling() && !isSlidingDown() && !mrRobotState.isDying()) {
                 setState(intendedMovement.MrRobotState);
             }
         }
@@ -384,8 +381,14 @@ public class MrRobot implements ActionListener, CollisionListener {
 
     @Override
     public void completed(Action completedAction) {
+        System.out.println("Completed: " + completedAction.getFirstActionInChain().getClass().getSimpleName());
         if(completedAction.getFirstActionInChain() == dieByFlameAction) {
+            // handle death
             Hud.removeLive();
+            // TODO - some fade-out / fade-in effect?
+
+            // reset Mr. Robot and flames and optionally rest of map
+            this.tileMap.restart();
         }
     }
 
@@ -550,7 +553,7 @@ public class MrRobot implements ActionListener, CollisionListener {
         float line = (y / 8f) - 1f;
 
         if(tileBelowId == NO_TILE) {
-            if (!isFalling() && !isJumping() && !dying) {
+            if (!isFalling() && !isJumping() && !mrRobotState.isDying()) {
                 mrrobotSprite.startAction(dropDownAction, null);
             }
         } else if(mrRobotIsClimbing()) {

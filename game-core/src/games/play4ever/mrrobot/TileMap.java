@@ -11,6 +11,9 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import games.play4ever.libgdx.collision.Collision;
 import games.play4ever.libgdx.sprites.AnimatedSprite;
 import games.play4ever.libgdx.sprites.Sprites;
@@ -31,10 +34,16 @@ public class TileMap {
     public static final int COLUMNS = 40;
     public static final int ROWS = 22;
 
+    private float mrRobotStartingPositionX;
+    private float mrRobotStartingPositionY;
+    private Map<Flame, float[]> flameStartingPositions = new HashMap<>();
+
     private TiledMapTileLayer tiledMapTileLayer;
     private TiledMapTile clearedFloor = null;
     private TiledMap map;
-    private TmxMapLoader loader;
+    private String filename = null;
+
+    private TmxMapLoader loader = new TmxMapLoader();
     private OrthogonalTiledMapRenderer tileMapRenderer;
 
     private MrRobot mrRobot;
@@ -63,12 +72,12 @@ public class TileMap {
         return tiledMapTileLayer;
     }
 
-    public TileMap(String filename, MrRobot mrRobot, Camera camera) {
+    public TileMap(String filename, MrRobot mrRobot) {
+        this.filename = filename;
+        this.map = loader.load(filename);
         this.mrRobot = mrRobot;
         Flame.flames.clear();
         Teleporter.startLevel();
-        this.loader = new TmxMapLoader();
-        this.map = loader.load("map/level16.tmx");
 
         this.clearedFloor = this.map.getTileSets().getTileSet(0).getTile(3);
         System.out.println("------------------------ BEGIN -----------------------------");
@@ -94,8 +103,8 @@ public class TileMap {
                                 tiledMapTileLayer.setCell(colCt, lineCt, null);
                                 // Placement of Mr. Robot starting position
                                 mrRobot.setTileMap(this);
-                                mrRobot.setPosition(x - 8, y);
-                                mrRobot.setState(STANDING_RIGHT);
+                                mrRobotStartingPositionX = x - 8;
+                                mrRobotStartingPositionY = y;
                             } else if(tile.getId() == TILE_TELEPORTER) {
                                 Teleporter.addTeleporter(cell, x - 8, y);
                             } else if(tile.getId() == TILE_SHIELD) {
@@ -108,11 +117,13 @@ public class TileMap {
                             } else if(tile.getId() == TILE_FLAME) {
                                 tiledMapTileLayer.setCell(colCt, lineCt, null);
                                 // Placement of flame starting position
-                                Flame flame = new Flame(camera);
+                                Flame flame = new Flame();
                                 Flame.flames.add(flame);
                                 flame.setTileMap(this);
-                                flame.setPosition(x - 8, y);
-                                flame.setState(Flame.FLAME_STATE.WALKING_LEFT);
+                                float[] flameStartingPosition = new float[2];
+                                flameStartingPosition[0] = x - 8;
+                                flameStartingPosition[1] = y;
+                                flameStartingPositions.put(flame, flameStartingPosition);
                             }
                         }
                     }
@@ -128,6 +139,26 @@ public class TileMap {
         }
         Bombs.getInstance().initialize(this);
         Teleporter.initializeTargets();
+        putCharactersAtStartingPosition();
+    }
+
+    private void putCharactersAtStartingPosition() {
+        mrRobot.setPosition(mrRobotStartingPositionX, mrRobotStartingPositionY);
+        mrRobot.setState(STANDING_RIGHT);
+        for(Flame flame : flameStartingPositions.keySet()) {
+            flame.setPosition(flameStartingPositions.get(flame)[0], flameStartingPositions.get(flame)[1]);
+            flame.setState(Flame.FLAME_STATE.WALKING_LEFT);
+            flame.getSprite().setVisible(true);
+        }
+        mrRobot.getMrrobotSprite().setVisible(true);
+    }
+
+    /**
+     * Resets the map (when the player dies).
+     *
+     */
+    public void restart() {
+        putCharactersAtStartingPosition();
     }
 
     public void clearCell(TiledMapTileLayer.Cell cell) {

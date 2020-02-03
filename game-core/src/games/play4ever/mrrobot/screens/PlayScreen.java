@@ -33,7 +33,7 @@ public class PlayScreen extends AbstractBaseScreen {
 
         DebugOutput.setPlayScreen(this);
         this.mrRobot = new MrRobot();
-        this.tileMap = new TileMap("map/level16.tmx", this.mrRobot, this.camera);
+        this.tileMap = new TileMap("map/level16.tmx", this.mrRobot);
 //        this.mrRobot.setTileMap(this.tileMap);
         Hud.setScore(0);
 
