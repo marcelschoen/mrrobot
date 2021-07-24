@@ -282,6 +282,10 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 		}
 	}
 
+	public Action getCurrentAction() {
+		return currentAction;
+	}
+
 	/**
 	 * Draws the sprite into a given spriteBatch. The "Sprites" class invokes this method
 	 * automatically for all registered sprites.

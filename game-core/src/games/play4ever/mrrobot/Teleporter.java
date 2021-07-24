@@ -45,7 +45,6 @@ public class Teleporter {
      */
     public static void initializeTargets() {
         int numberOfTargets = tempMap.size() - 1;
-        System.out.println("-------> NUMBER OF TARGET TELEPORTERS: " + numberOfTargets + " -------------");
         for(TiledMapTileCellWrapper cell : tempMap.keySet()) {
             Array<Vector2> targets = new Array<>(numberOfTargets);
             teleporterTargets.put(cell, targets);
@@ -63,7 +62,6 @@ public class Teleporter {
      */
     public static Vector2 getTeleportTarget(TiledMapTileCellWrapper fromTeleporter) {
         Array<Vector2> targets = teleporterTargets.get(fromTeleporter);
-        System.out.println("---> FROM TELEPORTER: " + fromTeleporter + " / targets: " + targets);
         int currentTarget = selectedTeleporter.get(fromTeleporter) + 1;
         if(currentTarget >= targets.size) {
             currentTarget = 0;

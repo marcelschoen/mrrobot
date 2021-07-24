@@ -211,11 +211,11 @@ public class MrRobot implements ActionListener, CollisionListener {
                 otherSprite.setVisible(false);
             }
             if(otherSprite.getType() == SpriteTypes.FLAMES) {
-                if(shieldSprite.isVisible()) {
+                if(shieldSprite.getCurrentAction().isRunning()) {
                     // Mr. Robot vanquishes flame with shield
                     Flame.getFlameOfSprite(otherSprite).die();
-                } else {
-                    // Mr. Robot dies
+                } else if(!Flame.getFlameOfSprite(otherSprite).isDying()) {
+                    // Mr. Robot dies (if flame isn't already blue / dying)
                     die();
                 }
             }

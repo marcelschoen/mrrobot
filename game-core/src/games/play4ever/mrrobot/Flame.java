@@ -64,6 +64,10 @@ public class Flame {
 
     private boolean dying = false;
 
+    public boolean isDying() {
+        return dying;
+    }
+
     public Flame() {
         List<String> animationNames = new ArrayList<>();
         for(ANIM animation : ANIM.values()) {
