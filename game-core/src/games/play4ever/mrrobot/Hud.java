@@ -21,6 +21,8 @@ public class Hud {
 
     public static void removeLive() { lives--; }
 
+    public static void addLive() { lives++; }
+
     public static void doRender(SpriteBatch batch, float delta) {
         BitmapFont font = Assets.instance().getFont(MrRobotAssets.FONT_ID.LOADING);
         font.draw(batch, "SCORE: " + score, 2f, 150f);

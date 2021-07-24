@@ -208,6 +208,10 @@ public class MrRobot implements ActionListener, CollisionListener {
             shieldSprite.startAction(shieldAction, null);
             otherSprite.setVisible(false);
         }
+        if(otherSprite.getType() == SpriteTypes.ONE_UP) {
+            Hud.addLive();
+            otherSprite.setVisible(false);
+        }
         if(otherSprite.getType() == SpriteTypes.FLAMES) {
             if(shieldSprite.getCurrentAction() != null && shieldSprite.getCurrentAction().isRunning()) {
                 // Mr. Robot vanquishes flame with shield

@@ -232,7 +232,6 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	 * @param action The action to execute.
 	 */
 	public void startAction(Action action, ActionListener listener) {
-		System.out.println("---- START ACTION: " + action.getClass().getName() + " ----------");
 		action.start(this, listener);
 		currentAction = action;
 	}
@@ -256,7 +255,6 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	 * @param animation The animation texture regions.
 	 */
 	public void addAnimation(String name, Animation<TextureRegion> animation) {
-		System.out.println("---> ADD animation '" + name + "' / " + animation.getAnimationDuration() + " sec.");
         animationMap.put(name, animation);
     }
 
@@ -267,7 +265,6 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	 */
 	public void showAnimation(String name) {
 		this.animation = animationMap.get(name);
-		System.out.println("---> SHOW animation '" + name + "' / " + animation.getAnimationDuration() + " sec.");
 		if(this.animation == null) {
 			throw new IllegalArgumentException("No animation found for name '" + name + "'");
 		}

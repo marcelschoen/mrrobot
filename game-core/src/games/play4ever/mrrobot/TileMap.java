@@ -123,8 +123,11 @@ public class TileMap {
                                 oneUpItem.setDefaultCollisionBounds(0, 0, 8, 8);
                                 Collision.addRectangles(oneUpItem);
                             } else if(tile.getId() == TILE_SHIELD) {
+                                AnimatedTiledMapTile animatedTiledMapTile = (AnimatedTiledMapTile)tiledMapTileLayer.getCell(colCt, lineCt).getTile();
                                 tiledMapTileLayer.setCell(colCt, lineCt, null);
-                                AnimatedSprite shieldItem = Sprites.createSprite(MrRobot.ANIM.shield_item.name(), SpriteTypes.SHIELDS);
+                                AnimatedSprite shieldItem = Sprites.createSprite(animatedTiledMapTile, SpriteTypes.SHIELDS);
+
+//                                AnimatedSprite shieldItem = Sprites.createSprite(MrRobot.ANIM.shield_item.name(), SpriteTypes.SHIELDS);
                                 shieldItem.setPosition(x, y);
                                 shieldItem.setVisible(true);
                                 shieldItem.setDefaultCollisionBounds(0, 0, 8, 8);
