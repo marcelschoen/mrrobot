@@ -3,6 +3,7 @@ package games.play4ever.libgdx.sprites;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.List;
@@ -83,12 +84,6 @@ public class Sprites {
         return sprite;
     }
 
-    public static AnimatedSprite createSprite(List<String> animationNames, int type) {
-        AnimatedSprite sprite = createSprite(animationNames);
-        sprite.setType(type);
-        return sprite;
-    }
-
     /**
      * Create single sprite with given animations (names are tags from Aseprite file).
      *
@@ -96,22 +91,28 @@ public class Sprites {
      * throughout the game loop, as it creates a new sprite object instance.
      *
      * @param animationNames Array of animation names (equals tags in Aseprite file).
+     * @param type The arbitrary custom type for the sprite.
      */
-    public static AnimatedSprite createSprite(String[] animationNames) {
-        AnimatedSprite sprite = new AnimatedSprite();
-        for(String animationName : animationNames) {
-            addAnimationToSprite(sprite, animationName);
-        }
-        sprites.add(sprite);
-        return sprite;
-    }
-
-    public static AnimatedSprite createSprite(String[] animationNames, int type) {
+    public static AnimatedSprite createSprite(List<String> animationNames, int type) {
         AnimatedSprite sprite = createSprite(animationNames);
         sprite.setType(type);
         return sprite;
     }
 
+    public static AnimatedSprite createSprite(AnimatedTiledMapTile animatedTiledMapTile, int type) {
+        AnimatedSprite sprite = new AnimatedSprite(animatedTiledMapTile, type);
+        sprite.setType(type);
+        sprites.add(sprite);
+        return sprite;
+    }
+
+    /**
+     * Adds the animation with the specified name to the given sprite. An animation of that
+     * same name must exist in the configuration.
+     *
+     * @param sprite The sprite instance to which to add the animation.
+     * @param animationName The name of the animation to add.
+     */
     private static void addAnimationToSprite(AnimatedSprite sprite, String animationName) {
         Animation<TextureRegion> animation = Assets.instance().getAnimation(animationName);
         sprite.addAnimation(animationName, animation);

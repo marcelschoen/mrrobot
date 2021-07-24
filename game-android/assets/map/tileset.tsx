@@ -31,18 +31,22 @@
  </tile>
  <tile id="5">
   <properties>
-   <property name="type" type="int" value="3"/>
+   <property name="type" type="int" value="30"/>
   </properties>
  </tile>
  <tile id="6">
   <properties>
-   <property name="type" type="int" value="3"/>
+   <property name="type" type="int" value="31"/>
   </properties>
  </tile>
  <tile id="7">
   <properties>
    <property name="type" type="int" value="18"/>
   </properties>
+  <animation>
+   <frame tileid="7" duration="100"/>
+   <frame tileid="39" duration="100"/>
+  </animation>
  </tile>
  <tile id="8">
   <properties>
@@ -218,12 +222,12 @@
  </tile>
  <tile id="37">
   <properties>
-   <property name="type" type="int" value="3"/>
+   <property name="type" type="int" value="30"/>
   </properties>
  </tile>
  <tile id="38">
   <properties>
-   <property name="type" type="int" value="3"/>
+   <property name="type" type="int" value="31"/>
   </properties>
  </tile>
  <tile id="39">
@@ -314,12 +318,12 @@
  </tile>
  <tile id="69">
   <properties>
-   <property name="type" type="int" value="3"/>
+   <property name="type" type="int" value="30"/>
   </properties>
  </tile>
  <tile id="70">
   <properties>
-   <property name="type" type="int" value="3"/>
+   <property name="type" type="int" value="31"/>
   </properties>
  </tile>
  <tile id="72">
@@ -411,12 +415,12 @@
  </tile>
  <tile id="101">
   <properties>
-   <property name="type" type="int" value="3"/>
+   <property name="type" type="int" value="30"/>
   </properties>
  </tile>
  <tile id="102">
   <properties>
-   <property name="type" type="int" value="3"/>
+   <property name="type" type="int" value="31"/>
   </properties>
  </tile>
  <tile id="104">

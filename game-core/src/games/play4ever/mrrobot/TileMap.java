@@ -11,6 +11,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +23,7 @@ import games.play4ever.libgdx.sprites.Sprites;
 import static games.play4ever.mrrobot.MrRobotState.STANDING_RIGHT;
 import static games.play4ever.mrrobot.Tiles.TILE_FLAME;
 import static games.play4ever.mrrobot.Tiles.TILE_MR_ROBOT;
+import static games.play4ever.mrrobot.Tiles.TILE_ONE_UP;
 import static games.play4ever.mrrobot.Tiles.TILE_SHIELD;
 import static games.play4ever.mrrobot.Tiles.TILE_TELEPORTER;
 
@@ -112,6 +114,14 @@ public class TileMap {
                                 mrRobotStartingPositionY = y;
                             } else if(tile.getId() == TILE_TELEPORTER) {
                                 Teleporter.addTeleporter(cellWrapper, x - 8, y);
+                            } else if(tile.getId() == TILE_ONE_UP) {
+                                AnimatedTiledMapTile animatedTiledMapTile = (AnimatedTiledMapTile)tiledMapTileLayer.getCell(colCt, lineCt).getTile();
+                                tiledMapTileLayer.setCell(colCt, lineCt, null);
+                                AnimatedSprite oneUpItem = Sprites.createSprite(animatedTiledMapTile, SpriteTypes.ONE_UP);
+                                oneUpItem.setPosition(x, y);
+                                oneUpItem.setVisible(true);
+                                oneUpItem.setDefaultCollisionBounds(0, 0, 8, 8);
+                                Collision.addRectangles(oneUpItem);
                             } else if(tile.getId() == TILE_SHIELD) {
                                 tiledMapTileLayer.setCell(colCt, lineCt, null);
                                 AnimatedSprite shieldItem = Sprites.createSprite(MrRobot.ANIM.shield_item.name(), SpriteTypes.SHIELDS);

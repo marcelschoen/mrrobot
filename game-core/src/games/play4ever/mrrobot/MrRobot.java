@@ -372,6 +372,7 @@ public class MrRobot implements ActionListener, CollisionListener {
             }
         }
     }
+
     public void moveLeft() {
         if(mrRobotState != MrRobotState.WALKING_LEFT) {
             boolean tryMoveLeft = false;

@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
+import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 
@@ -66,6 +68,30 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	public AnimatedSprite(int type) {
 		this();
 		this.type = type;
+	}
+
+	/**
+	 * Create an animated sprite from an animated Tiled-map tile.
+	 *
+	 * @param animatedTiledMapTile
+	 */
+	public AnimatedSprite(AnimatedTiledMapTile animatedTiledMapTile, int type) {
+		setType(type);
+
+		float duration = animatedTiledMapTile.getAnimationIntervals()[0] / 1000f;
+
+		StaticTiledMapTile[] tiles = animatedTiledMapTile.getFrameTiles();
+		TextureRegion[] textures = new TextureRegion[tiles.length];
+		int ct = 0;
+		for(StaticTiledMapTile tile : tiles) {
+			textures[ct++] = tile.getTextureRegion();
+		}
+		Animation<TextureRegion> animation = new Animation<>(duration, textures);
+		animation.setPlayMode(Animation.PlayMode.LOOP);
+
+		String animationName = "tile-" + animatedTiledMapTile.getId();
+		addAnimation(animationName, animation);
+		showAnimation(animationName);
 	}
 
 	/**
@@ -230,6 +256,7 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	 * @param animation The animation texture regions.
 	 */
 	public void addAnimation(String name, Animation<TextureRegion> animation) {
+		System.out.println("---> ADD animation '" + name + "' / " + animation.getAnimationDuration() + " sec.");
         animationMap.put(name, animation);
     }
 
@@ -240,6 +267,7 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	 */
 	public void showAnimation(String name) {
 		this.animation = animationMap.get(name);
+		System.out.println("---> SHOW animation '" + name + "' / " + animation.getAnimationDuration() + " sec.");
 		if(this.animation == null) {
 			throw new IllegalArgumentException("No animation found for name '" + name + "'");
 		}
