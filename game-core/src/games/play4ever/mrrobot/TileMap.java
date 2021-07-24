@@ -96,7 +96,11 @@ public class TileMap {
                         if(cell == null) {
                             line += "-";
                         } else {
-                            TiledMapTile tile = tiledMapTileLayer.getCell(colCt, lineCt).getTile();
+                            TiledMapTileLayer.Cell mapCell = tiledMapTileLayer.getCell(colCt, lineCt);
+                            TiledMapTileCellWrapper cellWrapper = new TiledMapTileCellWrapper(mapCell, colCt, lineCt);
+                            tiledMapTileLayer.setCell(colCt, lineCt, cellWrapper);
+                            TiledMapTile tile = cellWrapper.getTile();
+
                             line += tile.getId();
                             float x = colCt * 8;
                             float y = lineCt * 8;
@@ -107,7 +111,7 @@ public class TileMap {
                                 mrRobotStartingPositionX = x - 8;
                                 mrRobotStartingPositionY = y;
                             } else if(tile.getId() == TILE_TELEPORTER) {
-                                Teleporter.addTeleporter(cell, x - 8, y);
+                                Teleporter.addTeleporter(cellWrapper, x - 8, y);
                             } else if(tile.getId() == TILE_SHIELD) {
                                 tiledMapTileLayer.setCell(colCt, lineCt, null);
                                 AnimatedSprite shieldItem = Sprites.createSprite(MrRobot.ANIM.shield_item.name(), SpriteTypes.SHIELDS);

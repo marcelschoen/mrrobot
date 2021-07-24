@@ -77,6 +77,7 @@ public class MrRobot implements ActionListener, CollisionListener {
 
     private int tileBehindId = NO_TILE;
     private int tileBelowId = NO_TILE;
+    private TiledMapTileCellWrapper tileBelow = null;
     private int tileFurtherBelowId = NO_TILE;
 
     private TileMap tileMap;
@@ -123,7 +124,7 @@ public class MrRobot implements ActionListener, CollisionListener {
             animationNames.add(animation.name());
         }
         this.mrrobotSprite = Sprites.createSprite(animationNames, SpriteTypes.MR_ROBOT);
-        this.mrrobotSprite.setDefaultCollisionBounds(7, 3, 10, 20);
+        this.mrrobotSprite.setDefaultCollisionBounds(7, 4, 12, 14);
         this.mrrobotSprite.setVisible(true);
         Collision.addRectangles(this.mrrobotSprite);
 
@@ -249,7 +250,10 @@ public class MrRobot implements ActionListener, CollisionListener {
         this.mrrobotSprite.setPosition(x, y);
         cellBelow = tileMap.getTileMapCell(TileMap.CELL_TYPE.BELOW);
         tileBehindId = tileMap.getTileMapTile(TileMap.CELL_TYPE.BEHIND);
-        tileBelowId = tileMap.getTileMapTile(TileMap.CELL_TYPE.BELOW);
+
+        tileBelow = (TiledMapTileCellWrapper)tileMap.getTileMapCell(this.mrrobotSprite, TileMap.CELL_TYPE.BELOW);
+        tileBelowId = tileBelow == null ? -1 : tileBelow.getTile().getId();
+
         tileFurtherBelowId = tileMap.getTileMapTile(TileMap.CELL_TYPE.FURTHER_BELOW);
     }
 
@@ -411,8 +415,10 @@ public class MrRobot implements ActionListener, CollisionListener {
      */
     public void stopMrRobot() {
         if(isOnLadder()) {
+            System.out.println("----> stop / standing on ladder <----");
             changeState(MrRobotState.STANDING_ON_LADDER);
         } else {
+            System.out.println("----> stop / standing right <----");
             changeState(MrRobotState.STANDING_RIGHT);
         }
     }
@@ -474,6 +480,7 @@ public class MrRobot implements ActionListener, CollisionListener {
      *
      */
     public void mrRobotLands() {
+        System.out.println("---> Mr.Robot lands <---");
         alignMrRobotVertically();
         stopMrRobot();
     }
@@ -560,13 +567,14 @@ public class MrRobot implements ActionListener, CollisionListener {
      */
     public void checkMrRobot(float delta) {
         float x = mrrobotSprite.getX() + 12f;
-        float y = mrrobotSprite.getY()+ 7f;
+        float y = mrrobotSprite.getY() + 7f;
 
         float col = x / 8f;
         float line = (y / 8f) - 1f;
 
         if(tileBelowId == NO_TILE) {
             if (!isFalling() && !isJumping() && !mrRobotState.isDying()) {
+                System.out.println("______ falling down now ______");
                 mrrobotSprite.startAction(dropDownAction, null);
             }
         } else if(mrRobotIsClimbing()) {
@@ -588,7 +596,9 @@ public class MrRobot implements ActionListener, CollisionListener {
                 tileMap.clearCell(tileMap.getTileMapCell(TileMap.CELL_TYPE.BELOW));
                 Hud.addScore(1);
             } else if(tileBelowId == TILE_BOMB && mrRobotIsNearlyAlignedVertically()) {
-                Bombs.getInstance().igniteBomb((int)col, (int)line);
+//                Bombs.getInstance().igniteBomb((int)col, (int)line);
+
+                Bombs.getInstance().igniteBomb(tileBelow.getColumn(), tileBelow.getRow());
             }
             if(tileBelowId == TILE_ROLL_LEFT_1 || tileBelowId == TILE_ROLL_LEFT_2) {
                 setPosition(mrrobotSprite.getX() - ROLLING_SPEED * delta, mrrobotSprite.getY());
@@ -623,8 +633,8 @@ public class MrRobot implements ActionListener, CollisionListener {
     /**
      * @return The TileMapTileLayer.Cell right below Mr. Robots feet.
      */
-    public TiledMapTileLayer.Cell getCellBelow() {
-        return cellBelow;
+    public TiledMapTileCellWrapper getCellBelow() {
+        return (TiledMapTileCellWrapper)cellBelow;
     }
 
     public void alignMrRobotHorizontally(boolean alignLeftTile) {

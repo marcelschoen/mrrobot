@@ -103,6 +103,7 @@ public class Bombs {
         private float timer = 0;
 
         public Bomb(int col, int row) {
+            System.out.println(">> BOMB SET AT: " + col + "," + row);
             this.col = col;
             this.row = row;
             setState(BombState.DEFAULT);

@@ -63,6 +63,7 @@ public class FallDownAction extends Action {
         if (tileBelowId != NO_TILE && tileBelowId != TILE_SLIDER
                 && tileBelowId != TILE_LADDER_LEFT && tileBelowId != TILE_LADDER_RIGHT) {
             if (mrRobot.mrRobotIsNearlyAlignedVertically()) {
+                System.out.println("----> nearly aligned, stop falling... <----");
                 mrRobot.mrRobotLands();
                 return true;
             }

@@ -206,6 +206,7 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	 * @param action The action to execute.
 	 */
 	public void startAction(Action action, ActionListener listener) {
+		System.out.println("---- START ACTION: " + action.getClass().getName() + " ----------");
 		action.start(this, listener);
 		currentAction = action;
 	}

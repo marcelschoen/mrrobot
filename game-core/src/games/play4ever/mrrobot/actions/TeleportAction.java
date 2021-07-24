@@ -1,11 +1,11 @@
 package games.play4ever.mrrobot.actions;
 
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 
 import games.play4ever.libgdx.sprites.action.Action;
 import games.play4ever.mrrobot.MrRobot;
 import games.play4ever.mrrobot.Teleporter;
+import games.play4ever.mrrobot.TiledMapTileCellWrapper;
 
 import static games.play4ever.mrrobot.MrRobotState.TELEPORTING;
 
@@ -36,7 +36,7 @@ public class TeleportAction extends Action {
     protected void execute(float delta) {
         if(executionTimer <= 0.4f && !teleported) {
             teleported = true;
-            TiledMapTileLayer.Cell cellBelowMrRobot = mrRobot.getCellBelow();
+            TiledMapTileCellWrapper cellBelowMrRobot = mrRobot.getCellBelow();
             Vector2 targetPosition = Teleporter.getTeleportTarget(cellBelowMrRobot);
             mrRobot.setPosition(targetPosition.x, targetPosition.y);
         }
