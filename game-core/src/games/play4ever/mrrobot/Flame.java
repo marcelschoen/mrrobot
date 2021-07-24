@@ -127,6 +127,7 @@ public class Flame {
     }
 
     public void setState(FLAME_STATE state) {
+        this.dying = false;
         this.flameState = state;
         this.sprite.showAnimation(state.getAnimationName());
     }

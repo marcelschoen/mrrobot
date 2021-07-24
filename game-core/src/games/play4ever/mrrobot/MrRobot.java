@@ -199,26 +199,24 @@ public class MrRobot implements ActionListener, CollisionListener {
 
     @Override
     public void spritesCollided(AnimatedSprite spriteOne, AnimatedSprite spriteTwo, Rectangle overlapRectangle) {
-        AnimatedSprite mrRobotSprite = spriteOne;
         AnimatedSprite otherSprite = spriteTwo;
         if(spriteOne.getType() != SpriteTypes.MR_ROBOT) {
-            mrRobotSprite = spriteTwo;
             otherSprite = spriteOne;
         }
-            if(otherSprite.getType() == SpriteTypes.SHIELDS) {
-                Hud.addScore(100);
-                shieldSprite.startAction(shieldAction, null);
-                otherSprite.setVisible(false);
+        if(otherSprite.getType() == SpriteTypes.SHIELDS) {
+            Hud.addScore(100);
+            shieldSprite.startAction(shieldAction, null);
+            otherSprite.setVisible(false);
+        }
+        if(otherSprite.getType() == SpriteTypes.FLAMES) {
+            if(shieldSprite.getCurrentAction() != null && shieldSprite.getCurrentAction().isRunning()) {
+                // Mr. Robot vanquishes flame with shield
+                Flame.getFlameOfSprite(otherSprite).die();
+            } else if(!Flame.getFlameOfSprite(otherSprite).isDying()) {
+                // Mr. Robot dies (if flame isn't already blue / dying)
+                die();
             }
-            if(otherSprite.getType() == SpriteTypes.FLAMES) {
-                if(shieldSprite.getCurrentAction().isRunning()) {
-                    // Mr. Robot vanquishes flame with shield
-                    Flame.getFlameOfSprite(otherSprite).die();
-                } else if(!Flame.getFlameOfSprite(otherSprite).isDying()) {
-                    // Mr. Robot dies (if flame isn't already blue / dying)
-                    die();
-                }
-            }
+        }
     }
 
     public void die() {
@@ -331,6 +329,16 @@ public class MrRobot implements ActionListener, CollisionListener {
                 stopMrRobot();
             }
         }
+
+
+        // ====================== TEMPORARY - ALLOW RESTART BY F1 =====================
+        if(Gdx.input.isKeyPressed(Input.Keys.F1)) {
+            tileMap.restart();
+        }
+        // ====================== TEMPORARY - ALLOW RESTART BY F1 =====================
+
+
+
         if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || GamepadOverlay.isJumpPressed) {
                 if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.LEFT)
                 || GamepadOverlay.isRightPressed || GamepadOverlay.isLeftPressed) {
@@ -415,10 +423,8 @@ public class MrRobot implements ActionListener, CollisionListener {
      */
     public void stopMrRobot() {
         if(isOnLadder()) {
-            System.out.println("----> stop / standing on ladder <----");
             changeState(MrRobotState.STANDING_ON_LADDER);
         } else {
-            System.out.println("----> stop / standing right <----");
             changeState(MrRobotState.STANDING_RIGHT);
         }
     }
@@ -480,7 +486,6 @@ public class MrRobot implements ActionListener, CollisionListener {
      *
      */
     public void mrRobotLands() {
-        System.out.println("---> Mr.Robot lands <---");
         alignMrRobotVertically();
         stopMrRobot();
     }
@@ -574,7 +579,6 @@ public class MrRobot implements ActionListener, CollisionListener {
 
         if(tileBelowId == NO_TILE) {
             if (!isFalling() && !isJumping() && !mrRobotState.isDying()) {
-                System.out.println("______ falling down now ______");
                 mrrobotSprite.startAction(dropDownAction, null);
             }
         } else if(mrRobotIsClimbing()) {
@@ -596,8 +600,6 @@ public class MrRobot implements ActionListener, CollisionListener {
                 tileMap.clearCell(tileMap.getTileMapCell(TileMap.CELL_TYPE.BELOW));
                 Hud.addScore(1);
             } else if(tileBelowId == TILE_BOMB && mrRobotIsNearlyAlignedVertically()) {
-//                Bombs.getInstance().igniteBomb((int)col, (int)line);
-
                 Bombs.getInstance().igniteBomb(tileBelow.getColumn(), tileBelow.getRow());
             }
             if(tileBelowId == TILE_ROLL_LEFT_1 || tileBelowId == TILE_ROLL_LEFT_2) {

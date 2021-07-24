@@ -24,7 +24,10 @@ public class SetVisibilityAction extends Action {
     }
 
     @Override
-    public boolean isDone() {     return executionTimer < 0f;    }
+    public boolean isDone() {
+        boolean done = executionTimer <= 0f;
+        return done;
+    }
 
     @Override
     public void doStart() {
