@@ -2,7 +2,6 @@ package games.play4ever.mrrobot.actions;
 
 import games.play4ever.libgdx.sprites.action.Action;
 import games.play4ever.mrrobot.MrRobot;
-import games.play4ever.mrrobot.MrRobotGame;
 
 import static games.play4ever.mrrobot.MrRobotState.JUMP_RIGHT;
 
@@ -45,13 +44,11 @@ public class JumpSidewaysAction extends Action {
         } else {
             x -= JUMPING_SPEED * delta;
         }
-        mrRobot.setPosition(x, y);
-        if(x < -5) {
-            x = -5;
+        if(mrRobot.isCrossingLeftScreenBoundary(x)) {
             mrRobot.setState(mrRobot.getState().getReverse());
-        } else if(x > MrRobotGame.VIRTUAL_WIDTH - 19) {
-            x = MrRobotGame.VIRTUAL_WIDTH - 19;
+        } else if(mrRobot.isCrossingRightScreenBoundary(x)) {
             mrRobot.setState(mrRobot.getState().getReverse());
         }
+        mrRobot.setPosition(x, y);
     }
 }

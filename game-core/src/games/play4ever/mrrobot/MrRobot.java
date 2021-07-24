@@ -241,6 +241,11 @@ public class MrRobot implements ActionListener, CollisionListener {
      * @param y The y-coordinate in pixels.
      */
     public void setPosition(float x, float y) {
+        if(isCrossingLeftScreenBoundary(x)) {
+            x = -5;
+        } else if(isCrossingRightScreenBoundary(x)) {
+            x = MrRobotGame.VIRTUAL_WIDTH - 19;
+        }
         this.mrrobotSprite.setPosition(x, y);
         cellBelow = tileMap.getTileMapCell(TileMap.CELL_TYPE.BELOW);
         tileBehindId = tileMap.getTileMapTile(TileMap.CELL_TYPE.BEHIND);
@@ -251,6 +256,14 @@ public class MrRobot implements ActionListener, CollisionListener {
     public void changeState(MrRobotState state) {
         this.mrRobotState = state.changeFrom(this.mrRobotState, state);
         this.mrrobotSprite.showAnimation(mrRobotState.getAnimationName());
+    }
+
+    public boolean isCrossingLeftScreenBoundary(float x) {
+        return x < -5;
+    }
+
+    public boolean isCrossingRightScreenBoundary(float x) {
+        return x > MrRobotGame.VIRTUAL_WIDTH - 19;
     }
 
     /**
