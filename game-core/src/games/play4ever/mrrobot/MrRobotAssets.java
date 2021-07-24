@@ -132,7 +132,8 @@ public class MrRobotAssets extends Assets {
         Properties animatedSpriteList = FileUtil.readConfigPropertyFile("animationlist.properties");
         for(Map.Entry<Object, Object> entry : animatedSpriteList.entrySet()) {
             FileHandle animationFile = Gdx.files.internal( "animation/" + (String)entry.getValue() );
-            setAnimationMap(Aseprite.fromFile(animationFile.path()));
+            Gdx.app.log("MrRobotAssets", "Process Aseprite file: " + animationFile.name());
+            addAnimationMap(Aseprite.fromFile(animationFile.path()));
         }
     }
 
@@ -140,7 +141,7 @@ public class MrRobotAssets extends Assets {
      * Start playing menu background music.
      */
     public static void playMenuMusic() {
-        System.out.println("Start playing music...");
+        Gdx.app.log("MrRobotAssets", "Start playing music...");
         if(gdxMusic == null) {
             gdxMusic = Gdx.audio.newMusic(Gdx.files.internal("music/Happy Bee.mp3"));
         }

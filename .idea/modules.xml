@@ -2,12 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/game-android/game-android.iml" filepath="$PROJECT_DIR$/game-android/game-android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/game-core/game-core.iml" filepath="$PROJECT_DIR$/game-core/game-core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/game-desktop/game-desktop.iml" filepath="$PROJECT_DIR$/game-desktop/game-desktop.iml" />
-      <module fileurl="file://$PROJECT_DIR$/jplay-gamepad/jplay-gamepad.iml" filepath="$PROJECT_DIR$/jplay-gamepad/jplay-gamepad.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libgdx-darkfunction/libgdx-darkfunction.iml" filepath="$PROJECT_DIR$/libgdx-darkfunction/libgdx-darkfunction.iml" />
       <module fileurl="file://$PROJECT_DIR$/mrrobot.iml" filepath="$PROJECT_DIR$/mrrobot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/game-android/mrrobot.game-android.iml" filepath="$PROJECT_DIR$/.idea/modules/game-android/mrrobot.game-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/game-core/mrrobot.game-core.iml" filepath="$PROJECT_DIR$/.idea/modules/game-core/mrrobot.game-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/game-desktop/mrrobot.game-desktop.iml" filepath="$PROJECT_DIR$/.idea/modules/game-desktop/mrrobot.game-desktop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/jplay-gamepad/mrrobot.jplay-gamepad.iml" filepath="$PROJECT_DIR$/.idea/modules/jplay-gamepad/mrrobot.jplay-gamepad.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/libgdx-darkfunction/mrrobot.libgdx-darkfunction.iml" filepath="$PROJECT_DIR$/.idea/modules/libgdx-darkfunction/mrrobot.libgdx-darkfunction.iml" />
     </modules>
   </component>
 </project>

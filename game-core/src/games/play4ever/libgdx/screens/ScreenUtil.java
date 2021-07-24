@@ -10,7 +10,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import games.play4ever.mrrobot.screens.Resolution;
@@ -89,68 +89,55 @@ public class ScreenUtil {
 	}
 
 	public static void initialize(int width, int height) {
-		System.out.println("**** INITIALIZE SCREEN UTIL: " + width + " x " + height);
+		Gdx.app.log("ScreenUtil", "**** INITIALIZE SCREEN UTIL: " + width + " x " + height);
 		virtualResolution = new Resolution(width, height);
 		screenResolution = new Resolution((int)Gdx.graphics.getWidth(), (int)Gdx.graphics.getHeight());
+		Gdx.app.log("ScreenUtil", ">> virtual resolution: " + virtualResolution.getWidth() + " x "
+				+ virtualResolution.getHeight());
+		Gdx.app.log("ScreenUtil", ">> screen resolution: " + screenResolution.getWidth() + " x "
+				+ screenResolution.getHeight());
 
 		camera = new OrthographicCamera(virtualResolution.getWidth(), virtualResolution.getHeight());
 		camera.setToOrtho(false, virtualResolution.getWidth(), virtualResolution.getHeight());
-//		viewPort = new ExtendViewport(virtualResolution.getWidth(), virtualResolution.getHeight(), camera);
-		viewPort = new FitViewport(virtualResolution.getWidth(), virtualResolution.getHeight(), camera);
+		viewPort = new ExtendViewport(virtualResolution.getWidth(), virtualResolution.getHeight(), camera);
+//		viewPort = new FitViewport(virtualResolution.getWidth(), virtualResolution.getHeight(), camera);
 //		viewPort = new ScreenViewport(camera);
-		resize((int)width, (int)height);
+		resizeViewport((int)width, (int)height);
 	}
 
 	/**
 	 * 
-	 * @param newDisplayWidth
-	 * @param newDisplayHeight
+	 * @param newViewportWidth
+	 * @param newViewportHeight
 	 */
-	public static void resize(int newDisplayWidth, int newDisplayHeight) {
+	public static void resizeViewport(int newViewportWidth, int newViewportHeight) {
 
-//		newDisplayWidth = (newDisplayWidth * 70) / 100;
-//		newDisplayHeight = (newDisplayHeight * 70) / 100;
-
-
-		System.out.println("****************** RESIZE: " + newDisplayWidth + " x " + newDisplayHeight);
-		//new RuntimeException().printStackTrace();
-
-		screenResolution = new Resolution((int)Gdx.graphics.getWidth(), (int)Gdx.graphics.getHeight());
-		System.out.println(">> screen resolution: " + screenResolution.getWidth() + " x "
-				+ screenResolution.getHeight());
-
+		Gdx.app.log("ScreenUtil", "****************** RESIZE VIEWPORT: " + newViewportWidth + " x " + newViewportHeight);
 		if(virtualResolution == null) {
 			throw new IllegalStateException("Set virtual game size first with 'initialize'!");
 		}
 
-		int newDisplayX = (screenResolution.getWidth() - newDisplayWidth) / 2;
-		int newDisplayY = (screenResolution.getHeight() - newDisplayHeight) / 2;
-		System.out.println(">> position: " + newDisplayX + " x " + newDisplayY);
-
 		camera = new OrthographicCamera(virtualResolution.getWidth(), virtualResolution.getHeight());
 		camera.setToOrtho(false, virtualResolution.getWidth(), virtualResolution.getHeight());
 
-		//camera.update();
-
-		float xRatio = (float)newDisplayWidth / (float) screenResolution.getWidth();
-		float yRatio = (float)newDisplayHeight / (float) screenResolution.getHeight();
-		System.out.println(">> ratio: " + xRatio + " vs " + yRatio);
-		int viewPortWidth = newDisplayWidth;
-		int viewPortHeight = newDisplayHeight;
+		float xRatio = (float)newViewportWidth / (float) screenResolution.getWidth();
+		float yRatio = (float)newViewportHeight / (float) screenResolution.getHeight();
+		Gdx.app.log("ScreenUtil", ">> ratio: " + xRatio + " vs " + yRatio);
+		int viewPortWidth = newViewportWidth;
+		int viewPortHeight = newViewportHeight;
 
 		if(xRatio < yRatio) {
-			System.out.println("--> STRETCH: Horizontally");
+			Gdx.app.log("ScreenUtil", "--> STRETCH: Horizontally");
 			// Stretch horizontally
 			viewPortHeight = (int)((float) screenResolution.getHeight() * xRatio);
 		} else if(yRatio < xRatio){
-			System.out.println("--> STRETCH: Vertically");
+			Gdx.app.log("ScreenUtil", "--> STRETCH: Vertically");
 			// Stretch vertically
 			viewPortWidth = (int)((float) screenResolution.getWidth() * yRatio);
 		}
-		System.out.println("--> RESIZE viewport to " + newDisplayX + "," + newDisplayY + " / "
-				+ viewPortWidth + " x " + viewPortHeight);
+		Gdx.app.log("ScreenUtil", "--> RESIZE viewport to " + viewPortWidth + " x " + viewPortHeight);
 
-		System.out.println("CAMERA POS: " + camera.position.x + " / " + camera.position.y);
+		Gdx.app.log("ScreenUtil", "CAMERA POS: " + camera.position.x + " / " + camera.position.y);
 /*
 		camera.position.x = 0;
 		camera.position.y = 0;
@@ -162,7 +149,10 @@ public class ScreenUtil {
 		viewPort.setScreenY(newDisplayY);
  */
 //		viewPort = new StretchViewport(viewPortWidth, viewPortHeight, camera);
-		viewPort.update(newDisplayWidth, newDisplayHeight, true);
+		viewPort.update(viewPortWidth, viewPortHeight, true);
+
+		Gdx.app.log("ScreenUtil", "Screen bounds: " + viewPort.getScreenWidth() + "x" + viewPort.getScreenHeight());
+		Gdx.app.log("ScreenUtil", "World bounds: " + viewPort.getWorldWidth() + "x" + viewPort.getWorldHeight());
 
 //		Gdx.gl.glViewport(newDisplayX, newDisplayY, viewPortWidth, viewPortHeight);
 

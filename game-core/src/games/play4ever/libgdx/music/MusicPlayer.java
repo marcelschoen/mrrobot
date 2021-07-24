@@ -4,6 +4,8 @@
 
 package games.play4ever.libgdx.music;
 
+import com.badlogic.gdx.Gdx;
+
 import aurelienribon.tweenengine.BaseTween;
 import aurelienribon.tweenengine.Tween;
 import aurelienribon.tweenengine.TweenCallback;
@@ -99,7 +101,7 @@ public class MusicPlayer {
                 @Override
                 public void onEvent(int type, BaseTween<?> source) {
                     if((type & TweenCallback.COMPLETE) != 0) {
-                    	System.out.println("--- stop music ---");
+                    	Gdx.app.log("MusicPlayer", "--- stop music ---");
                         currentMusic.stop();
                     	isPlaying = false;
                     }

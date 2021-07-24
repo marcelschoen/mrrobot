@@ -8,7 +8,6 @@ package games.play4ever.libgdx.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
@@ -134,14 +133,6 @@ public abstract class AbstractBaseScreen implements Screen {
 	 * @param delta
 	 */
 	protected void baseRendering(float delta) {
-		DisplayMode displayMode = MrRobotGame.displayMode;
-		if(displayMode != null) {
-///			System.out.println("---> SET VIEW PORT TO: ");
-//	        Gdx.gl.glViewport(ScreenUtil.viewPortX, ScreenUtil.viewPortY, ScreenUtil.viewPortWidth, ScreenUtil.viewPortHeight);
-		}
-//		Gdx.gl.glViewport(viewPortX, viewPortY, viewPortWidth ,viewPortHeight);
-//		Gdx.gl.glViewport(400, 0, ScreenUtil.viewPortWidth - 400 ,ScreenUtil.viewPortHeight - 400);
-
 		camera.update();
 		MusicPlayer.instance().update(delta);
 
@@ -163,11 +154,11 @@ public abstract class AbstractBaseScreen implements Screen {
 	public abstract void doRender(float delta);
 
 	/* (non-Javadoc)
-	 * @see com.badlogic.gdx.Screen#resize(int, int)
+	 * @see com.badlogic.gdx.Screen#resizeViewport(int, int)
 	 */
 	@Override
 	public void resize(int newDisplayWidth, int newDisplayHeight) {
-		ScreenUtil.resize(newDisplayWidth, newDisplayHeight);
+		ScreenUtil.resizeViewport(newDisplayWidth, newDisplayHeight);
 		this.camera = ScreenUtil.getCamera();
 	}
 
@@ -192,7 +183,7 @@ public abstract class AbstractBaseScreen implements Screen {
 	 */
 	@Override
 	public void pause() {
-		System.out.println("-- pause screen --");
+		Gdx.app.log("AbstractBaseScreen", "-- pause screen --");
 		// nothing
 	}
 
@@ -201,7 +192,7 @@ public abstract class AbstractBaseScreen implements Screen {
 	 */
 	@Override
 	public void resume() {
-		System.out.println("-- resume screen --");
+		Gdx.app.log("AbstractBaseScreen", "-- resume screen --");
 		// nothing
 	}
 

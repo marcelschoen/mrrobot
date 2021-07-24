@@ -6,6 +6,7 @@
 
 package games.play4ever.libgdx;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -36,7 +37,7 @@ public class DebugOutput {
 		if(!initialized) {
 			initialized = true;
 			debugFont = font;
-			System.out.println("Debug line height: " + debugFont.getLineHeight() + ", cap height: " + debugFont.getCapHeight() + ", Xheight: " + debugFont.getXHeight());
+			Gdx.app.log("DebugOutput", "Debug line height: " + debugFont.getLineHeight() + ", cap height: " + debugFont.getCapHeight() + ", Xheight: " + debugFont.getXHeight());
 		}
 	}
 	

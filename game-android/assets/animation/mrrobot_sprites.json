@@ -267,7 +267,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
     "sourceSize": { "w": 24, "h": 24 },
-    "duration": 500
+    "duration": 100
    },
    {
     "filename": "mrrobot_sprites 30.ase",
@@ -276,7 +276,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
     "sourceSize": { "w": 24, "h": 24 },
-    "duration": 500
+    "duration": 100
    },
    {
     "filename": "mrrobot_sprites 31.ase",
@@ -285,7 +285,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
     "sourceSize": { "w": 24, "h": 24 },
-    "duration": 500
+    "duration": 100
    },
    {
     "filename": "mrrobot_sprites 32.ase",
@@ -294,7 +294,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
     "sourceSize": { "w": 24, "h": 24 },
-    "duration": 500
+    "duration": 100
    },
    {
     "filename": "mrrobot_sprites 33.ase",
@@ -303,7 +303,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
     "sourceSize": { "w": 24, "h": 24 },
-    "duration": 200
+    "duration": 100
    },
    {
     "filename": "mrrobot_sprites 34.ase",
@@ -312,7 +312,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
     "sourceSize": { "w": 24, "h": 24 },
-    "duration": 200
+    "duration": 100
    },
    {
     "filename": "mrrobot_sprites 35.ase",
@@ -321,7 +321,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
     "sourceSize": { "w": 24, "h": 24 },
-    "duration": 200
+    "duration": 100
    },
    {
     "filename": "mrrobot_sprites 36.ase",
@@ -330,7 +330,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
     "sourceSize": { "w": 24, "h": 24 },
-    "duration": 200
+    "duration": 100
    },
    {
     "filename": "mrrobot_sprites 37.ase",
@@ -349,113 +349,14 @@
     "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
     "sourceSize": { "w": 24, "h": 24 },
     "duration": 100
-   },
-   {
-    "filename": "mrrobot_sprites 39.ase",
-    "frame": { "x": 936, "y": 0, "w": 24, "h": 24 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
-    "sourceSize": { "w": 24, "h": 24 },
-    "duration": 100
-   },
-   {
-    "filename": "mrrobot_sprites 40.ase",
-    "frame": { "x": 960, "y": 0, "w": 24, "h": 24 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
-    "sourceSize": { "w": 24, "h": 24 },
-    "duration": 100
-   },
-   {
-    "filename": "mrrobot_sprites 41.ase",
-    "frame": { "x": 984, "y": 0, "w": 24, "h": 24 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
-    "sourceSize": { "w": 24, "h": 24 },
-    "duration": 100
-   },
-   {
-    "filename": "mrrobot_sprites 42.ase",
-    "frame": { "x": 1008, "y": 0, "w": 24, "h": 24 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
-    "sourceSize": { "w": 24, "h": 24 },
-    "duration": 100
-   },
-   {
-    "filename": "mrrobot_sprites 43.ase",
-    "frame": { "x": 1032, "y": 0, "w": 24, "h": 24 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
-    "sourceSize": { "w": 24, "h": 24 },
-    "duration": 100
-   },
-   {
-    "filename": "mrrobot_sprites 44.ase",
-    "frame": { "x": 1056, "y": 0, "w": 24, "h": 24 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
-    "sourceSize": { "w": 24, "h": 24 },
-    "duration": 100
-   },
-   {
-    "filename": "mrrobot_sprites 45.ase",
-    "frame": { "x": 1080, "y": 0, "w": 24, "h": 24 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
-    "sourceSize": { "w": 24, "h": 24 },
-    "duration": 100
-   },
-   {
-    "filename": "mrrobot_sprites 46.ase",
-    "frame": { "x": 1104, "y": 0, "w": 24, "h": 24 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
-    "sourceSize": { "w": 24, "h": 24 },
-    "duration": 100
-   },
-   {
-    "filename": "mrrobot_sprites 47.ase",
-    "frame": { "x": 1128, "y": 0, "w": 24, "h": 24 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
-    "sourceSize": { "w": 24, "h": 24 },
-    "duration": 100
-   },
-   {
-    "filename": "mrrobot_sprites 48.ase",
-    "frame": { "x": 1152, "y": 0, "w": 24, "h": 24 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
-    "sourceSize": { "w": 24, "h": 24 },
-    "duration": 100
-   },
-   {
-    "filename": "mrrobot_sprites 49.ase",
-    "frame": { "x": 1176, "y": 0, "w": 24, "h": 24 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 24, "h": 24 },
-    "sourceSize": { "w": 24, "h": 24 },
-    "duration": 100
    }
  ],
  "meta": {
   "app": "http://www.aseprite.org/",
-  "version": "1.2.15-x64",
+  "version": "1.2.28-x64",
   "image": "mrrobot_sprites.png",
   "format": "I8",
-  "size": { "w": 1200, "h": 24 },
+  "size": { "w": 936, "h": 24 },
   "scale": "1",
   "frameTags": [
    { "name": "mrrobot_walk_right", "from": 0, "to": 5, "direction": "forward" },
@@ -469,13 +370,10 @@
    { "name": "mrrobot_jump_left", "from": 20, "to": 20, "direction": "forward" },
    { "name": "mrrobot_dies", "from": 21, "to": 21, "direction": "forward" },
    { "name": "mrrobot_downfall", "from": 22, "to": 23, "direction": "forward" },
-   { "name": "mrrobot_teleport", "from": 25, "to": 26, "direction": "forward" },
-   { "name": "mrrobot_stand", "from": 27, "to": 28, "direction": "forward" },
-   { "name": "flame_left", "from": 29, "to": 32, "direction": "forward" },
-   { "name": "flame_right", "from": 33, "to": 36, "direction": "forward" },
-   { "name": "mrrobot_shield", "from": 37, "to": 41, "direction": "forward" },
-   { "name": "flame_blue", "from": 42, "to": 43, "direction": "forward" },
-   { "name": "shield_item", "from": 44, "to": 49, "direction": "forward" }
+   { "name": "mrrobot_teleport", "from": 24, "to": 25, "direction": "forward" },
+   { "name": "mrrobot_stand", "from": 26, "to": 27, "direction": "forward" },
+   { "name": "mrrobot_shield", "from": 28, "to": 32, "direction": "forward" },
+   { "name": "shield_item", "from": 33, "to": 38, "direction": "forward" }
   ],
   "layers": [
    { "name": "Sprite Sheet", "opacity": 255, "blendMode": "normal" }

@@ -1,5 +1,6 @@
 package games.play4ever.mrrobot;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapLayer;
@@ -80,14 +81,14 @@ public class TileMap {
         Teleporter.startLevel();
 
         this.clearedFloor = this.map.getTileSets().getTileSet(0).getTile(3);
-        System.out.println("------------------------ BEGIN -----------------------------");
-        System.out.println("> Layers: " + this.map.getLayers().getCount());
+        Gdx.app.log("TileMap", "------------------------ BEGIN -----------------------------");
+        Gdx.app.log("TileMap", "> Layers: " + this.map.getLayers().getCount());
         for(MapLayer layer : this.map.getLayers()) {
-            System.out.println("--> layer: " + layer.getName() + " / " + layer.getClass().getName());
+            Gdx.app.log("TileMap", "--> layer: " + layer.getName() + " / " + layer.getClass().getName());
             if(layer instanceof TiledMapTileLayer) {
                 this.tiledMapTileLayer = (TiledMapTileLayer)layer;
-                System.out.println("==>> layer size: " + tiledMapTileLayer.getWidth() + " by " + tiledMapTileLayer.getHeight());
-                System.out.println("==>> tile 0,0: " + tiledMapTileLayer.getCell(0,0).getTile().getId());
+                Gdx.app.log("TileMap", "==>> layer size: " + tiledMapTileLayer.getWidth() + " by " + tiledMapTileLayer.getHeight());
+                Gdx.app.log("TileMap", "==>> tile 0,0: " + tiledMapTileLayer.getCell(0,0).getTile().getId());
                 for(int lineCt = tiledMapTileLayer.getHeight() - 1; lineCt > -1; lineCt --) {
                     String line = "";
                     for(int colCt = 0; colCt < tiledMapTileLayer.getWidth(); colCt ++) {
@@ -127,14 +128,14 @@ public class TileMap {
                             }
                         }
                     }
-//                    System.out.println("==>> " + lineCt + ": " + line);
+//                    Gdx.app.log("TileMap", "==>> " + lineCt + ": " + line);
                 }
             }
-//            System.out.println("-->> Objects in layer: " + this.map.getLayers().get(0).getObjects().getCount());
+//            Gdx.app.log("TileMap", "-->> Objects in layer: " + this.map.getLayers().get(0).getObjects().getCount());
             this.tileMapRenderer = new OrthogonalTiledMapRenderer(map);
 
             for(MapObject obj : this.map.getLayers().get(0).getObjects()) {
-                System.out.println("> obj: " + obj.getName() + " / " + obj.getClass().getName());
+                Gdx.app.log("TileMap", "> obj: " + obj.getName() + " / " + obj.getClass().getName());
             }
         }
         Bombs.getInstance().initialize(this);

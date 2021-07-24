@@ -11,7 +11,8 @@ public class MainActivity extends AndroidApplication {
         super.onCreate(savedInstanceState);
         
         AndroidApplicationConfiguration cfg = new AndroidApplicationConfiguration();
-        
+        cfg.hideStatusBar = true;
+
         initialize(new games.play4ever.mrrobot.MrRobotGame(null), cfg);
     }
 }

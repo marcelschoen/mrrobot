@@ -123,7 +123,7 @@ public class MrRobot implements ActionListener, CollisionListener {
             animationNames.add(animation.name());
         }
         this.mrrobotSprite = Sprites.createSprite(animationNames, SpriteTypes.MR_ROBOT);
-        this.mrrobotSprite.setDefaultCollisionBounds(6, 0, 12, 24);
+        this.mrrobotSprite.setDefaultCollisionBounds(7, 3, 10, 20);
         this.mrrobotSprite.setVisible(true);
         Collision.addRectangles(this.mrrobotSprite);
 
@@ -381,7 +381,7 @@ public class MrRobot implements ActionListener, CollisionListener {
 
     @Override
     public void completed(Action completedAction) {
-        System.out.println("Completed: " + completedAction.getFirstActionInChain().getClass().getSimpleName());
+        Gdx.app.log("MrRobot", "Completed: " + completedAction.getFirstActionInChain().getClass().getSimpleName());
         if(completedAction.getFirstActionInChain() == dieByFlameAction) {
             // handle death
             Hud.removeLive();

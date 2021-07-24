@@ -96,7 +96,7 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 		if(this.animationMap.size() > 0) {
 			Animation<TextureRegion> animation = this.animationMap.values().iterator().next();
 			TextureRegion frame = animation.getKeyFrame(0);
-			setDefaultCollisionBounds(0, 0, frame.getRegionWidth(), frame.getRegionHeight());
+			setDefaultCollisionBounds(1, 1, frame.getRegionWidth() -2 , frame.getRegionHeight() - 2);
 		}
 	}
 

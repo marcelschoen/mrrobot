@@ -1,5 +1,6 @@
 package games.play4ever.mrrobot;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 
@@ -70,7 +71,7 @@ public class Bombs {
      * @param row The row in the tilemap.
      */
     public void igniteBomb(int column, int row) {
-        System.out.println("* IGNITE BOMB AT: " + column + " / " + row);
+        Gdx.app.log("Bombs", "* IGNITE BOMB AT: " + column + " / " + row);
         DebugOutput.flicker(Color.YELLOW);
         Bomb bomb = bombs[column][row];
         bomb.setState(BombState.IGNITED);

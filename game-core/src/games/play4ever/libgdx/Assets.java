@@ -62,12 +62,13 @@ public abstract class Assets {
 	public void initialize() {
 		assets = this;
 		manager = new AssetManager();
+		this.animationHashMap = new HashMap<>();
 
 		doLoadAssets();
 		
 		// Start loading...
 		manager.update();
-		System.out.println("> Game assets loading...");
+		Gdx.app.log("Assets.initialize()", "> Game assets loading...");
 	}
 
 	/**
@@ -75,10 +76,11 @@ public abstract class Assets {
 	 */
 	public abstract void doLoadAssets();
 
-	public void setAnimationMap(HashMap<String, Animation<TextureRegion>> animationHashMap) {
-		this.animationHashMap = new HashMap<>();
+	public void addAnimationMap(HashMap<String, Animation<TextureRegion>> animationHashMap) {
 		for(String name : animationHashMap.keySet()) {
-			this.animationHashMap.put(name.substring(name.lastIndexOf("/") + 1), animationHashMap.get(name));
+			String animationName = name.substring(name.lastIndexOf("/") + 1);
+			Gdx.app.log("Assets", "Add animation '" + animationName + "'");
+			this.animationHashMap.put(animationName, animationHashMap.get(name));
 		}
 	}
 
@@ -170,7 +172,7 @@ public abstract class Assets {
 	protected void loadFont(String filename, FontID id) {
 		String fontName = "fonts/" + filename;
 		fontFileNameMap.put(id, fontName);
-		System.out.println(">> LOAD FONT: " + fontName);
+		Gdx.app.log("Assets.loadFont()",">> LOAD FONT: " + fontName);
 		manager.load(fontName, BitmapFont.class);
 	}
 	
@@ -188,7 +190,7 @@ public abstract class Assets {
 			if(font != null) {
 				/////////////////////////////////////////font.setScale(1, -1);
 				fontMap.put(id, font);
-				System.out.println("Font available: " + id);
+				Gdx.app.log("Assets.getFont()","Font available: " + id);
 			}
 		}
 		if(font == null) {

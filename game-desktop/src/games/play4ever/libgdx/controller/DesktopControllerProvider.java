@@ -4,6 +4,7 @@
 
 package games.play4ever.libgdx.controller;
 
+import com.badlogic.gdx.Gdx;
 import com.codeminders.hidapi.HIDDeviceInfo;
 import com.codeminders.hidapi.HIDManager;
 
@@ -43,7 +44,7 @@ public class DesktopControllerProvider implements IControllerProvider {
 			com.codeminders.hidapi.ClassPathLibraryLoader.loadNativeHIDLibrary();
 			hidManager = HIDManager.getInstance();
 			updateControllers();
-			System.out.println("Desktop controller provider ready: " + hidManager);
+			Gdx.app.log("DesktopControllerProvider", "Desktop controller provider ready: " + hidManager);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Failed to initialize Desktop controller provider: " + e, e);
@@ -58,7 +59,7 @@ public class DesktopControllerProvider implements IControllerProvider {
 	public void release() {
 		// do nothing
 		if(hidManager != null) {
-			System.out.println("Release HID manager.");
+			Gdx.app.log("DesktopControllerProvider", "Release HID manager.");
 			hidManager.release();
 			hidManager = null;
 		}
@@ -75,16 +76,16 @@ public class DesktopControllerProvider implements IControllerProvider {
 			HIDDeviceInfo[] devices;
 			devices = hidManager.listDevices();
 			for(HIDDeviceInfo device : devices) {
-				System.out.println("------------ DEVICE INFO -------------");
-				System.out.println(">          Product: " + device.getProduct_string());
-				System.out.println(">       Product ID: " + device.getProduct_id());
-				System.out.println(">   Release number: " + device.getRelease_number());
-				System.out.println(">     Manufacturer: " + device.getManufacturer_string());
-				System.out.println("> Interface number: " + device.getInterface_number());
-				System.out.println(">    Serial number: " + device.getSerial_number());
-				System.out.println(">            Usage: " + device.getUsage());
-				System.out.println(">        Usage_page:" + device.getUsage_page());
-				System.out.println(">           Vendor: " + device.getVendor_id());
+				Gdx.app.log("DesktopControllerProvider", "------------ DEVICE INFO -------------");
+				Gdx.app.log("DesktopControllerProvider", ">          Product: " + device.getProduct_string());
+				Gdx.app.log("DesktopControllerProvider", ">       Product ID: " + device.getProduct_id());
+				Gdx.app.log("DesktopControllerProvider", ">   Release number: " + device.getRelease_number());
+				Gdx.app.log("DesktopControllerProvider", ">     Manufacturer: " + device.getManufacturer_string());
+				Gdx.app.log("DesktopControllerProvider", "> Interface number: " + device.getInterface_number());
+				Gdx.app.log("DesktopControllerProvider", ">    Serial number: " + device.getSerial_number());
+				Gdx.app.log("DesktopControllerProvider", ">            Usage: " + device.getUsage());
+				Gdx.app.log("DesktopControllerProvider", ">        Usage_page:" + device.getUsage_page());
+				Gdx.app.log("DesktopControllerProvider", ">           Vendor: " + device.getVendor_id());
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -93,7 +94,7 @@ public class DesktopControllerProvider implements IControllerProvider {
 		}
 /*		
 		Controller[] actualControllers = ControllerEnvironment.getDefaultEnvironment().getControllers();
-		System.out.println("Number of controllers found: " + actualControllers.length);
+		Gdx.app.log("DesktopControllerProvider", "Number of controllers found: " + actualControllers.length);
 		for(int ct = 0; ct < MAX_CONTROLLERS; ct++) {
 			if(ct < actualControllers.length && actualControllers[ct] != null) {
 				Controller desktopController = actualControllers[ct];
@@ -110,15 +111,15 @@ public class DesktopControllerProvider implements IControllerProvider {
 /*	
 	public static void printControllerInfo(boolean isChild, Controller controller) {
 		if(!isChild) {
-			System.out.println("-------------------- CONTROLLER INFO ---------------------");
+			Gdx.app.log("DesktopControllerProvider", "-------------------- CONTROLLER INFO ---------------------");
 		}
-		System.out.println("Controller: " + controller.getName() + " / Type: " + controller.getType()
+		Gdx.app.log("DesktopControllerProvider", "Controller: " + controller.getName() + " / Type: " + controller.getType()
 				+ ", Port: " + controller.getPortNumber() + ", Port type: " + controller.getPortType()
 				+ ", Rumblers: " + controller.getRumblers());
 		Component[] components = controller.getComponents();
 		for(Component component : components) {
 			String name = component.getIdentifier().getName();
-			System.out.println("-> component name: " + name + ", ID: " + component.getIdentifier()
+			Gdx.app.log("DesktopControllerProvider", "-> component name: " + name + ", ID: " + component.getIdentifier()
 					+ ", analog: " + component.isAnalog() + ", relative: " + component.isRelative()
 					+ ", dead zone: " + component.getDeadZone() + ", value: " + component.getPollData());
 		}
@@ -143,7 +144,7 @@ public class DesktopControllerProvider implements IControllerProvider {
 				if(connected.get(actualControllers[ct]) == null) {
 					// Newly connected controller found
 					update = true;
-					System.out.println("Newly connected Desktop controller found.");
+					Gdx.app.log("DesktopControllerProvider", "Newly connected Desktop controller found.");
 				}
 			}
 		}

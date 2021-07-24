@@ -43,7 +43,7 @@ public class TestScreen implements Screen {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.badlogic.gdx.Screen#resize(int, int)
+	 * @see com.badlogic.gdx.Screen#resizeViewport(int, int)
 	 */
 	@Override
 	public void resize(int arg0, int arg1) {

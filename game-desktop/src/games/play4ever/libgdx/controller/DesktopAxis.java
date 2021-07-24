@@ -41,10 +41,10 @@ public class DesktopAxis implements IAxis {
 		this.controller = controller;
 		/*
 		Component[] components = controller.getComponents();
-		System.out.println("-------- Controller: " + controller.getName() + ":" + controller.getPortNumber() + " ---------");
+		Gdx.app.log("-------- Controller: " + controller.getName() + ":" + controller.getPortNumber() + " ---------");
 		for(Component component : components) {
 			if(component.isAnalog()) {
-				System.out.println("> Component: " + component.getName() + " / ID: " + component.getIdentifier());
+				Gdx.app.log("> Component: " + component.getName() + " / ID: " + component.getIdentifier());
 			}
 		}
 		*/

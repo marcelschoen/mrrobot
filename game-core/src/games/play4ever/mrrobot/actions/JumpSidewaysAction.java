@@ -29,7 +29,7 @@ public class JumpSidewaysAction extends Action {
 
     @Override
     public void doStart() {
-        setDuration(0.4f);
+        setDuration(0.5f);
         mrRobot.changeState(JUMP_RIGHT);
     }
 

@@ -6,6 +6,7 @@
 package games.play4ever.mrrobot.screens;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 
@@ -47,7 +48,7 @@ public class LoadingScreen extends AbstractBaseScreen {
 		if(!Assets.instance().isLoadingCompleted()) {
 			Assets.instance().load();
 		} else {
-			System.out.println("All assets loaded.");
+			Gdx.app.log("LoadingScreen", "All assets loaded.");
 			MrRobotGame.instance().finishInitialization();
 			Assets.instance().loadingCompleted();
 			MrRobotGame.instance().setScreen(titleScreen);

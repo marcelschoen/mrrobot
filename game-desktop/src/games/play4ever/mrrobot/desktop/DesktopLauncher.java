@@ -14,7 +14,7 @@ import games.play4ever.mrrobot.MrRobotGame;
 public class DesktopLauncher {
 	public static void main (String[] args) {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-		cfg.title = "bombmaniacs-gdx";
+		cfg.title = "mrrobot-gdx";
 		cfg.width = 1920;
 		cfg.height = 1080;
 		cfg.fullscreen = true;
@@ -27,7 +27,7 @@ public class DesktopLauncher {
 			Graphics.DisplayMode displayMode = findMatchingMode(cfg.width, cfg.height);
 			cfg.width = displayMode.width;
 			cfg.height = displayMode.height;
-			System.out.println("Running game in fullscreen mode...");
+			System.out.println("Running game in fullscreen mode: " + cfg.width + "x" + cfg.height);
 			new LwjglApplication(new MrRobotGame(displayMode), cfg);
 		} else {
 			System.out.println("Running game in window mode...");
@@ -49,15 +49,30 @@ public class DesktopLauncher {
 		Graphics.DisplayMode displayMode = null;
 		float targetRatio = (float)width / (float)height;
 
+		System.out.println("Find matching mode for: " + width + " x " + height);
+
 		List<Graphics.DisplayMode> validModes = new ArrayList<Graphics.DisplayMode>();
 		Map<Graphics.DisplayMode, Float> modes = new HashMap<Graphics.DisplayMode, Float>();
 
+		Graphics.DisplayMode perfectMode = null, nearPerfectMode = null;
 		for(Graphics.DisplayMode mode: LwjglApplicationConfiguration.getDisplayModes()) {
 			if(mode.width >= width && mode.height >= height) {
 				float modeRatio = (float)mode.width / (float)mode.height;
 				System.out.println("Valid mode: " + mode + ", ratio: " + modeRatio);
 				validModes.add(mode);
 				modes.put(mode, modeRatio);
+				if(mode.width == width && mode.height == height) {
+					perfectMode = mode;
+				}
+				if(modeRatio == targetRatio) {
+					if(nearPerfectMode != null) {
+						if(mode.width >= width && mode.height >= height ) {
+							nearPerfectMode = mode;
+						}
+					} else {
+						nearPerfectMode = mode;
+					}
+				}
 			}
 		}
 
@@ -77,7 +92,9 @@ public class DesktopLauncher {
 			}
 		}
 
-		displayMode = validModes.get(0);
+		displayMode = perfectMode == null ? nearPerfectMode : perfectMode;
+		displayMode = displayMode == null? validModes.get(0) : displayMode;
+
 		System.out.println("---- USE RESOLUTION: " + displayMode + " -------");
 		return displayMode;
 	}
