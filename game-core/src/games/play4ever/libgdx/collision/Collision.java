@@ -56,6 +56,10 @@ public class Collision {
         }
     }
 
+    public static void clearRectangles() {
+        rectangles.clear();
+    }
+
     public static void notifyListeners(AnimatedSprite spriteOne, AnimatedSprite spriteTwo, Rectangle overlapRectangle) {
         for(CollisionListener listener : listeners) {
             listener.spritesCollided(spriteOne, spriteTwo, overlapRectangle);

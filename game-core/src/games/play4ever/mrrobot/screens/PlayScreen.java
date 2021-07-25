@@ -32,12 +32,20 @@ public class PlayScreen extends AbstractBaseScreen {
         super(game, null, Color.BLUE);
 
         DebugOutput.setPlayScreen(this);
+        TileMap.resetToFirstMap();
+
         this.mrRobot = new MrRobot();
-        this.tileMap = new TileMap("map/level16.tmx", this.mrRobot);
-//        this.mrRobot.setTileMap(this.tileMap);
+        startLevel();
         Hud.setScore(0);
 
         GamepadOverlay.initialize();
+    }
+
+    public void startLevel() {
+        Sprites.clearAll();
+        Collision.clearRectangles();
+        this.mrRobot.createSprites();
+        this.tileMap = new TileMap(TileMap.getCurrentMap(), this.mrRobot);
     }
 
     public void handleInput(float delta) {
@@ -72,6 +80,14 @@ public class PlayScreen extends AbstractBaseScreen {
      */
     @Override
     public void doRender(float delta) {
+
+
+        if(tileMap.getNumberOfDots() == 0) {
+            TileMap.switchToNextMap();
+            startLevel();
+        }
+
+
 
         // Handle controls
         handleInput(delta);

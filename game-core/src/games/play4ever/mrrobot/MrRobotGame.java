@@ -27,6 +27,8 @@ import games.play4ever.mrrobot.screens.TitleScreen;
  */
 public class MrRobotGame extends Game {
 
+    public static final String GAME_TESTING = "game.testing";
+
     // Map is 40x22 with 8x8 pixel tiles
     public static int VIRTUAL_WIDTH = 320;
     public static int VIRTUAL_HEIGHT = 176;
@@ -48,12 +50,13 @@ public class MrRobotGame extends Game {
         }
         instance = this;
 
-        if(System.getProperty("game.testing","").equalsIgnoreCase("on")) {
+        if(System.getProperty(GAME_TESTING,"").equalsIgnoreCase("on")) {
             // enable interactive testing
             testing = true;
         }
 
         ScreenUtil.initialize(VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
+        TileMap.readMapLists();
 
         Assets assets = new MrRobotAssets();
         assets.initialize();

@@ -27,6 +27,7 @@ import games.play4ever.mrrobot.actions.TeleportCompletedAction;
 import static games.play4ever.mrrobot.MrRobotState.STANDING_RIGHT;
 import static games.play4ever.mrrobot.Tiles.NO_TILE;
 import static games.play4ever.mrrobot.Tiles.TILE_BOMB;
+import static games.play4ever.mrrobot.Tiles.TILE_BOMB_EXPLODING;
 import static games.play4ever.mrrobot.Tiles.TILE_DOT;
 import static games.play4ever.mrrobot.Tiles.TILE_ELEVATOR;
 import static games.play4ever.mrrobot.Tiles.TILE_LADDER_LEFT;
@@ -119,18 +120,7 @@ public class MrRobot implements ActionListener, CollisionListener {
             }
         }
 
-        List<String> animationNames = new ArrayList<>();
-        for(ANIM animation : ANIM.values()) {
-            animationNames.add(animation.name());
-        }
-        this.mrrobotSprite = Sprites.createSprite(animationNames, SpriteTypes.MR_ROBOT);
-        this.mrrobotSprite.setDefaultCollisionBounds(7, 4, 12, 14);
-        this.mrrobotSprite.setVisible(true);
-        Collision.addRectangles(this.mrrobotSprite);
-
-        this.shieldSprite = Sprites.createSprite(ANIM.mrrobot_shield.name(), SpriteTypes.SHIELDS);
-        this.shieldSprite.setVisible(false);
-        this.shieldSprite.attachToSprite(this.mrrobotSprite, 0, 0);
+        createSprites();
 
         // Initialize pre-defined actions for Mr. Robot
 
@@ -190,6 +180,21 @@ public class MrRobot implements ActionListener, CollisionListener {
         Collision.initialize();
     }
 
+    public void createSprites() {
+        List<String> animationNames = new ArrayList<>();
+        for(ANIM animation : ANIM.values()) {
+            animationNames.add(animation.name());
+        }
+        this.mrrobotSprite = Sprites.createSprite(animationNames, SpriteTypes.MR_ROBOT);
+        this.mrrobotSprite.setDefaultCollisionBounds(7, 4, 12, 14);
+        this.mrrobotSprite.setVisible(true);
+        Collision.addRectangles(this.mrrobotSprite);
+
+        this.shieldSprite = Sprites.createSprite(ANIM.mrrobot_shield.name(), SpriteTypes.SHIELDS);
+        this.shieldSprite.setVisible(false);
+        this.shieldSprite.attachToSprite(this.mrrobotSprite, 0, 0);
+    }
+
     /**
      * @param tileMap Sets the current tilemap instance.
      */
@@ -214,8 +219,11 @@ public class MrRobot implements ActionListener, CollisionListener {
         }
         if(otherSprite.getType() == SpriteTypes.FLAMES) {
             if(shieldSprite.getCurrentAction() != null && shieldSprite.getCurrentAction().isRunning()) {
-                // Mr. Robot vanquishes flame with shield
-                Flame.getFlameOfSprite(otherSprite).die();
+                if(!Flame.getFlameOfSprite(otherSprite).isDying()) {
+                    // Mr. Robot vanquishes flame with shield
+                    Flame.getFlameOfSprite(otherSprite).die();
+                    Hud.addScore(150);
+                }
             } else if(!Flame.getFlameOfSprite(otherSprite).isDying()) {
                 // Mr. Robot dies (if flame isn't already blue / dying)
                 die();
@@ -300,12 +308,6 @@ public class MrRobot implements ActionListener, CollisionListener {
      * @param delta time since last screen refresh in seconds.
      */
     public void handleInput(float delta) {
-/*
-        DebugOutput.log("y: " + getY(), 40, 75);
-        DebugOutput.log("behind: " + tileBehindId, 40, 60);
-        DebugOutput.log("below: " + tileBelowId, 40, 46);
-        DebugOutput.log("below 2: " + tileFurtherBelowId, 40, 32);
-*/
 
         if(mrRobotState.isInputBlocked()) {
             return;
@@ -336,8 +338,15 @@ public class MrRobot implements ActionListener, CollisionListener {
 
 
         // ====================== TEMPORARY - ALLOW RESTART BY F1 =====================
-        if(Gdx.input.isKeyPressed(Input.Keys.F1)) {
-            tileMap.restart();
+        if(MrRobotGame.testing) {
+            if(Gdx.input.isKeyPressed(Input.Keys.F1)) {
+                // F1 - restart level
+                tileMap.restart();
+            } else if(Gdx.input.isKeyPressed(Input.Keys.F2)) {
+                // F2 - next level
+            } else if(Gdx.input.isKeyPressed(Input.Keys.F3)) {
+                // F3 - back to menu
+            }
         }
         // ====================== TEMPORARY - ALLOW RESTART BY F1 =====================
 
@@ -586,6 +595,8 @@ public class MrRobot implements ActionListener, CollisionListener {
             if (!isFalling() && !isJumping() && !mrRobotState.isDying()) {
                 mrrobotSprite.startAction(dropDownAction, null);
             }
+        } else if(tileBelowId == TILE_BOMB_EXPLODING) {
+            die();
         } else if(mrRobotIsClimbing()) {
             if(mrRobotState == MrRobotState.CLIMBING_UP) {
                 if(tileBehindId == NO_TILE && tileBelowId != TILE_LADDER_LEFT) {
@@ -603,6 +614,7 @@ public class MrRobot implements ActionListener, CollisionListener {
         } else {
             if(tileBelowId == TILE_DOT) {
                 tileMap.clearCell(tileMap.getTileMapCell(TileMap.CELL_TYPE.BELOW));
+                tileMap.decreaseNumberOfDots();
                 Hud.addScore(1);
             } else if(tileBelowId == TILE_BOMB && mrRobotIsNearlyAlignedVertically()) {
                 Bombs.getInstance().igniteBomb(tileBelow.getColumn(), tileBelow.getRow());

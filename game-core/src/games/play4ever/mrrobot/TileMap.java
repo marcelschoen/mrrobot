@@ -12,15 +12,18 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
+import com.badlogic.gdx.utils.Array;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import games.play4ever.libgdx.FileUtil;
 import games.play4ever.libgdx.collision.Collision;
 import games.play4ever.libgdx.sprites.AnimatedSprite;
 import games.play4ever.libgdx.sprites.Sprites;
 
 import static games.play4ever.mrrobot.MrRobotState.STANDING_RIGHT;
+import static games.play4ever.mrrobot.Tiles.TILE_DOT;
 import static games.play4ever.mrrobot.Tiles.TILE_FLAME;
 import static games.play4ever.mrrobot.Tiles.TILE_MR_ROBOT;
 import static games.play4ever.mrrobot.Tiles.TILE_ONE_UP;
@@ -45,12 +48,15 @@ public class TileMap {
     private TiledMapTile clearedFloor = null;
     private TiledMap map;
     private String filename = null;
+    private int numberOfDots = 0;
 
     private TmxMapLoader loader = new TmxMapLoader();
     private OrthogonalTiledMapRenderer tileMapRenderer;
 
     private MrRobot mrRobot;
 
+    private static Array<String> mapFileNames = new Array<>();
+    private static int currentMapIndex = 0;
 
     public enum CELL_TYPE {
         BELOW(1f),
@@ -67,18 +73,38 @@ public class TileMap {
         }
     }
 
-    public TiledMapTileSet getTileSet() {
-        return this.map.getTileSets().getTileSet(0);
+    public static void readMapLists() {
+        // Load all bitmap fonts
+        Array<String> mapList = FileUtil.readConfigTextFile("maplist.txt");
+        for(String line : mapList) {
+            mapFileNames.add("map/" + line);
+        }
     }
 
-    public TiledMapTileLayer getTiledMapTileLayer() {
-        return tiledMapTileLayer;
+    public static String getCurrentMap() {
+        return mapFileNames.get(currentMapIndex);
+    }
+
+    public static void resetToFirstMap() {
+        currentMapIndex = 0;
+    }
+
+    public static void switchToNextMap() {
+        currentMapIndex++;
+        if(currentMapIndex >= mapFileNames.size) {
+            resetToFirstMap();
+        }
+    }
+
+    public TiledMapTileSet getTileSet() {
+        return this.map.getTileSets().getTileSet(0);
     }
 
     public TileMap(String filename, MrRobot mrRobot) {
         this.filename = filename;
         this.map = loader.load(filename);
         this.mrRobot = mrRobot;
+
         Flame.flames.clear();
         Teleporter.startLevel();
 
@@ -112,6 +138,8 @@ public class TileMap {
                                 mrRobot.setTileMap(this);
                                 mrRobotStartingPositionX = x - 8;
                                 mrRobotStartingPositionY = y;
+                            } else if(tile.getId() == TILE_DOT) {
+                                numberOfDots++;
                             } else if(tile.getId() == TILE_TELEPORTER) {
                                 Teleporter.addTeleporter(cellWrapper, x - 8, y);
                             } else if(tile.getId() == TILE_ONE_UP) {
@@ -158,6 +186,17 @@ public class TileMap {
         Bombs.getInstance().initialize(this);
         Teleporter.initializeTargets();
         putCharactersAtStartingPosition();
+    }
+
+    public void decreaseNumberOfDots() {
+        numberOfDots--;
+        if(numberOfDots < 0) {
+            throw new IllegalStateException("Number of dots now negative!");
+        }
+    }
+
+    public int getNumberOfDots() {
+        return numberOfDots;
     }
 
     private void putCharactersAtStartingPosition() {

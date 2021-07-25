@@ -11,6 +11,8 @@ import java.util.Map;
 
 import games.play4ever.mrrobot.MrRobotGame;
 
+import static games.play4ever.mrrobot.MrRobotGame.GAME_TESTING;
+
 public class DesktopLauncher {
 	public static void main (String[] args) {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
@@ -22,6 +24,8 @@ public class DesktopLauncher {
 			cfg.fullscreen = true;
 		}
 		System.setProperty("desktop", "true");
+
+		System.setProperty(GAME_TESTING, "true");
 
 		if(cfg.fullscreen) {
 			Graphics.DisplayMode displayMode = findMatchingMode(cfg.width, cfg.height);
