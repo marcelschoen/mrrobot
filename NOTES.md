@@ -7,8 +7,7 @@
 * Magnets (https://www.youtube.com/watch?v=DRrW01Hfs1k / 23:06)
 ** Small magnet icons (left/right): Player picks it up, becomes magnetic for matching magnet
 * Trampolins
-* Shield also yields score points (for bonus round)
-* Bombs flames (only when standing on top of exploding bomb)
+* Bombs kill flames (only when standing on top of exploding bomb)
 * Flames move around
 * Falling down out of screen kills Mr Robot
 

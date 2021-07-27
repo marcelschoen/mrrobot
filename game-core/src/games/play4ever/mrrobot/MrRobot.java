@@ -47,8 +47,6 @@ public class MrRobot implements ActionListener, CollisionListener {
 
     public static MrRobot instance = null;
 
-
-
     private IntendedMovement intendedMovement = new IntendedMovement();
 
     public enum ANIM {
@@ -71,7 +69,7 @@ public class MrRobot implements ActionListener, CollisionListener {
     private static final float WALK_SPEED = 40;
     private static final float ROLLING_SPEED = 26;
 
-    private AnimatedSprite mrrobotSprite = null;
+    private AnimatedSprite mrRobotSprite = null;
     private AnimatedSprite shieldSprite = null;
 
     private TiledMapTileLayer.Cell cellBelow = null;
@@ -185,14 +183,14 @@ public class MrRobot implements ActionListener, CollisionListener {
         for(ANIM animation : ANIM.values()) {
             animationNames.add(animation.name());
         }
-        this.mrrobotSprite = Sprites.createSprite(animationNames, SpriteTypes.MR_ROBOT);
-        this.mrrobotSprite.setDefaultCollisionBounds(7, 4, 12, 14);
-        this.mrrobotSprite.setVisible(true);
-        Collision.addRectangles(this.mrrobotSprite);
+        this.mrRobotSprite = Sprites.createSprite(animationNames, SpriteTypes.MR_ROBOT);
+        this.mrRobotSprite.setDefaultCollisionBounds(7, 4, 12, 14);
+        this.mrRobotSprite.setVisible(true);
+        Collision.addRectangles(this.mrRobotSprite);
 
         this.shieldSprite = Sprites.createSprite(ANIM.mrrobot_shield.name(), SpriteTypes.SHIELDS);
         this.shieldSprite.setVisible(false);
-        this.shieldSprite.attachToSprite(this.mrrobotSprite, 0, 0);
+        this.shieldSprite.attachToSprite(this.mrRobotSprite, 0, 0);
     }
 
     /**
@@ -234,15 +232,15 @@ public class MrRobot implements ActionListener, CollisionListener {
     public void die() {
         if(!mrRobotState.isDying()) {
             setState(MrRobotState.DYING);
-            this.mrrobotSprite.startAction(dieByFlameAction, this);
+            this.mrRobotSprite.startAction(dieByFlameAction, this);
         }
     }
 
     /**
      * @return The Mr. Robot sprite instance.
      */
-    public AnimatedSprite getMrrobotSprite() {
-        return this.mrrobotSprite;
+    public AnimatedSprite getMrRobotSprite() {
+        return this.mrRobotSprite;
     }
 
     /**
@@ -257,11 +255,11 @@ public class MrRobot implements ActionListener, CollisionListener {
         } else if(isCrossingRightScreenBoundary(x)) {
             x = MrRobotGame.VIRTUAL_WIDTH - 19;
         }
-        this.mrrobotSprite.setPosition(x, y);
+        this.mrRobotSprite.setPosition(x, y);
         cellBelow = tileMap.getTileMapCell(TileMap.CELL_TYPE.BELOW);
         tileBehindId = tileMap.getTileMapTile(TileMap.CELL_TYPE.BEHIND);
 
-        tileBelow = (TiledMapTileCellWrapper)tileMap.getTileMapCell(this.mrrobotSprite, TileMap.CELL_TYPE.BELOW);
+        tileBelow = (TiledMapTileCellWrapper)tileMap.getTileMapCell(this.mrRobotSprite, TileMap.CELL_TYPE.BELOW);
         tileBelowId = tileBelow == null ? -1 : tileBelow.getTile().getId();
 
         tileFurtherBelowId = tileMap.getTileMapTile(TileMap.CELL_TYPE.FURTHER_BELOW);
@@ -269,7 +267,7 @@ public class MrRobot implements ActionListener, CollisionListener {
 
     public void changeState(MrRobotState state) {
         this.mrRobotState = state.changeFrom(this.mrRobotState, state);
-        this.mrrobotSprite.showAnimation(mrRobotState.getAnimationName());
+        this.mrRobotSprite.showAnimation(mrRobotState.getAnimationName());
     }
 
     public boolean isCrossingLeftScreenBoundary(float x) {
@@ -280,26 +278,30 @@ public class MrRobot implements ActionListener, CollisionListener {
         return x > MrRobotGame.VIRTUAL_WIDTH - 19;
     }
 
+    public boolean isCrossingLowerScreenBoundary(float y) {
+        return y < 0;
+    }
+
     /**
      * @param state Sets
      */
     public void setState(MrRobotState state) {
         this.mrRobotState = state;
-        this.mrrobotSprite.showAnimation(state.getAnimationName());
+        this.mrRobotSprite.showAnimation(state.getAnimationName());
     }
 
     /**
      * @return The x-coordinate of the Mr. Robot sprite in pixels.
      */
     public float getX() {
-        return this.mrrobotSprite.getX();
+        return this.mrRobotSprite.getX();
     }
 
     /**
      * @return The y-coordinate of the Mr. Robot sprite in pixels.
      */
     public float getY() {
-        return this.mrrobotSprite.getY();
+        return this.mrRobotSprite.getY();
     }
 
     /**
@@ -325,7 +327,7 @@ public class MrRobot implements ActionListener, CollisionListener {
             }
         } else if(Gdx.input.isKeyPressed(Input.Keys.DOWN) || GamepadOverlay.isDownPressed) {
             if(tileBelowId == Tiles.TILE_TELEPORTER) {
-                mrrobotSprite.startAction(teleportAction, null);
+                mrRobotSprite.startAction(teleportAction, null);
             } else if(!mrRobotIsClimbing()) {
                 tryClimbingDown();
             }
@@ -355,10 +357,10 @@ public class MrRobot implements ActionListener, CollisionListener {
         if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || GamepadOverlay.isJumpPressed) {
                 if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.LEFT)
                 || GamepadOverlay.isRightPressed || GamepadOverlay.isLeftPressed) {
-                    getMrrobotSprite().startAction(jumpSidewaysAction, null);
+                    getMrRobotSprite().startAction(jumpSidewaysAction, null);
                 } else {
                     changeState(MrRobotState.JUMPUP_RIGHT);
-                    getMrrobotSprite().startAction(jumpUpAction, this);
+                    getMrRobotSprite().startAction(jumpUpAction, this);
                 }
         }
         completeMovement();
@@ -563,8 +565,8 @@ public class MrRobot implements ActionListener, CollisionListener {
      * @param delta
      */
     public void moveMrRobot(float delta) {
-        float x = mrrobotSprite.getX();
-        float y = mrrobotSprite.getY();
+        float x = mrRobotSprite.getX();
+        float y = mrRobotSprite.getY();
         if (mrRobotState == MrRobotState.WALKING_RIGHT) {
             x += WALK_SPEED * delta;
             y = alignMrRobotVertically();
@@ -585,15 +587,17 @@ public class MrRobot implements ActionListener, CollisionListener {
      * @param delta Time delta.
      */
     public void checkMrRobot(float delta) {
-        float x = mrrobotSprite.getX() + 12f;
-        float y = mrrobotSprite.getY() + 7f;
+        float x = mrRobotSprite.getX() + 12f;
+        float y = mrRobotSprite.getY() + 7f;
 
-        float col = x / 8f;
         float line = (y / 8f) - 1f;
 
-        if(tileBelowId == NO_TILE) {
+        if(isCrossingLowerScreenBoundary(y)) {
+            // falling out of screen
+            die();
+        } else if(tileBelowId == NO_TILE) {
             if (!isFalling() && !isJumping() && !mrRobotState.isDying()) {
-                mrrobotSprite.startAction(dropDownAction, null);
+                mrRobotSprite.startAction(dropDownAction, null);
             }
         } else if(tileBelowId == TILE_BOMB_EXPLODING) {
             die();
@@ -620,18 +624,18 @@ public class MrRobot implements ActionListener, CollisionListener {
                 Bombs.getInstance().igniteBomb(tileBelow.getColumn(), tileBelow.getRow());
             }
             if(tileBelowId == TILE_ROLL_LEFT_1 || tileBelowId == TILE_ROLL_LEFT_2) {
-                setPosition(mrrobotSprite.getX() - ROLLING_SPEED * delta, mrrobotSprite.getY());
+                setPosition(mrRobotSprite.getX() - ROLLING_SPEED * delta, mrRobotSprite.getY());
             } else if(tileBelowId == TILE_ROLL_RIGHT_1 || tileBelowId == TILE_ROLL_RIGHT_2) {
-                setPosition(mrrobotSprite.getX() + ROLLING_SPEED * delta, mrrobotSprite.getY());
+                setPosition(mrRobotSprite.getX() + ROLLING_SPEED * delta, mrRobotSprite.getY());
             } else if(tileBelowId == TILE_ELEVATOR && tileBehindId == TILE_ELEVATOR && !isRisingUp() && !isJumping()) {
-                mrrobotSprite.startAction(riseUpAction, null);
+                mrRobotSprite.startAction(riseUpAction, null);
             }
         }
 
         if(line > 0) {
             if(tileFurtherBelowId == TILE_SLIDER && !isSlidingDown()
                     && !isJumping() && !isFalling()) {
-                mrrobotSprite.startAction(slideDownAction, null);
+                mrRobotSprite.startAction(slideDownAction, null);
             }
         }
     }
@@ -657,26 +661,26 @@ public class MrRobot implements ActionListener, CollisionListener {
     }
 
     public void alignMrRobotHorizontally(boolean alignLeftTile) {
-        float x = mrrobotSprite.getX() + 12;
+        float x = mrRobotSprite.getX() + 12;
         int col = (int)(x / 8f) - 2;
         if(alignLeftTile) {
             col --;
         }
-        setPosition(col * 8f + 11, mrrobotSprite.getY());
+        setPosition(col * 8f + 11, mrRobotSprite.getY());
     }
 
     public float alignMrRobotVertically() {
-        float y = mrrobotSprite.getY() + 12;
+        float y = mrRobotSprite.getY() + 12;
         int row = (int)(y / 8f) - 1;
-        setPosition(mrrobotSprite.getX(), row * 8f);
-        return mrrobotSprite.getY();
+        setPosition(mrRobotSprite.getX(), row * 8f);
+        return mrRobotSprite.getY();
     }
 
     /**
      * @return True if Mr. Robot is nearly vertically aligned with his feet (lower sprite boundary).
      */
     public boolean mrRobotIsNearlyAlignedVertically() {
-        float y = mrrobotSprite.getY();
+        float y = mrRobotSprite.getY();
         int row = (int)(y / 8f);
         float diff = y - (row * 8f);
         return Math.abs(diff) < 1.5f;
@@ -686,7 +690,7 @@ public class MrRobot implements ActionListener, CollisionListener {
      * @return True if Mr. Robot is nearly vertically aligned with his head (upper sprite boundary).
      */
     public boolean mrRobotIsNearlyAlignedVerticallyAtTop() {
-        float y = mrrobotSprite.getY();
+        float y = mrRobotSprite.getY();
         int row = (int)(y / 8f);
         float diff = y - (row * 8f);
         return diff > 1.5f;
@@ -696,7 +700,7 @@ public class MrRobot implements ActionListener, CollisionListener {
      * @return True if Mr. Robot is nearly aligned horizontally (center of sprite).
      */
     public boolean mrRobotIsNearlyAlignedHorizontally() {
-        float x = mrrobotSprite.getX() + 6f;
+        float x = mrRobotSprite.getX() + 6f;
         int col = (int)(x / 8f) + 1;
         float diff = x - (col * 8f);
         return Math.abs(diff) < 8f;

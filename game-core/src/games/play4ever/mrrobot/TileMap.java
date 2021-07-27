@@ -207,7 +207,7 @@ public class TileMap {
             flame.setState(Flame.FLAME_STATE.WALKING_LEFT);
             flame.getSprite().setVisible(true);
         }
-        mrRobot.getMrrobotSprite().setVisible(true);
+        mrRobot.getMrRobotSprite().setVisible(true);
     }
 
     /**
@@ -223,7 +223,7 @@ public class TileMap {
     }
 
     public int getTileMapTile(CELL_TYPE type) {
-        return getTileMapTile(mrRobot.getMrrobotSprite(), type);
+        return getTileMapTile(mrRobot.getMrRobotSprite(), type);
     }
 
     public int getTileMapTile(AnimatedSprite sprite, CELL_TYPE type) {
@@ -249,7 +249,7 @@ public class TileMap {
     }
 
     public TiledMapTileLayer.Cell getTileMapCell(CELL_TYPE type) {
-        return getTileMapCell(mrRobot.getMrrobotSprite(), type);
+        return getTileMapCell(mrRobot.getMrRobotSprite(), type);
     }
 
     public TiledMapTileLayer.Cell getCell(int col, int line) {
