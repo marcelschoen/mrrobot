@@ -89,7 +89,7 @@ public enum MrRobotState {
      */
     public static MrRobotState changeFrom(MrRobotState oldState, MrRobotState targetState) {
         MrRobotState result = targetState;
-        if(!(oldState.isFacingRight() && result.isFacingRight())) {
+        if(oldState.isFacingRight() != result.isFacingRight()) {
             result = result.getReverse();
         }
         return result;

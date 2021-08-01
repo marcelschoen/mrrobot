@@ -70,6 +70,7 @@ public class MrRobot implements ActionListener, CollisionListener {
 
     private static final float WALK_SPEED = 40;
     private static final float ROLLING_SPEED = 26;
+    private static final float PULLING_SPEED = 30;
 
     private AnimatedSprite mrRobotSprite = null;
     private AnimatedSprite shieldSprite = null;
@@ -89,7 +90,8 @@ public class MrRobot implements ActionListener, CollisionListener {
     private MrRobotState mrRobotState = STANDING_RIGHT;
 
     /** Pre-defined actions. */
-    private Action jumpSidewaysAction = null;
+    private Action jumpSidewaysRightAction = null;
+    private Action jumpSidewaysLeftAction = null;
     private Action jumpUpAction = null;
     private Action dieByFlameAction = null;
     private Action teleportAction = null;
@@ -131,8 +133,12 @@ public class MrRobot implements ActionListener, CollisionListener {
 
         // we keep a specific reference to the movement action within the sideays jump, to be
         // able to set the direction at the time of commencing the jump
-        jumpSidewaysAction = new ActionBuilder()
-                .custom(new JumpSidewaysAction(this))
+        jumpSidewaysRightAction = new ActionBuilder()
+                .custom(new JumpSidewaysAction(this, false))
+                .custom(new FallDownAction(this))
+                .build();
+        jumpSidewaysLeftAction = new ActionBuilder()
+                .custom(new JumpSidewaysAction(this, true))
                 .custom(new FallDownAction(this))
                 .build();
         jumpUpAction = new ActionBuilder()
@@ -174,12 +180,10 @@ public class MrRobot implements ActionListener, CollisionListener {
                 .setVisibility(false, 0.f)
                 .build();
         magnetLeftAction = new ActionBuilder()
-                .debugLog("Picked up magnet left....", 5)
-                .debugLog("Magnet left used up.", 1)
+                .debugLog("Picked up magnet left....", 10)
                 .build();
         magnetRightAction = new ActionBuilder()
-                .debugLog("Picked up magnet right....", 5)
-                .debugLog("Magnet right used up.", 1)
+                .debugLog("Picked up magnet right....", 10)
                 .build();
         dieByFlameAction = new ActionBuilder()
                 .setAnimation(ANIM.mrrobot_dies.name())
@@ -379,9 +383,11 @@ public class MrRobot implements ActionListener, CollisionListener {
 
 
         if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || GamepadOverlay.isJumpPressed) {
-                if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.LEFT)
-                || GamepadOverlay.isRightPressed || GamepadOverlay.isLeftPressed) {
-                    getMrRobotSprite().startAction(jumpSidewaysAction, null);
+                if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)
+                || GamepadOverlay.isRightPressed) {
+                    getMrRobotSprite().startAction(jumpSidewaysRightAction, null);
+                } else if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || GamepadOverlay.isLeftPressed) {
+                    getMrRobotSprite().startAction(jumpSidewaysLeftAction, null);
                 } else {
                     changeState(MrRobotState.JUMPUP_RIGHT);
                     getMrRobotSprite().startAction(jumpUpAction, this);
@@ -446,7 +452,6 @@ public class MrRobot implements ActionListener, CollisionListener {
 
     @Override
     public void completed(Action completedAction) {
-        Gdx.app.log("MrRobot", "Completed: " + completedAction.getFirstActionInChain().getClass().getSimpleName());
         if(completedAction.getFirstActionInChain() == dieByFlameAction) {
             // handle death
             Hud.removeLive();
@@ -653,11 +658,10 @@ public class MrRobot implements ActionListener, CollisionListener {
             } else if(tileBelowId == TILE_BOMB && mrRobotIsNearlyAlignedVertically()) {
                 Bombs.getInstance().igniteBomb(tileBelow.getColumn(), tileBelow.getRow());
             }
-            if(magnetLeftActive && Magnets.isMagnetLeftClose(getX(), getY())) {
-                setPosition(mrRobotSprite.getX() + ROLLING_SPEED * delta, mrRobotSprite.getY());
-            }
-            if(magnetRightActive && Magnets.isMagnetRightClose(getX(), getY())) {
-                setPosition(mrRobotSprite.getX() - ROLLING_SPEED * delta, mrRobotSprite.getY());
+            if(magnetLeftActive && (getState() == MrRobotState.JUMP_RIGHT || getState() == MrRobotState.FALL_RIGHT) && Magnets.isMagnetLeftClose(getX(), getY())) {
+                setPosition(mrRobotSprite.getX() + PULLING_SPEED * delta, mrRobotSprite.getY());
+            } else if(magnetRightActive && (getState() == MrRobotState.JUMP_LEFT || getState() == MrRobotState.FALL_LEFT) && Magnets.isMagnetRightClose(getX(), getY())) {
+                setPosition(mrRobotSprite.getX() - PULLING_SPEED * delta, mrRobotSprite.getY());
             }
             if(tileBelowId == TILE_ROLL_LEFT_1 || tileBelowId == TILE_ROLL_LEFT_2) {
                 setPosition(mrRobotSprite.getX() - ROLLING_SPEED * delta, mrRobotSprite.getY());

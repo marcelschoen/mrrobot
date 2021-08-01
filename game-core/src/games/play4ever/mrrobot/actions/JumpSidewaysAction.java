@@ -3,6 +3,7 @@ package games.play4ever.mrrobot.actions;
 import games.play4ever.libgdx.sprites.action.Action;
 import games.play4ever.mrrobot.MrRobot;
 
+import static games.play4ever.mrrobot.MrRobotState.JUMP_LEFT;
 import static games.play4ever.mrrobot.MrRobotState.JUMP_RIGHT;
 
 /**
@@ -17,19 +18,26 @@ public class JumpSidewaysAction extends Action {
     /** Reference to Mr. Robot */
     private MrRobot mrRobot = null;
 
+    private boolean isLeft = true;
+
     /**
      * Creates the teleport action.
      *
      * @param mrRobot The Mr. Robot instance.
      */
-    public JumpSidewaysAction(MrRobot mrRobot) {
+    public JumpSidewaysAction(MrRobot mrRobot, boolean isLeft) {
         this.mrRobot = mrRobot;
+        this.isLeft = isLeft;
     }
 
     @Override
     public void doStart() {
-        setDuration(0.5f);
-        mrRobot.changeState(JUMP_RIGHT);
+        setDuration(0.4f);
+        if(!isLeft) {
+            mrRobot.changeState(JUMP_RIGHT);
+        } else {
+            mrRobot.changeState(JUMP_LEFT);
+        }
     }
 
     @Override
