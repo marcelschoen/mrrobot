@@ -9,4 +9,8 @@ public class SpriteTypes {
     public static int SHIELDS = 3;
 
     public static int ONE_UP = 4;
+
+    public static int MAGNET_LEFT = 5;
+
+    public static int MAGNET_RIGHT = 6;
 }

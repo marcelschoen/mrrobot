@@ -25,6 +25,10 @@ import games.play4ever.libgdx.sprites.Sprites;
 import static games.play4ever.mrrobot.MrRobotState.STANDING_RIGHT;
 import static games.play4ever.mrrobot.Tiles.TILE_DOT;
 import static games.play4ever.mrrobot.Tiles.TILE_FLAME;
+import static games.play4ever.mrrobot.Tiles.TILE_MAGNET_ITEM_LEFT;
+import static games.play4ever.mrrobot.Tiles.TILE_MAGNET_ITEM_RIGHT;
+import static games.play4ever.mrrobot.Tiles.TILE_MAGNET_LEFT;
+import static games.play4ever.mrrobot.Tiles.TILE_MAGNET_RIGHT;
 import static games.play4ever.mrrobot.Tiles.TILE_MR_ROBOT;
 import static games.play4ever.mrrobot.Tiles.TILE_ONE_UP;
 import static games.play4ever.mrrobot.Tiles.TILE_SHIELD;
@@ -106,6 +110,7 @@ public class TileMap {
         this.mrRobot = mrRobot;
 
         Flame.flames.clear();
+        Magnets.reset();
         Teleporter.startLevel();
 
         this.clearedFloor = this.map.getTileSets().getTileSet(0).getTile(3);
@@ -154,8 +159,6 @@ public class TileMap {
                                 AnimatedTiledMapTile animatedTiledMapTile = (AnimatedTiledMapTile)tiledMapTileLayer.getCell(colCt, lineCt).getTile();
                                 tiledMapTileLayer.setCell(colCt, lineCt, null);
                                 AnimatedSprite shieldItem = Sprites.createSprite(animatedTiledMapTile, SpriteTypes.SHIELDS);
-
-//                                AnimatedSprite shieldItem = Sprites.createSprite(MrRobot.ANIM.shield_item.name(), SpriteTypes.SHIELDS);
                                 shieldItem.setPosition(x, y);
                                 shieldItem.setVisible(true);
                                 shieldItem.setDefaultCollisionBounds(0, 0, 8, 8);
@@ -170,6 +173,33 @@ public class TileMap {
                                 flameStartingPosition[0] = x - 8;
                                 flameStartingPosition[1] = y;
                                 flameStartingPositions.put(flame, flameStartingPosition);
+                            } else if(tile.getId() == TILE_MAGNET_ITEM_LEFT) {
+                                TiledMapTile tiledMapTile = (TiledMapTile)tiledMapTileLayer.getCell(colCt, lineCt).getTile();
+                                AnimatedSprite magnetLeftItem = Sprites.createSprite(tiledMapTile, 50, SpriteTypes.MAGNET_LEFT);
+                                tiledMapTileLayer.setCell(colCt, lineCt, null);
+                                magnetLeftItem.setPosition(x, y);
+                                magnetLeftItem.setVisible(true);
+                                magnetLeftItem.setDefaultCollisionBounds(0, 0, 8, 8);
+                                Collision.addRectangles(magnetLeftItem);
+                            } else if(tile.getId() == TILE_MAGNET_ITEM_RIGHT) {
+                                TiledMapTile tiledMapTile = (TiledMapTile)tiledMapTileLayer.getCell(colCt, lineCt).getTile();
+                                AnimatedSprite magnetRightItem = Sprites.createSprite(tiledMapTile, 50, SpriteTypes.MAGNET_LEFT);
+                                tiledMapTileLayer.setCell(colCt, lineCt, null);
+                                magnetRightItem.setPosition(x, y);
+                                magnetRightItem.setVisible(true);
+                                Collision.addRectangles(magnetRightItem);
+                            } else if(tile.getId() == TILE_MAGNET_LEFT) {
+                                tiledMapTileLayer.setCell(colCt, lineCt, null);
+                                AnimatedSprite magnetLeft = Sprites.createSprite(MrRobot.ANIM.magnet_left.name());
+                                magnetLeft.setPosition(x, y);
+                                magnetLeft.setVisible(true);
+                                Magnets.addMagnetLeft(magnetLeft);
+                            } else if(tile.getId() == TILE_MAGNET_RIGHT) {
+                                tiledMapTileLayer.setCell(colCt, lineCt, null);
+                                AnimatedSprite magnetRight = Sprites.createSprite(MrRobot.ANIM.magnet_right.name());
+                                magnetRight.setPosition(x, y);
+                                magnetRight.setVisible(true);
+                                Magnets.addMagnetRight(magnetRight);
                             }
                         }
                     }

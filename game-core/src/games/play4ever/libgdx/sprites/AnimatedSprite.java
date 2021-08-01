@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.utils.Array;
@@ -73,7 +74,21 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	/**
 	 * Create an animated sprite from an animated Tiled-map tile.
 	 *
-	 * @param animatedTiledMapTile
+	 * @param tiledMapTile The Tiled map tile from which to create a sprite.
+	 * @param duration The time in ms for how long to show one frame.
+	 * @param type The arbitrary sprite type.
+	 */
+	public AnimatedSprite(TiledMapTile tiledMapTile, float duration, int type) {
+		setType(type);
+		TextureRegion texture = tiledMapTile.getTextureRegion();
+		initializeAnimationAndType(new TextureRegion[] { texture }, "tile-" + tiledMapTile.getId(), duration, type);
+	}
+
+	/**
+	 * Create an animated sprite from an animated Tiled-map tile.
+	 *
+	 * @param animatedTiledMapTile The animated Tiled map tile from which to create a sprite.
+	 * @param type The arbitrary sprite type.
 	 */
 	public AnimatedSprite(AnimatedTiledMapTile animatedTiledMapTile, int type) {
 		setType(type);
@@ -82,14 +97,29 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 
 		StaticTiledMapTile[] tiles = animatedTiledMapTile.getFrameTiles();
 		TextureRegion[] textures = new TextureRegion[tiles.length];
+
 		int ct = 0;
 		for(StaticTiledMapTile tile : tiles) {
 			textures[ct++] = tile.getTextureRegion();
 		}
+
+		initializeAnimationAndType(textures, "tile-" + animatedTiledMapTile.getId(), duration, type);
+	}
+
+	/**
+	 * Initialize an animated sprite from a set of texture regions.
+	 *
+	 * @param textures The texture regions with the graphics for the animation frames.
+	 * @param animationName The name of the animation.
+	 * @param duration The time in ms for how long to show one frame.
+	 * @param type The sprite type.
+	 */
+	public void initializeAnimationAndType(TextureRegion[] textures, String animationName, float duration, int type) {
+		setType(type);
+
 		Animation<TextureRegion> animation = new Animation<>(duration, textures);
 		animation.setPlayMode(Animation.PlayMode.LOOP);
 
-		String animationName = "tile-" + animatedTiledMapTile.getId();
 		addAnimation(animationName, animation);
 		showAnimation(animationName);
 	}

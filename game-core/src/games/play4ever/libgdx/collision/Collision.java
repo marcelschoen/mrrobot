@@ -1,9 +1,7 @@
 package games.play4ever.libgdx.collision;
 
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 import games.play4ever.libgdx.sprites.AnimatedSprite;
@@ -22,21 +20,6 @@ public class Collision {
     private static Rectangle overlapRectangle = new Rectangle();
     private static CollisionRectangle checkOne = new CollisionRectangle();
     private static CollisionRectangle checkTwo = new CollisionRectangle();
-
-    /**
-     *
-     */
-    public static void initialize() {
-        /*
-        rectangles = new Array<>(sprites.size);
-        Array<AnimatedSprite> sprites = Sprites.getSprites();
-        for(AnimatedSprite sprite : sprites) {
-            if(sprite != null) {
-                addRectangles(sprite);
-            }
-        }
-         */
-    }
 
     public static void addListener(CollisionListener listener) {
         listeners.add(listener);
@@ -103,25 +86,5 @@ public class Collision {
         if(Intersector.intersectRectangles(one, two, overlapRectangle)) {
             notifyListeners(one.getSprite(), two.getSprite(), overlapRectangle);
         }
-    }
-
-
-    /**
-     * Processes the given tiled map to provide collision detection for all of its tiles.
-     *
-     * @param tiledMap
-     */
-    public static void processTileMap(TiledMap tiledMap) {
-
-    }
-
-    public static void registerCollisionsForMapTiles(Vector2 position) {
-
-    }
-    public static void registerCollisionsForMapTiles(Array<Vector2> position) {
-
-    }
-    public static void registerCollisionsForAllMapTiles() {
-
     }
 }

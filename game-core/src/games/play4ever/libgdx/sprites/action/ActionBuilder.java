@@ -69,6 +69,19 @@ public class ActionBuilder {
         return this;
     }
 
+    /**
+     * Creates a debug logging action.
+     *
+     * @param text The text to be logged.
+     * @param duration The duration for the action in ms.
+     * @return this action builder instance.
+     */
+    public ActionBuilder debugLog(String text, float duration) {
+        DebugLogAction debugLogAction = (DebugLogAction)addAction(new DebugLogAction());
+        debugLogAction.log(text, duration);
+        return this;
+    }
+
     public ActionBuilder stayPut(float secDuration){
         StayPutAction newAction = (StayPutAction)addAction(new StayPutAction());
         newAction.stayPut(secDuration);

@@ -63,7 +63,9 @@ public class MrRobot implements ActionListener, CollisionListener {
         mrrobot_dies,
         mrrobot_teleport,
         mrrobot_shield,
-        shield_item
+        shield_item,
+        magnet_left,
+        magnet_right
     };
 
     private static final float WALK_SPEED = 40;
@@ -81,6 +83,9 @@ public class MrRobot implements ActionListener, CollisionListener {
 
     private TileMap tileMap;
 
+    private boolean magnetRightActive = false;
+    private boolean magnetLeftActive = false;
+
     private MrRobotState mrRobotState = STANDING_RIGHT;
 
     /** Pre-defined actions. */
@@ -89,6 +94,8 @@ public class MrRobot implements ActionListener, CollisionListener {
     private Action dieByFlameAction = null;
     private Action teleportAction = null;
     private Action shieldAction = null;
+    private Action magnetLeftAction = null;
+    private Action magnetRightAction = null;
     private Action slideDownAction = null;
     private Action dropDownAction = null;
     private Action riseUpAction = null;
@@ -166,6 +173,14 @@ public class MrRobot implements ActionListener, CollisionListener {
                 .setVisibility(true, 0.3f)
                 .setVisibility(false, 0.f)
                 .build();
+        magnetLeftAction = new ActionBuilder()
+                .debugLog("Picked up magnet left....", 5)
+                .debugLog("Magnet left used up.", 1)
+                .build();
+        magnetRightAction = new ActionBuilder()
+                .debugLog("Picked up magnet right....", 5)
+                .debugLog("Magnet right used up.", 1)
+                .build();
         dieByFlameAction = new ActionBuilder()
                 .setAnimation(ANIM.mrrobot_dies.name())
                 .stayPut(0.3f)
@@ -175,7 +190,6 @@ public class MrRobot implements ActionListener, CollisionListener {
                 .build();
 
         Collision.addListener(this);
-        Collision.initialize();
     }
 
     public void createSprites() {
@@ -206,9 +220,19 @@ public class MrRobot implements ActionListener, CollisionListener {
         if(spriteOne.getType() != SpriteTypes.MR_ROBOT) {
             otherSprite = spriteOne;
         }
+        if(otherSprite.getType() == SpriteTypes.MAGNET_LEFT) {
+            otherSprite.startAction(magnetLeftAction, this);
+            otherSprite.setVisible(false);
+            magnetLeftActive = true;
+        }
+        if(otherSprite.getType() == SpriteTypes.MAGNET_RIGHT) {
+            otherSprite.startAction(magnetRightAction, this);
+            otherSprite.setVisible(false);
+            magnetRightActive = true;
+        }
         if(otherSprite.getType() == SpriteTypes.SHIELDS) {
             Hud.addScore(100);
-            shieldSprite.startAction(shieldAction, null);
+            shieldSprite.startAction(shieldAction, this);
             otherSprite.setVisible(false);
         }
         if(otherSprite.getType() == SpriteTypes.ONE_UP) {
@@ -430,6 +454,12 @@ public class MrRobot implements ActionListener, CollisionListener {
 
             // reset Mr. Robot and flames and optionally rest of map
             this.tileMap.restart();
+        } else if(completedAction.getFirstActionInChain() == magnetLeftAction) {
+            // magnet left item is used up
+            magnetLeftActive = false;
+        } else if(completedAction.getFirstActionInChain() == magnetRightAction) {
+            // magnet right item is used up
+            magnetRightActive = false;
         }
     }
 
@@ -622,6 +652,12 @@ public class MrRobot implements ActionListener, CollisionListener {
                 Hud.addScore(1);
             } else if(tileBelowId == TILE_BOMB && mrRobotIsNearlyAlignedVertically()) {
                 Bombs.getInstance().igniteBomb(tileBelow.getColumn(), tileBelow.getRow());
+            }
+            if(magnetLeftActive && Magnets.isMagnetLeftClose(getX(), getY())) {
+                setPosition(mrRobotSprite.getX() + ROLLING_SPEED * delta, mrRobotSprite.getY());
+            }
+            if(magnetRightActive && Magnets.isMagnetRightClose(getX(), getY())) {
+                setPosition(mrRobotSprite.getX() - ROLLING_SPEED * delta, mrRobotSprite.getY());
             }
             if(tileBelowId == TILE_ROLL_LEFT_1 || tileBelowId == TILE_ROLL_LEFT_2) {
                 setPosition(mrRobotSprite.getX() - ROLLING_SPEED * delta, mrRobotSprite.getY());

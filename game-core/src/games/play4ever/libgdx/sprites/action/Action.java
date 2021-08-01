@@ -103,6 +103,14 @@ public abstract class Action {
         return result;
     }
 
+    public Action getLastActionInChain() {
+        Action result = this;
+        while(result.followUpAction != null) {
+            result = result.followUpAction;
+        }
+        return result;
+    }
+
     public Action runFollowUpAction() {
         if(followUpAction != null) {
             followUpAction.start(sprite, listener);

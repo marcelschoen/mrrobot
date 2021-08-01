@@ -3,6 +3,7 @@ package games.play4ever.libgdx.sprites;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
 import com.badlogic.gdx.utils.Array;
 
@@ -58,9 +59,7 @@ public class Sprites {
         sprites.add(sprite);
         return sprite;
     }
-    public static void addSprite(AnimatedSprite sprite) {
-        sprites.add(sprite);
-}
+
     public static AnimatedSprite createSprite(String animationName, int type) {
         AnimatedSprite sprite = createSprite(animationName);
         sprite.setType(type);
@@ -96,6 +95,13 @@ public class Sprites {
     public static AnimatedSprite createSprite(List<String> animationNames, int type) {
         AnimatedSprite sprite = createSprite(animationNames);
         sprite.setType(type);
+        return sprite;
+    }
+
+    public static AnimatedSprite createSprite(TiledMapTile tiledMapTile, float duration, int type) {
+        AnimatedSprite sprite = new AnimatedSprite(tiledMapTile, duration, type);
+        sprite.setType(type);
+        sprites.add(sprite);
         return sprite;
     }
 
