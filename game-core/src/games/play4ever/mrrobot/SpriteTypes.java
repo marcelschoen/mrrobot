@@ -13,4 +13,6 @@ public class SpriteTypes {
     public static int MAGNET_LEFT = 5;
 
     public static int MAGNET_RIGHT = 6;
+
+    public static int TRAMPOLINES = 7;
 }

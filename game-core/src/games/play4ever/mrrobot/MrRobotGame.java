@@ -33,7 +33,7 @@ public class MrRobotGame extends Game {
     public static int VIRTUAL_WIDTH = 320;
     public static int VIRTUAL_HEIGHT = 176;
 
-    public static boolean testing = false;
+    public static boolean testing = true; // TODO >>>>>>>>>>>>>>>>>>>>> CHANGE DEFAULT
 
     /** Singleton instance of game. */
     private static MrRobotGame instance = null;

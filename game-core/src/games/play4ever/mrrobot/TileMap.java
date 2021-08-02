@@ -33,6 +33,10 @@ import static games.play4ever.mrrobot.Tiles.TILE_MR_ROBOT;
 import static games.play4ever.mrrobot.Tiles.TILE_ONE_UP;
 import static games.play4ever.mrrobot.Tiles.TILE_SHIELD;
 import static games.play4ever.mrrobot.Tiles.TILE_TELEPORTER;
+import static games.play4ever.mrrobot.Tiles.TILE_TRAMPOLINE_END;
+import static games.play4ever.mrrobot.Tiles.TILE_TRAMPOLINE_LEFT;
+import static games.play4ever.mrrobot.Tiles.TILE_TRAMPOLINE_MIDDLE;
+import static games.play4ever.mrrobot.Tiles.TILE_TRAMPOLINE_RIGHT;
 
 /**
  * Encapsulates tilemap-related functionality.
@@ -121,7 +125,7 @@ public class TileMap {
             if(layer instanceof TiledMapTileLayer) {
                 this.tiledMapTileLayer = (TiledMapTileLayer)layer;
                 Gdx.app.log("TileMap", "==>> layer size: " + tiledMapTileLayer.getWidth() + " by " + tiledMapTileLayer.getHeight());
-                Gdx.app.log("TileMap", "==>> tile 0,0: " + tiledMapTileLayer.getCell(0,0).getTile().getId());
+//                Gdx.app.log("TileMap", "==>> tile 0,0: " + tiledMapTileLayer.getCell(0,0).getTile().getId());
                 for(int lineCt = tiledMapTileLayer.getHeight() - 1; lineCt > -1; lineCt --) {
                     String line = "";
                     for(int colCt = 0; colCt < tiledMapTileLayer.getWidth(); colCt ++) {
@@ -200,6 +204,11 @@ public class TileMap {
                                 magnetRight.setPosition(x, y);
                                 magnetRight.setVisible(true);
                                 Magnets.addMagnetRight(magnetRight);
+                            } else if(tile.getId() == TILE_TRAMPOLINE_LEFT) {
+                                replaceTrampolineTilesWithSprite(colCt, lineCt);
+                                AnimatedSprite trampoline = Sprites.createSprite(MrRobot.ANIM.trampoline_still.name(), SpriteTypes.TRAMPOLINES);
+                                trampoline.setPosition(x, y);
+                                trampoline.setVisible(true);
                             }
                         }
                     }
@@ -216,6 +225,19 @@ public class TileMap {
         Bombs.getInstance().initialize(this);
         Teleporter.initializeTargets();
         putCharactersAtStartingPosition();
+    }
+
+    private void replaceTrampolineTilesWithSprite(int startColumn, int row) {
+        // Use two transparent tiles "behind" the sprite, so that Mr. Robot can stand on them
+        TiledMapTile emptyTile1 = map.getTileSets().getTile(TILE_TRAMPOLINE_END);
+        TiledMapTile emptyTile2 = map.getTileSets().getTile(TILE_TRAMPOLINE_MIDDLE);
+        tiledMapTileLayer.getCell(startColumn, row).setTile(emptyTile1);
+        int col = startColumn + 1;
+        while(col < this.tiledMapTileLayer.getWidth() && tiledMapTileLayer.getCell(col, row).getTile().getId() != TILE_TRAMPOLINE_RIGHT) {
+            tiledMapTileLayer.getCell(col, row).setTile(emptyTile2);
+            col++;
+        }
+        tiledMapTileLayer.getCell(col, row).setTile(emptyTile1);
     }
 
     public void decreaseNumberOfDots() {

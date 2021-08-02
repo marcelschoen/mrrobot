@@ -12,6 +12,9 @@ public class Tiles {
 
     public static final int NO_TILE = -1;
 
+    public static final int TILE_TRAMPOLINE_END = 256;
+    public static final int TILE_TRAMPOLINE_MIDDLE = 257;
+
     public static final int TILE_DOT = 2;
     public static final int TILE_SLIDER = 17;
     public static final int TILE_ROLL_RIGHT_1 = 12;
@@ -21,8 +24,6 @@ public class Tiles {
     public static final int TILE_ELEVATOR = 16;
     public static final int TILE_TELEPORTER = 10;
     public static final int TILE_SHIELD = 9;
-    public static final int TILE_MAGNET_TO_LEFT = 25;
-    public static final int TILE_MAGNET_TO_RIGHT = 26;
 
     public static final int TILE_BOMB_IGNITING = 20;
     public static final int TILE_BOMB_BURNING = 84;
@@ -45,5 +46,4 @@ public class Tiles {
     public static final int TILE_TRAMPOLINE_LEFT = 22;
     public static final int TILE_TRAMPOLINE = 23;
     public static final int TILE_TRAMPOLINE_RIGHT = 24;
-    public static final int TILE_TRAMPOLINE_BOUNCE = 28;
 }

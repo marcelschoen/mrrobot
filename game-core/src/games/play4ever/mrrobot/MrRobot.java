@@ -23,6 +23,7 @@ import games.play4ever.mrrobot.actions.RiseUpAction;
 import games.play4ever.mrrobot.actions.SlideDownAction;
 import games.play4ever.mrrobot.actions.TeleportAction;
 import games.play4ever.mrrobot.actions.TeleportCompletedAction;
+import games.play4ever.mrrobot.screens.PlayScreen;
 
 import static games.play4ever.mrrobot.MrRobotState.STANDING_RIGHT;
 import static games.play4ever.mrrobot.Tiles.NO_TILE;
@@ -65,7 +66,10 @@ public class MrRobot implements ActionListener, CollisionListener {
         mrrobot_shield,
         shield_item,
         magnet_left,
-        magnet_right
+        magnet_right,
+        trampoline_still,
+        trampoline_small,
+        trampoline_big
     };
 
     private static final float WALK_SPEED = 40;
@@ -102,9 +106,12 @@ public class MrRobot implements ActionListener, CollisionListener {
     private Action dropDownAction = null;
     private Action riseUpAction = null;
 
+    private PlayScreen playScreen = null;
+
     /**
      */
-    public MrRobot() {
+    public MrRobot(PlayScreen playScreen) {
+        this.playScreen = playScreen;
         if(instance != null) {
             throw new IllegalStateException("MrRobot must exist only once!");
         }
@@ -370,11 +377,16 @@ public class MrRobot implements ActionListener, CollisionListener {
         // ====================== TEMPORARY - ALLOW RESTART BY F1 =====================
         if(MrRobotGame.testing) {
             if(Gdx.input.isKeyPressed(Input.Keys.F1)) {
+                Gdx.app.log("MrRobot", ">>>> F1");
                 // F1 - restart level
                 tileMap.restart();
             } else if(Gdx.input.isKeyPressed(Input.Keys.F2)) {
+                Gdx.app.log("MrRobot", ">>>> F2");
                 // F2 - next level
+                TileMap.switchToNextMap();
+                playScreen.startLevel();
             } else if(Gdx.input.isKeyPressed(Input.Keys.F3)) {
+                Gdx.app.log("MrRobot", ">>>> F3");
                 // F3 - back to menu
             }
         }
@@ -383,8 +395,7 @@ public class MrRobot implements ActionListener, CollisionListener {
 
 
         if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || GamepadOverlay.isJumpPressed) {
-                if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)
-                || GamepadOverlay.isRightPressed) {
+                if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || GamepadOverlay.isRightPressed) {
                     getMrRobotSprite().startAction(jumpSidewaysRightAction, null);
                 } else if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || GamepadOverlay.isLeftPressed) {
                     getMrRobotSprite().startAction(jumpSidewaysLeftAction, null);
@@ -394,6 +405,13 @@ public class MrRobot implements ActionListener, CollisionListener {
                 }
         }
         completeMovement();
+    }
+
+    public void startLevel() {
+        Sprites.clearAll();
+        Collision.clearRectangles();
+        createSprites();
+        this.tileMap = new TileMap(TileMap.getCurrentMap(), this);
     }
 
     public void moveRight() {
@@ -439,6 +457,7 @@ public class MrRobot implements ActionListener, CollisionListener {
             }
         }
     }
+
     public void completeMovement() {
         if(intendedMovement.MrRobotState != null) {
             // Mr. Roobot can only move around if he isn't currently falling down
