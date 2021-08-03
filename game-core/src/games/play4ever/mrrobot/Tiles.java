@@ -44,6 +44,5 @@ public class Tiles {
     public static final int TILE_MAGNET_ITEM_RIGHT = 59;
 
     public static final int TILE_TRAMPOLINE_LEFT = 22;
-    public static final int TILE_TRAMPOLINE = 23;
     public static final int TILE_TRAMPOLINE_RIGHT = 24;
 }

@@ -18,6 +18,8 @@ public class DropDownAction extends Action {
 
     private static final float DOWN_SPEED = 32;
 
+    private int startingHeight = -1;
+
     /** Reference to Mr. Robot */
     private MrRobot mrRobot = null;
 
@@ -28,6 +30,10 @@ public class DropDownAction extends Action {
      */
     public DropDownAction(MrRobot mrRobot) {
         this.mrRobot = mrRobot;
+    }
+
+    public void setStartingHeight(int startingHeight) {
+        this.startingHeight = startingHeight;
     }
 
     @Override
@@ -47,6 +53,10 @@ public class DropDownAction extends Action {
                 && tileBelowId != TILE_LADDER_LEFT && tileBelowId != TILE_LADDER_RIGHT) {
             if (mrRobot.mrRobotIsNearlyAlignedVertically()) {
                 mrRobot.mrRobotLands();
+                int fallHeight = startingHeight - mrRobot.getCellBelow().getRow();
+                if(fallHeight > 4) {
+                    mrRobot.die();
+                }
                 return true;
             }
         }

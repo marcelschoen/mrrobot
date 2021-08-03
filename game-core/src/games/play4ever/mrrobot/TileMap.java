@@ -187,10 +187,11 @@ public class TileMap {
                                 Collision.addRectangles(magnetLeftItem);
                             } else if(tile.getId() == TILE_MAGNET_ITEM_RIGHT) {
                                 TiledMapTile tiledMapTile = (TiledMapTile)tiledMapTileLayer.getCell(colCt, lineCt).getTile();
-                                AnimatedSprite magnetRightItem = Sprites.createSprite(tiledMapTile, 50, SpriteTypes.MAGNET_LEFT);
-                                tiledMapTileLayer.setCell(colCt, lineCt, null);
+                                AnimatedSprite magnetRightItem = Sprites.createSprite(tiledMapTile, 50, SpriteTypes.MAGNET_RIGHT);
                                 magnetRightItem.setPosition(x, y);
                                 magnetRightItem.setVisible(true);
+                                tiledMapTileLayer.setCell(colCt, lineCt, null);
+                                magnetRightItem.setDefaultCollisionBounds(0, 0, 8, 8);
                                 Collision.addRectangles(magnetRightItem);
                             } else if(tile.getId() == TILE_MAGNET_LEFT) {
                                 tiledMapTileLayer.setCell(colCt, lineCt, null);
@@ -206,9 +207,11 @@ public class TileMap {
                                 Magnets.addMagnetRight(magnetRight);
                             } else if(tile.getId() == TILE_TRAMPOLINE_LEFT) {
                                 replaceTrampolineTilesWithSprite(colCt, lineCt);
-                                AnimatedSprite trampoline = Sprites.createSprite(MrRobot.ANIM.trampoline_still.name(), SpriteTypes.TRAMPOLINES);
-                                trampoline.setPosition(x, y);
-                                trampoline.setVisible(true);
+                                AnimatedSprite trampolineSprite = Sprites.createSprite(MrRobot.ANIM.trampoline_still.name(), SpriteTypes.TRAMPOLINES);
+                                trampolineSprite.setPosition(x, y);
+                                trampolineSprite.setVisible(true);
+                                Trampoline trampoline = new Trampoline(trampolineSprite);
+                                Trampolins.addTrampoline(colCt, lineCt, trampoline);
                             }
                         }
                     }
@@ -240,6 +243,9 @@ public class TileMap {
         tiledMapTileLayer.getCell(col, row).setTile(emptyTile1);
     }
 
+    /**
+     * Counts down by one dot, after Mr. Robot consumed one by walking over it.
+     */
     public void decreaseNumberOfDots() {
         numberOfDots--;
         if(numberOfDots < 0) {
@@ -247,10 +253,17 @@ public class TileMap {
         }
     }
 
+    /**
+     * @return The number of remaining dots before the level is completed.
+     */
     public int getNumberOfDots() {
         return numberOfDots;
     }
 
+    /**
+     * Reset Mr. Robot and the flame sprites to their starting positions in the level (after
+     * Mr. Robot has died).
+     */
     private void putCharactersAtStartingPosition() {
         mrRobot.setPosition(mrRobotStartingPositionX, mrRobotStartingPositionY);
         mrRobot.setState(STANDING_RIGHT);
@@ -264,7 +277,6 @@ public class TileMap {
 
     /**
      * Resets the map (when the player dies).
-     *
      */
     public void restart() {
         putCharactersAtStartingPosition();
@@ -304,6 +316,13 @@ public class TileMap {
         return getTileMapCell(mrRobot.getMrRobotSprite(), type);
     }
 
+    /**
+     * Returns a cell from the tile map.
+     *
+     * @param col The column for the tile.
+     * @param line The line (row) for the tile.
+     * @return The tile at the position (may be null).
+     */
     public TiledMapTileLayer.Cell getCell(int col, int line) {
         TiledMapTileLayer.Cell cell = tiledMapTileLayer.getCell(col, line);
         if(cell == null) {
@@ -315,6 +334,12 @@ public class TileMap {
         return cell;
     }
 
+    /**
+     * Renders the tile map.
+     *
+     * @param delta The time delta
+     * @param camera The 2D camera.
+     */
     public void doRender(float delta, Camera camera) {
         this.tileMapRenderer.setView((OrthographicCamera) camera);
         tileMapRenderer.render();

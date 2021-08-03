@@ -97,7 +97,7 @@ public class MrRobot implements ActionListener, CollisionListener {
     private Action jumpSidewaysRightAction = null;
     private Action jumpSidewaysLeftAction = null;
     private Action jumpUpAction = null;
-    private Action dieByFlameAction = null;
+    private Action dyingAction = null;
     private Action teleportAction = null;
     private Action shieldAction = null;
     private Action magnetLeftAction = null;
@@ -192,7 +192,7 @@ public class MrRobot implements ActionListener, CollisionListener {
         magnetRightAction = new ActionBuilder()
                 .debugLog("Picked up magnet right....", 10)
                 .build();
-        dieByFlameAction = new ActionBuilder()
+        dyingAction = new ActionBuilder()
                 .setAnimation(ANIM.mrrobot_dies.name())
                 .stayPut(0.3f)
                 .setAnimation(ANIM.mrrobot_downfall.name())
@@ -228,6 +228,7 @@ public class MrRobot implements ActionListener, CollisionListener {
     @Override
     public void spritesCollided(AnimatedSprite spriteOne, AnimatedSprite spriteTwo, Rectangle overlapRectangle) {
         AnimatedSprite otherSprite = spriteTwo;
+        Gdx.app.log("MrRobot", "Sprite collision with: " + otherSprite.getType());
         if(spriteOne.getType() != SpriteTypes.MR_ROBOT) {
             otherSprite = spriteOne;
         }
@@ -267,7 +268,7 @@ public class MrRobot implements ActionListener, CollisionListener {
     public void die() {
         if(!mrRobotState.isDying()) {
             setState(MrRobotState.DYING);
-            this.mrRobotSprite.startAction(dieByFlameAction, this);
+            this.mrRobotSprite.startAction(dyingAction, this);
         }
     }
 
@@ -471,7 +472,7 @@ public class MrRobot implements ActionListener, CollisionListener {
 
     @Override
     public void completed(Action completedAction) {
-        if(completedAction.getFirstActionInChain() == dieByFlameAction) {
+        if(completedAction.getFirstActionInChain() == dyingAction) {
             // handle death
             Hud.removeLive();
             // TODO - some fade-out / fade-in effect?
@@ -646,11 +647,15 @@ public class MrRobot implements ActionListener, CollisionListener {
 
         float line = (y / 8f) - 1f;
 
+        if(isFalling()) {
+
+        }
         if(isCrossingLowerScreenBoundary(y)) {
             // falling out of screen
             die();
         } else if(tileBelowId == NO_TILE) {
             if (!isFalling() && !isJumping() && !mrRobotState.isDying()) {
+                ((DropDownAction)dropDownAction).setStartingHeight((int)line);
                 mrRobotSprite.startAction(dropDownAction, null);
             }
         } else if(tileBelowId == TILE_BOMB_EXPLODING) {
