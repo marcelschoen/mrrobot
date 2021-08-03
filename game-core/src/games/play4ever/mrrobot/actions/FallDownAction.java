@@ -9,6 +9,7 @@ import static games.play4ever.mrrobot.Tiles.NO_TILE;
 import static games.play4ever.mrrobot.Tiles.TILE_LADDER_LEFT;
 import static games.play4ever.mrrobot.Tiles.TILE_LADDER_RIGHT;
 import static games.play4ever.mrrobot.Tiles.TILE_SLIDER;
+import static games.play4ever.mrrobot.Tiles.TILE_TRAMPOLINE_MIDDLE;
 
 /**
  * Lets Mr. Robot fall down sideways.
@@ -19,6 +20,8 @@ public class FallDownAction extends Action {
 
     private static final float HORIZONTAL_SPEED = 40;
     private static final float DOWN_SPEED = 32;
+
+    private int startingHeight = -1;
 
     /** Reference to Mr. Robot */
     private MrRobot mrRobot = null;
@@ -34,6 +37,7 @@ public class FallDownAction extends Action {
 
     @Override
     public void doStart() {
+        this.startingHeight = mrRobot.getTileMapRow();
         mrRobot.changeState(FALL_RIGHT);
     }
 
@@ -64,6 +68,10 @@ public class FallDownAction extends Action {
                 && tileBelowId != TILE_LADDER_LEFT && tileBelowId != TILE_LADDER_RIGHT) {
             if (mrRobot.mrRobotIsNearlyAlignedVertically()) {
                 mrRobot.mrRobotLands();
+                int fallHeight = startingHeight- mrRobot.getTileMapRow();
+                if(fallHeight > 4 && tileBelowId != TILE_TRAMPOLINE_MIDDLE) {
+                    mrRobot.die();
+                }
                 return true;
             }
         }

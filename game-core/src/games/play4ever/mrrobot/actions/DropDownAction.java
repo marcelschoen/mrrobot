@@ -8,6 +8,7 @@ import static games.play4ever.mrrobot.Tiles.NO_TILE;
 import static games.play4ever.mrrobot.Tiles.TILE_LADDER_LEFT;
 import static games.play4ever.mrrobot.Tiles.TILE_LADDER_RIGHT;
 import static games.play4ever.mrrobot.Tiles.TILE_SLIDER;
+import static games.play4ever.mrrobot.Tiles.TILE_TRAMPOLINE_MIDDLE;
 
 /**
  * Lets Mr. Robot drop down vertically.
@@ -32,12 +33,9 @@ public class DropDownAction extends Action {
         this.mrRobot = mrRobot;
     }
 
-    public void setStartingHeight(int startingHeight) {
-        this.startingHeight = startingHeight;
-    }
-
     @Override
     public void doStart() {
+        this.startingHeight = mrRobot.getTileMapRow();
         mrRobot.changeState(DROP_RIGHT);
     }
 
@@ -53,9 +51,15 @@ public class DropDownAction extends Action {
                 && tileBelowId != TILE_LADDER_LEFT && tileBelowId != TILE_LADDER_RIGHT) {
             if (mrRobot.mrRobotIsNearlyAlignedVertically()) {
                 mrRobot.mrRobotLands();
-                int fallHeight = startingHeight - mrRobot.getCellBelow().getRow();
-                if(fallHeight > 4) {
-                    mrRobot.die();
+                int fallHeight = startingHeight- mrRobot.getTileMapRow();
+                if(tileBelowId == TILE_TRAMPOLINE_MIDDLE) {
+
+
+
+                } else {
+                    if(fallHeight > 4) {
+                        mrRobot.die();
+                    }
                 }
                 return true;
             }

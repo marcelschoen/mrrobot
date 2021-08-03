@@ -38,6 +38,7 @@ import static games.play4ever.mrrobot.Tiles.TILE_ROLL_LEFT_2;
 import static games.play4ever.mrrobot.Tiles.TILE_ROLL_RIGHT_1;
 import static games.play4ever.mrrobot.Tiles.TILE_ROLL_RIGHT_2;
 import static games.play4ever.mrrobot.Tiles.TILE_SLIDER;
+import static games.play4ever.mrrobot.Tiles.TILE_TRAMPOLINE_MIDDLE;
 
 /**
  * Represents and handles the state and attributes of Mr. Robot.
@@ -228,7 +229,6 @@ public class MrRobot implements ActionListener, CollisionListener {
     @Override
     public void spritesCollided(AnimatedSprite spriteOne, AnimatedSprite spriteTwo, Rectangle overlapRectangle) {
         AnimatedSprite otherSprite = spriteTwo;
-        Gdx.app.log("MrRobot", "Sprite collision with: " + otherSprite.getType());
         if(spriteOne.getType() != SpriteTypes.MR_ROBOT) {
             otherSprite = spriteOne;
         }
@@ -648,14 +648,15 @@ public class MrRobot implements ActionListener, CollisionListener {
         float line = (y / 8f) - 1f;
 
         if(isFalling()) {
-
+            if(tileBelowId == TILE_TRAMPOLINE_MIDDLE && mrRobotIsNearlyAlignedVertically()) {
+                Gdx.app.log("MrRobot", "* Fell on trampoline *");
+            }
         }
         if(isCrossingLowerScreenBoundary(y)) {
             // falling out of screen
             die();
         } else if(tileBelowId == NO_TILE) {
             if (!isFalling() && !isJumping() && !mrRobotState.isDying()) {
-                ((DropDownAction)dropDownAction).setStartingHeight((int)line);
                 mrRobotSprite.startAction(dropDownAction, null);
             }
         } else if(tileBelowId == TILE_BOMB_EXPLODING) {
@@ -738,6 +739,11 @@ public class MrRobot implements ActionListener, CollisionListener {
         int row = (int)(y / 8f) - 1;
         setPosition(mrRobotSprite.getX(), row * 8f);
         return mrRobotSprite.getY();
+    }
+
+    public int getTileMapRow() {
+        float y = mrRobotSprite.getY() + 12;
+        return (int)(y / 8f) - 1;
     }
 
     /**
