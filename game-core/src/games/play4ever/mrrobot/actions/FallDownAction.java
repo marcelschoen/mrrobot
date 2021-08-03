@@ -3,6 +3,8 @@ package games.play4ever.mrrobot.actions;
 import games.play4ever.libgdx.sprites.action.Action;
 import games.play4ever.mrrobot.MrRobot;
 import games.play4ever.mrrobot.MrRobotGame;
+import games.play4ever.mrrobot.Trampoline;
+import games.play4ever.mrrobot.Trampolins;
 
 import static games.play4ever.mrrobot.MrRobotState.FALL_RIGHT;
 import static games.play4ever.mrrobot.Tiles.NO_TILE;
@@ -71,6 +73,12 @@ public class FallDownAction extends Action {
                 int fallHeight = startingHeight- mrRobot.getTileMapRow();
                 if(fallHeight > 4 && tileBelowId != TILE_TRAMPOLINE_MIDDLE) {
                     mrRobot.die();
+                } else if (tileBelowId == TILE_TRAMPOLINE_MIDDLE) {
+                    Trampoline trampoline = Trampolins.getTrampolineForTile(mrRobot.getTileMapColumn(), mrRobot.getTileMapRow() - 1);
+
+
+
+
                 }
                 return true;
             }

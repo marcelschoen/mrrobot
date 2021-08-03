@@ -746,6 +746,11 @@ public class MrRobot implements ActionListener, CollisionListener {
         return (int)(y / 8f) - 1;
     }
 
+    public int getTileMapColumn() {
+        float x = mrRobotSprite.getX() + 12;
+        return (int)(x / 8f) - 2;
+    }
+
     /**
      * @return True if Mr. Robot is nearly vertically aligned with his feet (lower sprite boundary).
      */

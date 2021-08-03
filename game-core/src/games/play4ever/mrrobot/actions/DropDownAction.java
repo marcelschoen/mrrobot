@@ -2,6 +2,8 @@ package games.play4ever.mrrobot.actions;
 
 import games.play4ever.libgdx.sprites.action.Action;
 import games.play4ever.mrrobot.MrRobot;
+import games.play4ever.mrrobot.Trampoline;
+import games.play4ever.mrrobot.Trampolins;
 
 import static games.play4ever.mrrobot.MrRobotState.DROP_RIGHT;
 import static games.play4ever.mrrobot.Tiles.NO_TILE;
@@ -53,6 +55,7 @@ public class DropDownAction extends Action {
                 mrRobot.mrRobotLands();
                 int fallHeight = startingHeight- mrRobot.getTileMapRow();
                 if(tileBelowId == TILE_TRAMPOLINE_MIDDLE) {
+                    Trampoline trampoline = Trampolins.getTrampolineForTile(mrRobot.getTileMapColumn(), mrRobot.getTileMapRow() - 1);
 
 
 

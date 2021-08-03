@@ -1,5 +1,7 @@
 package games.play4ever.mrrobot;
 
+import com.badlogic.gdx.Gdx;
+
 import static games.play4ever.mrrobot.TileMap.COLUMNS;
 import static games.play4ever.mrrobot.TileMap.ROWS;
 
@@ -27,6 +29,9 @@ public class Trampolins {
         trampolins[column][row] = trampoline;
         trampolins[column+1][row] = trampoline;
         trampolins[column+2][row] = trampoline;
+        trampolins[column+3][row] = trampoline;
+        trampolins[column+4][row] = trampoline;
+        Gdx.app.log("Trampolins", "Add trampolin at " + column + "," + row);
     }
 
     public static Trampoline getTrampolineForTile(int column, int row) {
