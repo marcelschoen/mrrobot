@@ -114,7 +114,7 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	 * @param duration The time in ms for how long to show one frame.
 	 * @param type The sprite type.
 	 */
-	public void initializeAnimationAndType(TextureRegion[] textures, String animationName, float duration, int type) {
+	private void initializeAnimationAndType(TextureRegion[] textures, String animationName, float duration, int type) {
 		setType(type);
 
 		Animation<TextureRegion> animation = new Animation<>(duration, textures);
@@ -294,7 +294,18 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	 * @param name The name of the animation.
 	 */
 	public void showAnimation(String name) {
+		showAnimation(name, Animation.PlayMode.LOOP);
+	}
+
+	/**
+	 * Starts the given animation for this sprite.
+	 *
+	 * @param name The name of the animation.
+	 * @param mode The play mode for the animation.
+	 */
+	public void showAnimation(String name, Animation.PlayMode mode) {
 		this.animation = animationMap.get(name);
+		this.animation.setPlayMode(mode);
 		if(this.animation == null) {
 			throw new IllegalArgumentException("No animation found for name '" + name + "'");
 		}
@@ -362,7 +373,8 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 		if(this.animation == null) {
 			throw new IllegalStateException("Animation not ready.");
 		}
-		TextureRegion keyFrame = this.animation.getKeyFrame(this.animationStateTime, true);
+		this.animation.setPlayMode(Animation.PlayMode.NORMAL);
+		TextureRegion keyFrame = this.animation.getKeyFrame(this.animationStateTime, false);
 		// Update default sprite bounds with values matching current animation frame
 		batch.draw(keyFrame, xPosition, yPosition);
 	}

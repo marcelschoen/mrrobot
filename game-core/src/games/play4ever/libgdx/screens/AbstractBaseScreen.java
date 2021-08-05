@@ -167,7 +167,6 @@ public abstract class AbstractBaseScreen implements Screen {
 	 */
 	@Override
 	public void show() {
-//		Gdx.input.setInputProcessor(this);
 	}
 
 	/* (non-Javadoc)
@@ -175,7 +174,6 @@ public abstract class AbstractBaseScreen implements Screen {
 	 */
 	@Override
 	public void hide() {
-//		Gdx.input.setInputProcessor(null);
 	}
 
 	/* (non-Javadoc)
@@ -184,7 +182,6 @@ public abstract class AbstractBaseScreen implements Screen {
 	@Override
 	public void pause() {
 		Gdx.app.log("AbstractBaseScreen", "-- pause screen --");
-		// nothing
 	}
 
 	/* (non-Javadoc)

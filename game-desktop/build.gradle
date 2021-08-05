@@ -7,6 +7,10 @@ sourceSets.main.resources.srcDirs = ["../game-android/assets"]
 project.ext.mainClassName = "DesktopLauncher"
 project.ext.assetsDir = new File("../game-android/assets")
 
+dependencies {
+    implementation "com.badlogicgames.gdx-controllers:gdx-controllers-desktop:$gdxControllersVersion"
+}
+
 task run(dependsOn: classes, type: JavaExec) {
     main = project.mainClassName
     classpath = sourceSets.main.runtimeClasspath

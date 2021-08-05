@@ -39,6 +39,7 @@ public class GamepadOverlay {
     public static boolean isDownPressed = false;
     public static boolean isRightPressed = false;
     public static boolean isJumpPressed = false;
+    public static boolean isBackPressed = false;
 
     private static Texture gamepad_overlay = null;
     private static Texture gamepad_overlay_button = null;

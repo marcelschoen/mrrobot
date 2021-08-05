@@ -14,6 +14,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
 import com.badlogic.gdx.utils.Array;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -207,7 +208,8 @@ public class TileMap {
                                 Magnets.addMagnetRight(magnetRight);
                             } else if(tile.getId() == TILE_TRAMPOLINE_LEFT) {
                                 replaceTrampolineTilesWithSprite(colCt, lineCt);
-                                AnimatedSprite trampolineSprite = Sprites.createSprite(MrRobot.ANIM.trampoline_still.name(), SpriteTypes.TRAMPOLINES);
+                                AnimatedSprite trampolineSprite = Sprites.createSprite(Arrays.asList(MrRobot.ANIM.trampoline_still.name(), MrRobot.ANIM.trampoline_big.name()) , SpriteTypes.TRAMPOLINES);
+                                trampolineSprite.showAnimation(MrRobot.ANIM.trampoline_still.name());
                                 trampolineSprite.setPosition(x, y);
                                 trampolineSprite.setVisible(true);
                                 Trampoline trampoline = new Trampoline(trampolineSprite);

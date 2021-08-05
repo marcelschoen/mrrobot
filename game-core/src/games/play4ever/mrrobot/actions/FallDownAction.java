@@ -1,5 +1,7 @@
 package games.play4ever.mrrobot.actions;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
+
 import games.play4ever.libgdx.sprites.action.Action;
 import games.play4ever.mrrobot.MrRobot;
 import games.play4ever.mrrobot.MrRobotGame;
@@ -75,6 +77,7 @@ public class FallDownAction extends Action {
                     mrRobot.die();
                 } else if (tileBelowId == TILE_TRAMPOLINE_MIDDLE) {
                     Trampoline trampoline = Trampolins.getTrampolineForTile(mrRobot.getTileMapColumn(), mrRobot.getTileMapRow() - 1);
+                    trampoline.getSprite().showAnimation(MrRobot.ANIM.trampoline_big.name(), Animation.PlayMode.NORMAL);
 
 
 

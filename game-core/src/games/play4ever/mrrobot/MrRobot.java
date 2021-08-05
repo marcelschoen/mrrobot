@@ -68,6 +68,7 @@ public class MrRobot implements ActionListener, CollisionListener {
         shield_item,
         magnet_left,
         magnet_right,
+        trampoline,
         trampoline_still,
         trampoline_small,
         trampoline_big
@@ -353,15 +354,19 @@ public class MrRobot implements ActionListener, CollisionListener {
 
         intendedMovement.clear();
 
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || GamepadOverlay.isLeftPressed) {
+//        if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || GamepadOverlay.isLeftPressed) {
+        if(GameInput.isLeftPressed()) {
             moveLeft();
-        } else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || GamepadOverlay.isRightPressed) {
+//        } else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || GamepadOverlay.isRightPressed) {
+        } else if(GameInput.isRightPressed()) {
             moveRight();
-        } else if(Gdx.input.isKeyPressed(Input.Keys.UP) || GamepadOverlay.isUpPressed) {
+//        } else if(Gdx.input.isKeyPressed(Input.Keys.UP) || GamepadOverlay.isUpPressed) {
+        } else if(GameInput.isUpPressed()) {
             if(!mrRobotIsClimbing()) {
                 tryClimbingUp();
             }
-        } else if(Gdx.input.isKeyPressed(Input.Keys.DOWN) || GamepadOverlay.isDownPressed) {
+//        } else if(Gdx.input.isKeyPressed(Input.Keys.DOWN) || GamepadOverlay.isDownPressed) {
+        } else if(GameInput.isDownPressed()) {
             if(tileBelowId == Tiles.TILE_TELEPORTER) {
                 mrRobotSprite.startAction(teleportAction, null);
             } else if(!mrRobotIsClimbing()) {
@@ -393,8 +398,18 @@ public class MrRobot implements ActionListener, CollisionListener {
         }
         // ====================== TEMPORARY - ALLOW RESTART BY F1 =====================
 
+        if(GameInput.isButtonOkPressed()) {
+            if(GameInput.isRightPressed()) {
+                getMrRobotSprite().startAction(jumpSidewaysRightAction, null);
+            } else if(GameInput.isLeftPressed()) {
+                getMrRobotSprite().startAction(jumpSidewaysLeftAction, null);
+            } else {
+                changeState(MrRobotState.JUMPUP_RIGHT);
+                getMrRobotSprite().startAction(jumpUpAction, this);
+            }
+        }
 
-
+/*
         if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) || GamepadOverlay.isJumpPressed) {
                 if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || GamepadOverlay.isRightPressed) {
                     getMrRobotSprite().startAction(jumpSidewaysRightAction, null);
@@ -405,6 +420,7 @@ public class MrRobot implements ActionListener, CollisionListener {
                     getMrRobotSprite().startAction(jumpUpAction, this);
                 }
         }
+        */
         completeMovement();
     }
 
