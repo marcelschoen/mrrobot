@@ -76,7 +76,7 @@ public class FallDownAction extends Action {
                 if(fallHeight > 4 && tileBelowId != TILE_TRAMPOLINE_MIDDLE) {
                     mrRobot.die();
                 } else if (tileBelowId == TILE_TRAMPOLINE_MIDDLE) {
-                    Trampoline trampoline = Trampolins.getTrampolineForTile(mrRobot.getTileMapColumn(), mrRobot.getTileMapRow() - 1);
+                    Trampoline trampoline = Trampolins.getTrampolineForTile(mrRobot.getTileMapColumn(), mrRobot.getTileMapRow());
                     trampoline.getSprite().showAnimation(MrRobot.ANIM.trampoline_big.name(), Animation.PlayMode.NORMAL);
 
 

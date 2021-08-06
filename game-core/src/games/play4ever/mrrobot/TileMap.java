@@ -301,17 +301,30 @@ public class TileMap {
     }
 
     public TiledMapTileLayer.Cell getTileMapCell(AnimatedSprite entity, CELL_TYPE type) {
-        float x = mrRobot.getX() + 12f;
-        float y = mrRobot.getY();
-
-        float col = x / 8f;
-        float line = (y / 8f) - 1f;
+        int col = getColumn(entity);
+        int line = getRow(entity);
         if(type == CELL_TYPE.BEHIND) {
             line += 1;
         } else if(type == CELL_TYPE.FURTHER_BELOW) {
             line -= 1;
         }
-        return getCell((int)col, (int)line);
+        return getCell(col, line);
+    }
+
+    /**
+     * @param entity The sprite for which to calculate the tilemap column
+     * @return The tilemap column of the middle of the sprite
+     */
+    public static int getColumn(AnimatedSprite entity) {
+        return (int)((entity.getX() + 12f) / 8f);
+    }
+
+    /**
+     * @param entity The sprite for which to calculate the tilemap row
+     * @return The tilemap row BELOW the sprite (i.e. the row Mr. Robot is standing on)
+     */
+    public static int getRow(AnimatedSprite entity) {
+        return (int)((entity.getY() / 8f) - 1f);
     }
 
     public TiledMapTileLayer.Cell getTileMapCell(CELL_TYPE type) {

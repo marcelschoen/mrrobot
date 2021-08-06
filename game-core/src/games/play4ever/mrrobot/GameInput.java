@@ -202,8 +202,8 @@ public class GameInput implements ControllerListener, InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        Gdx.app.log(getClass().getName(), "==============>>>  keyDown: " + keycode);
-        if(keycode == Input.Keys.BACK) {
+//        Gdx.app.log(getClass().getName(), "==============>>>  keyDown: " + keycode);
+        if(keycode == Input.Keys.BACK || keycode == Input.Keys.BACKSPACE) {
             backKeyPressed = true;
         }
         return false;
@@ -211,8 +211,8 @@ public class GameInput implements ControllerListener, InputProcessor {
 
     @Override
     public boolean keyUp(int keycode) {
-        Gdx.app.log(getClass().getName(), "keyUp: " + keycode);
-        if(keycode == Input.Keys.BACK) {
+//        Gdx.app.log(getClass().getName(), "keyUp: " + keycode);
+        if(keycode == Input.Keys.BACK || keycode == Input.Keys.BACKSPACE) {
             backKeyPressed = false;
         }
         return false;
@@ -220,7 +220,7 @@ public class GameInput implements ControllerListener, InputProcessor {
 
     @Override
     public boolean keyTyped(char character) {
-        Gdx.app.log(getClass().getName(), "keyTyped: " + character);
+//        Gdx.app.log(getClass().getName(), "keyTyped: " + character);
         return false;
     }
 

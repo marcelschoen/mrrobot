@@ -761,16 +761,6 @@ public class MrRobot implements ActionListener, CollisionListener {
         return mrRobotSprite.getY();
     }
 
-    public int getTileMapRow() {
-        float y = mrRobotSprite.getY() + 12;
-        return (int)(y / 8f) - 1;
-    }
-
-    public int getTileMapColumn() {
-        float x = mrRobotSprite.getX() + 12;
-        return (int)(x / 8f) - 2;
-    }
-
     /**
      * @return True if Mr. Robot is nearly vertically aligned with his feet (lower sprite boundary).
      */
@@ -799,6 +789,20 @@ public class MrRobot implements ActionListener, CollisionListener {
         int col = (int)(x / 8f) + 1;
         float diff = x - (col * 8f);
         return Math.abs(diff) < 8f;
+    }
+
+    /**
+     * @return The tilemap row BELOW Mr. Robot (i.e. the row Mr. Robot is standing on)
+     */
+    public int getTileMapRow() {
+        return TileMap.getRow(mrRobotSprite);
+    }
+
+    /**
+     * @return The tilemap column of the middle of Mr. Robot
+     */
+    public int getTileMapColumn() {
+        return TileMap.getColumn(mrRobotSprite);
     }
 
     class IntendedMovement {
