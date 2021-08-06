@@ -42,6 +42,7 @@ public class MrRobotGame extends Game {
     public static Graphics.DisplayMode displayMode = null;
 
     public PlayScreen playScreen;
+    public TitleScreen titleScreen;
 
     @Override
     public void create() {
@@ -61,7 +62,7 @@ public class MrRobotGame extends Game {
         Assets assets = new MrRobotAssets();
         assets.initialize();
 
-        TitleScreen titleScreen = new TitleScreen(this);
+        titleScreen = new TitleScreen(this);
         setScreen(new LoadingScreen(this, titleScreen));
     }
 

@@ -22,6 +22,7 @@ public class GameInput implements ControllerListener, InputProcessor {
     private static boolean controllerRight = false;
     private static boolean controllerOk = false;
     private static boolean controllerBack = false;
+    private static boolean backKeyPressed = false;
 
     private GameInput() {
         Controllers.addListener(this);
@@ -58,7 +59,7 @@ public class GameInput implements ControllerListener, InputProcessor {
                 || Gdx.input.isKeyPressed(Input.Keys.B)
                 || Gdx.input.isKeyPressed(Input.Keys.Y)
                 || (connected && controllerBack)
-                || GamepadOverlay.isJumpPressed) {
+                || backKeyPressed) {
             return true;
         }
         return false;
@@ -201,41 +202,55 @@ public class GameInput implements ControllerListener, InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
+        Gdx.app.log(getClass().getName(), "==============>>>  keyDown: " + keycode);
+        if(keycode == Input.Keys.BACK) {
+            backKeyPressed = true;
+        }
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
+        Gdx.app.log(getClass().getName(), "keyUp: " + keycode);
+        if(keycode == Input.Keys.BACK) {
+            backKeyPressed = false;
+        }
         return false;
     }
 
     @Override
     public boolean keyTyped(char character) {
+        Gdx.app.log(getClass().getName(), "keyTyped: " + character);
         return false;
     }
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+//        Gdx.app.log(getClass().getName(), "touchDown");
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+//        Gdx.app.log(getClass().getName(), "touchUp");
         return false;
     }
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
+//        Gdx.app.log(getClass().getName(), "touchDragged");
         return false;
     }
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
+//        Gdx.app.log(getClass().getName(), "mouseMoved");
         return false;
     }
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
+//        Gdx.app.log(getClass().getName(), "scrolled");
         return false;
     }
 }

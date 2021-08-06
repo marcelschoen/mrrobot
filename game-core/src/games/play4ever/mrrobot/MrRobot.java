@@ -352,6 +352,10 @@ public class MrRobot implements ActionListener, CollisionListener {
             return;
         }
 
+        if(GameInput.isButtonBackPressed()) {
+            MrRobotGame.instance().setScreen(MrRobotGame.instance().titleScreen);
+        }
+
         intendedMovement.clear();
 
 //        if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || GamepadOverlay.isLeftPressed) {
