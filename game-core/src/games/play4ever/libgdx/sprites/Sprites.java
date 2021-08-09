@@ -1,6 +1,5 @@
 package games.play4ever.libgdx.sprites;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -30,22 +29,6 @@ public class Sprites {
     public static void resetAllSprites() {
         for(AnimatedSprite sprite : sprites) {
             sprite.reset();
-        }
-    }
-
-    public static void pushSpriteIntoBackground(AnimatedSprite sprite) {
-        int swapWith = sprites.indexOf(sprite, true);
-        if(swapWith != 0) {
-            Gdx.app.log(Sprites.class.getName(), "push sprite into background: " + sprite);
-            sprites.swap(0, swapWith);
-        }
-    }
-
-    public static void pushSpriteIntoForeground(AnimatedSprite sprite) {
-        int swapWith = sprites.lastIndexOf(sprite, true);
-        if(swapWith != sprites.size - 1) {
-            Gdx.app.log(Sprites.class.getName(), ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> push sprite into foreground: " + sprite);
-            sprites.swap(sprites.size - 1, swapWith);
         }
     }
 

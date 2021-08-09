@@ -407,23 +407,23 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	 */
 	public void draw(SpriteBatch batch, float xPosition, float yPosition, float delta) {
 
-		this.animationStateTime += delta;
 		if(batch == null) {
 			throw new IllegalArgumentException("batch must not be null");
 		}
 		if(this.animation == null) {
 			throw new IllegalStateException("Animation not ready.");
 		}
+		this.animationStateTime += delta;
+		if(this.animation.getPlayMode() != Animation.PlayMode.NORMAL && this.animationStateTime > 1.0) {
+			this.animationStateTime -= 1f;
+		}
 		TextureRegion keyFrame = this.animation.getKeyFrames()[0];
-		if(!this.animation.isAnimationFinished(this.animationStateTime)) {
+		if(this.animation.getPlayMode() != Animation.PlayMode.NORMAL || !this.animation.isAnimationFinished(this.animationStateTime)) {
 			keyFrame = this.animation.getKeyFrame(this.animationStateTime);
 		} else {
 			// If animation is finished, stay on last frame.
 			TextureRegion[] textures = this.animation.getKeyFrames();
 			keyFrame = textures[textures.length - 1];
-		}
-		if(this.animation.getPlayMode() != Animation.PlayMode.NORMAL && this.animationStateTime > 1.0) {
-			this.animationStateTime -= 1f;
 		}
 		// Update default sprite bounds with values matching current animation frame
 		batch.draw(keyFrame, xPosition, yPosition);
