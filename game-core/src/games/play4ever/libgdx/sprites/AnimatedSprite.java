@@ -57,6 +57,10 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 
 	private AnimatedSprite attachedToSprite = null;
 
+	private int zPlane = 0;
+	public static final int FOREGROUND = 255;
+	public static final int BACKGROUND = 0;
+
 	private float xOffsetAttachement = 0;
 	private float yOffsetAttachement = 0;
 
@@ -71,6 +75,12 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 		this.type = type;
 	}
 
+	public AnimatedSprite(int type, int zPlane) {
+		this();
+		this.type = type;
+		setZ(zPlane);
+	}
+
 	/**
 	 * Create an animated sprite from an animated Tiled-map tile.
 	 *
@@ -81,7 +91,23 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	public AnimatedSprite(TiledMapTile tiledMapTile, float duration, int type) {
 		setType(type);
 		TextureRegion texture = tiledMapTile.getTextureRegion();
-		initializeAnimationAndType(new TextureRegion[] { texture }, "tile-" + tiledMapTile.getId(), duration, type);
+		initializeAnimationAndType(new TextureRegion[] { texture }, "tile-" + tiledMapTile.getId(), duration, type, BACKGROUND);
+	}
+
+	/**
+	 * Create an animated sprite from an animated Tiled-map tile.
+	 *
+	 * @param tiledMapTile The Tiled map tile from which to create a sprite.
+	 * @param duration The time in ms for how long to show one frame.
+	 * @param type The arbitrary sprite type.
+	 * @param zPlane The z-order which defines if the sprite is drawn behind other sprites or before them
+	 *               (see constants FOREGROUND and BACKGROUND). Must be a value ranging from 0 (BACKGROUND)
+	 *               to 255 (FOREGROUND).
+	 */
+	public AnimatedSprite(TiledMapTile tiledMapTile, float duration, int type, int zPlane) {
+		setType(type);
+		TextureRegion texture = tiledMapTile.getTextureRegion();
+		initializeAnimationAndType(new TextureRegion[] { texture }, "tile-" + tiledMapTile.getId(), duration, type, zPlane);
 	}
 
 	/**
@@ -103,7 +129,7 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 			textures[ct++] = tile.getTextureRegion();
 		}
 
-		initializeAnimationAndType(textures, "tile-" + animatedTiledMapTile.getId(), duration, type);
+		initializeAnimationAndType(textures, "tile-" + animatedTiledMapTile.getId(), duration, type, BACKGROUND);
 	}
 
 	/**
@@ -113,15 +139,30 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	 * @param animationName The name of the animation.
 	 * @param duration The time in ms for how long to show one frame.
 	 * @param type The sprite type.
+	 * @param zPlane The z-order which defines if the sprite is drawn behind other sprites or before them
+	 *               (see constants FOREGROUND and BACKGROUND). Must be a value ranging from 0 (BACKGROUND)
+	 *               to 255 (FOREGROUND).
 	 */
-	private void initializeAnimationAndType(TextureRegion[] textures, String animationName, float duration, int type) {
+	private void initializeAnimationAndType(TextureRegion[] textures, String animationName, float duration, int type, int zPlane) {
 		setType(type);
+		setZ(zPlane);
 
 		Animation<TextureRegion> animation = new Animation<>(duration, textures);
 		animation.setPlayMode(Animation.PlayMode.LOOP);
 
 		addAnimation(animationName, animation);
 		showAnimation(animationName);
+	}
+
+	public int getZ() {
+		return zPlane;
+	}
+
+	public void setZ(int zPlane) {
+		if(zPlane < BACKGROUND || zPlane > FOREGROUND) {
+			throw new IllegalArgumentException("invalid z-plane: " + zPlane + ", value must range from " + BACKGROUND + " to " + FOREGROUND + "!");
+		}
+		this.zPlane = zPlane;
 	}
 
 	/**
@@ -305,6 +346,7 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	 */
 	public void showAnimation(String name, Animation.PlayMode mode) {
 		this.animation = animationMap.get(name);
+		this.animationStateTime = 0f;
 		this.animation.setPlayMode(mode);
 		if(this.animation == null) {
 			throw new IllegalArgumentException("No animation found for name '" + name + "'");
@@ -353,7 +395,8 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	}
 
 	/**
-	 * Draws the sprite into a given spriteBatch. The "Sprites" class invokes this method
+	 * Draws the sprite into a given spriteBatch. T
+	 * he "Sprites" class invokes this method
 	 * automatically for all registered sprites.
 	 * 
 	 * @param batch The target spriteBatch.
@@ -363,18 +406,25 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	 * @see {@link games.play4ever.libgdx.sprites.Sprites}
 	 */
 	public void draw(SpriteBatch batch, float xPosition, float yPosition, float delta) {
+
 		this.animationStateTime += delta;
-		if(this.animationStateTime > 1.0) {
-			this.animationStateTime -= 1f;
-		}
 		if(batch == null) {
 			throw new IllegalArgumentException("batch must not be null");
 		}
 		if(this.animation == null) {
 			throw new IllegalStateException("Animation not ready.");
 		}
-		this.animation.setPlayMode(Animation.PlayMode.NORMAL);
-		TextureRegion keyFrame = this.animation.getKeyFrame(this.animationStateTime, false);
+		TextureRegion keyFrame = this.animation.getKeyFrames()[0];
+		if(!this.animation.isAnimationFinished(this.animationStateTime)) {
+			keyFrame = this.animation.getKeyFrame(this.animationStateTime);
+		} else {
+			// If animation is finished, stay on last frame.
+			TextureRegion[] textures = this.animation.getKeyFrames();
+			keyFrame = textures[textures.length - 1];
+		}
+		if(this.animation.getPlayMode() != Animation.PlayMode.NORMAL && this.animationStateTime > 1.0) {
+			this.animationStateTime -= 1f;
+		}
 		// Update default sprite bounds with values matching current animation frame
 		batch.draw(keyFrame, xPosition, yPosition);
 	}

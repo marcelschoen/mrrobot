@@ -185,8 +185,14 @@ public final class Aseprite {
         }
 
         boolean durationsDivisibleByShortest() {
+            int frameCounter = 0;
             for (AseFormat.AseKeyFrame frame : frames) {
-                if (frame.duration % shortestFrameDuration() != 0) return false;
+                if (frame.duration % shortestFrameDuration() != 0) {
+                    Gdx.app.error(getClass().getName(), "Frame " + frameCounter + " duration: " + frame.duration + " / shortest frame duration: " + shortestFrameDuration()
+                    + "; all durations MUST be divisible through the shortest duration!");
+                    return false;
+                }
+                frameCounter ++;
             }
             return true;
         }

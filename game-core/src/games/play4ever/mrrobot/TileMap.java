@@ -212,6 +212,7 @@ public class TileMap {
                                 trampolineSprite.showAnimation(MrRobot.ANIM.trampoline_still.name());
                                 trampolineSprite.setPosition(x, y);
                                 trampolineSprite.setVisible(true);
+                                trampolineSprite.setZ(AnimatedSprite.BACKGROUND);
                                 Trampoline trampoline = new Trampoline(trampolineSprite);
                                 Trampolins.addTrampoline(colCt, lineCt, trampoline);
                             }

@@ -29,7 +29,7 @@ public class Flame {
     private static final float DOWN_SPEED = 40;
     private static final float ROLLING_SPEED = 26;
 
-    private AnimatedSprite sprite = new AnimatedSprite(SpriteTypes.FLAMES);
+    private AnimatedSprite sprite = null;
 
     private int tileBehindId = NO_TILE;
     private int tileBelowId = NO_TILE;

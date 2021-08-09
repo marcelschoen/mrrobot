@@ -1,5 +1,6 @@
 package games.play4ever.libgdx.sprites;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -21,7 +22,7 @@ import games.play4ever.libgdx.Assets;
  */
 public class Sprites {
 
-    private static Array<AnimatedSprite> sprites = new Array<>();
+    private static Array<AnimatedSprite> sprites = new Array<>(true, 256);
 
     /**
      * Calls the "reset" method on every sprite, to reset its state and the state of all its actions.
@@ -29,6 +30,22 @@ public class Sprites {
     public static void resetAllSprites() {
         for(AnimatedSprite sprite : sprites) {
             sprite.reset();
+        }
+    }
+
+    public static void pushSpriteIntoBackground(AnimatedSprite sprite) {
+        int swapWith = sprites.indexOf(sprite, true);
+        if(swapWith != 0) {
+            Gdx.app.log(Sprites.class.getName(), "push sprite into background: " + sprite);
+            sprites.swap(0, swapWith);
+        }
+    }
+
+    public static void pushSpriteIntoForeground(AnimatedSprite sprite) {
+        int swapWith = sprites.lastIndexOf(sprite, true);
+        if(swapWith != sprites.size - 1) {
+            Gdx.app.log(Sprites.class.getName(), ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> push sprite into foreground: " + sprite);
+            sprites.swap(sprites.size - 1, swapWith);
         }
     }
 
@@ -137,9 +154,14 @@ public class Sprites {
     public static void drawSprites(SpriteBatch batch, float delta) {
         for(AnimatedSprite sprite : sprites) {
             sprite.executeCurrentAction(delta);
-            if(sprite.isVisible()) {
-                sprite.draw(batch, delta);
+        }
+        for(int zPlane=AnimatedSprite.BACKGROUND; zPlane<=AnimatedSprite.FOREGROUND; zPlane++) {
+            for(AnimatedSprite sprite : sprites) {
+                if(sprite.isVisible() && sprite.getZ() == zPlane) {
+                    sprite.draw(batch, delta);
+                }
             }
+
         }
     }
 }

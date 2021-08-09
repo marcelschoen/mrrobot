@@ -218,6 +218,9 @@ public class MrRobot implements ActionListener, CollisionListener {
         this.shieldSprite = Sprites.createSprite(ANIM.mrrobot_shield.name(), SpriteTypes.SHIELDS);
         this.shieldSprite.setVisible(false);
         this.shieldSprite.attachToSprite(this.mrRobotSprite, 0, 0);
+
+        this.shieldSprite.setZ(AnimatedSprite.FOREGROUND);
+        this.mrRobotSprite.setZ(AnimatedSprite.FOREGROUND);
     }
 
     /**
@@ -404,12 +407,12 @@ public class MrRobot implements ActionListener, CollisionListener {
 
         if(GameInput.isButtonOkPressed()) {
             if(GameInput.isRightPressed()) {
-                getMrRobotSprite().startAction(jumpSidewaysRightAction, null);
+                mrRobotSprite.startAction(jumpSidewaysRightAction, null);
             } else if(GameInput.isLeftPressed()) {
-                getMrRobotSprite().startAction(jumpSidewaysLeftAction, null);
+                mrRobotSprite.startAction(jumpSidewaysLeftAction, null);
             } else {
                 changeState(MrRobotState.JUMPUP_RIGHT);
-                getMrRobotSprite().startAction(jumpUpAction, this);
+                mrRobotSprite.startAction(jumpUpAction, this);
             }
         }
 

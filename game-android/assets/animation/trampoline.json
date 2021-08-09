@@ -42,7 +42,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 56, "h": 8 },
     "sourceSize": { "w": 56, "h": 8 },
-    "duration": 100
+    "duration": 25
    },
    {
     "filename": "trampoline 5.ase",
@@ -51,7 +51,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 56, "h": 8 },
     "sourceSize": { "w": 56, "h": 8 },
-    "duration": 100
+    "duration": 25
    },
    {
     "filename": "trampoline 6.ase",
@@ -60,7 +60,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 56, "h": 8 },
     "sourceSize": { "w": 56, "h": 8 },
-    "duration": 100
+    "duration": 50
    },
    {
     "filename": "trampoline 7.ase",
@@ -69,7 +69,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 56, "h": 8 },
     "sourceSize": { "w": 56, "h": 8 },
-    "duration": 100
+    "duration": 25
    },
    {
     "filename": "trampoline 8.ase",
@@ -78,7 +78,7 @@
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 56, "h": 8 },
     "sourceSize": { "w": 56, "h": 8 },
-    "duration": 100
+    "duration": 25
    }
  ],
  "meta": {
@@ -91,7 +91,7 @@
   "frameTags": [
    { "name": "trampoline_still", "from": 0, "to": 0, "direction": "forward" },
    { "name": "trampoline_small", "from": 1, "to": 3, "direction": "forward" },
-   { "name": "trampoline_big", "from": 4, "to": 8, "direction": "forward" }
+   { "name": "trampoline_big", "from": 5, "to": 8, "direction": "forward" }
   ],
   "layers": [
    { "name": "Sprite-Sheet", "opacity": 255, "blendMode": "normal" }

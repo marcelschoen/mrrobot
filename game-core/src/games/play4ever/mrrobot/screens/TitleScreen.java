@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Texture;
 
 import games.play4ever.libgdx.Assets;
 import games.play4ever.libgdx.screens.AbstractBaseScreen;
+import games.play4ever.mrrobot.GameInput;
 import games.play4ever.mrrobot.MrRobotAssets;
 import games.play4ever.mrrobot.MrRobotGame;
 
@@ -45,7 +46,8 @@ public class TitleScreen extends AbstractBaseScreen {
 			batch.draw(this.titlePicture, 0, 0);
 		}
 		batch.end();
-		if(System.currentTimeMillis() - this.startTime > 5000) {
+		if(GameInput.isButtonOkPressed()) {
+//		if(System.currentTimeMillis() - this.startTime > 5000) {
 			beginGame();
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
