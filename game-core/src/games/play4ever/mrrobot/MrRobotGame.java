@@ -1,7 +1,6 @@
 package games.play4ever.mrrobot;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Graphics;
 
 import games.play4ever.libgdx.Assets;
 import games.play4ever.libgdx.screens.ScreenUtil;
@@ -37,9 +36,6 @@ public class MrRobotGame extends Game {
 
     /** Singleton instance of game. */
     private static MrRobotGame instance = null;
-
-    /** Stores the current display mode. */
-    public static Graphics.DisplayMode displayMode = null;
 
     public PlayScreen playScreen;
     public TitleScreen titleScreen;
@@ -79,10 +75,8 @@ public class MrRobotGame extends Game {
 
     /**
      * Creates a MrRobotGame game instance.
-     * @param currentMode
      */
-    public MrRobotGame(Graphics.DisplayMode currentMode) {
-        displayMode = currentMode;
+    public MrRobotGame() {
     }
 
     /**

@@ -100,7 +100,9 @@ public class ScreenUtil {
 		camera = new OrthographicCamera(virtualResolution.getWidth(), virtualResolution.getHeight());
 		camera.setToOrtho(false, virtualResolution.getWidth(), virtualResolution.getHeight());
 		viewPort = new ExtendViewport(virtualResolution.getWidth(), virtualResolution.getHeight(), camera);
-//		viewPort = new FitViewport(virtualResolution.getWidth(), virtualResolution.getHeight(), camera);
+
+
+//		viewPort = new StretchViewport(virtualResolution.getWidth(), virtualResolution.getHeight(), camera);
 //		viewPort = new ScreenViewport(camera);
 		resizeViewport((int)width, (int)height);
 	}

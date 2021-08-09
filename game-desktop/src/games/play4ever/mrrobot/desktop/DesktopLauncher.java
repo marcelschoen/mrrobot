@@ -1,8 +1,8 @@
 package games.play4ever.mrrobot.desktop;
 
 import com.badlogic.gdx.Graphics;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,31 +13,28 @@ import games.play4ever.mrrobot.MrRobotGame;
 
 import static games.play4ever.mrrobot.MrRobotGame.GAME_TESTING;
 
+/**
+ * Launcher for desktop (Windows, Linux, MacOS)
+ */
 public class DesktopLauncher {
-	public static void main (String[] args) {
-		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-		cfg.title = "mrrobot-gdx";
-		cfg.width = 1920;
-		cfg.height = 1080;
-		cfg.fullscreen = true;
-		if(args != null && args.length > 0 && args[0].equalsIgnoreCase("fullscreen")) {
-			cfg.fullscreen = true;
+
+	public static void main(String[] args) {
+		Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
+		cfg.setTitle("mrrobot-gdx");
+		if (args != null && args.length > 0 && args[0].equalsIgnoreCase("fullscreen")) {
 		}
 		System.setProperty("desktop", "true");
-
 		System.setProperty(GAME_TESTING, "true");
 
-		if(cfg.fullscreen) {
-			Graphics.DisplayMode displayMode = findMatchingMode(cfg.width, cfg.height);
-			cfg.width = displayMode.width;
-			cfg.height = displayMode.height;
-			System.out.println("Running game in fullscreen mode: " + cfg.width + "x" + cfg.height);
-			new LwjglApplication(new MrRobotGame(displayMode), cfg);
+		if (true) {
+			Graphics.DisplayMode displayMode = findMatchingMode(1920, 1080);
+			Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+			config.setFullscreenMode(displayMode);
+			new Lwjgl3Application(new MrRobotGame(), config);
 		} else {
 			System.out.println("Running game in window mode...");
-			new LwjglApplication(new MrRobotGame(null), cfg);
+			new Lwjgl3Application(new MrRobotGame(), cfg);
 		}
-
 	}
 
 	/**
@@ -45,32 +42,34 @@ public class DesktopLauncher {
 	 * while still allowing for the same aspect ratio when stretching the
 	 * game vieport.
 	 *
-	 * @param width The internal game screen width.
+	 * @param width  The internal game screen width.
 	 * @param height The internal game screen height.
 	 * @return The matching display resolution to use (for fullscreen mode only).
 	 */
+
 	private static Graphics.DisplayMode findMatchingMode(int width, int height) {
 		Graphics.DisplayMode displayMode = null;
-		float targetRatio = (float)width / (float)height;
+		float targetRatio = (float) width / (float) height;
 
 		System.out.println("Find matching mode for: " + width + " x " + height);
 
 		List<Graphics.DisplayMode> validModes = new ArrayList<Graphics.DisplayMode>();
 		Map<Graphics.DisplayMode, Float> modes = new HashMap<Graphics.DisplayMode, Float>();
 
+
 		Graphics.DisplayMode perfectMode = null, nearPerfectMode = null;
-		for(Graphics.DisplayMode mode: LwjglApplicationConfiguration.getDisplayModes()) {
-			if(mode.width >= width && mode.height >= height) {
-				float modeRatio = (float)mode.width / (float)mode.height;
+		for (Graphics.DisplayMode mode : Lwjgl3ApplicationConfiguration.getDisplayModes()) {
+			if (mode.width >= width && mode.height >= height) {
+				float modeRatio = (float) mode.width / (float) mode.height;
 				System.out.println("Valid mode: " + mode + ", ratio: " + modeRatio);
 				validModes.add(mode);
 				modes.put(mode, modeRatio);
-				if(mode.width == width && mode.height == height) {
+				if (mode.width == width && mode.height == height) {
 					perfectMode = mode;
 				}
-				if(modeRatio == targetRatio) {
-					if(nearPerfectMode != null) {
-						if(mode.width >= width && mode.height >= height ) {
+				if (modeRatio == targetRatio) {
+					if (nearPerfectMode != null) {
+						if (mode.width >= width && mode.height >= height) {
 							nearPerfectMode = mode;
 						}
 					} else {
@@ -81,15 +80,15 @@ public class DesktopLauncher {
 		}
 
 		float currentRatio = -1;
-		for(Map.Entry<Graphics.DisplayMode, Float> mode : modes.entrySet()) {
-			if(displayMode == null) {
+		for (Map.Entry<Graphics.DisplayMode, Float> mode : modes.entrySet()) {
+			if (displayMode == null) {
 				displayMode = mode.getKey();
 				currentRatio = mode.getValue();
 			}
-			if(displayMode != mode.getKey()) {
+			if (displayMode != mode.getKey()) {
 				float diffCurrent = Math.abs(targetRatio - currentRatio);
 				float diffNew = Math.abs(targetRatio - mode.getValue());
-				if(diffNew < diffCurrent) {
+				if (diffNew < diffCurrent) {
 					displayMode = mode.getKey();
 					currentRatio = mode.getValue();
 				}
@@ -97,7 +96,7 @@ public class DesktopLauncher {
 		}
 
 		displayMode = perfectMode == null ? nearPerfectMode : perfectMode;
-		displayMode = displayMode == null? validModes.get(0) : displayMode;
+		displayMode = displayMode == null ? validModes.get(0) : displayMode;
 
 		System.out.println("---- USE RESOLUTION: " + displayMode + " -------");
 		return displayMode;
