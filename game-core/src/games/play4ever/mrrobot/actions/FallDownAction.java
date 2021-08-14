@@ -22,7 +22,7 @@ import static games.play4ever.mrrobot.Tiles.TILE_TRAMPOLINE_MIDDLE;
  */
 public class FallDownAction extends Action {
 
-    private static final float HORIZONTAL_SPEED = 40;
+    private static final float HORIZONTAL_SPEED = 38;
     private static final float DOWN_SPEED = 32;
 
     private int startingHeight = -1;
@@ -78,10 +78,6 @@ public class FallDownAction extends Action {
                 } else if (tileBelowId == TILE_TRAMPOLINE_MIDDLE) {
                     Trampoline trampoline = Trampolins.getTrampolineForTile(mrRobot.getTileMapColumn(), mrRobot.getTileMapRow());
                     trampoline.getSprite().showAnimation(MrRobot.ANIM.trampoline_big.name(), Animation.PlayMode.NORMAL);
-
-
-
-
                 }
                 return true;
             }

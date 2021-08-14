@@ -80,8 +80,8 @@ public class Flame {
 
         killFlameAction = new ActionBuilder()
                 .setAnimation(Flame.ANIM.flame_blue.name())
-                .moveTo(4, 5, 0.2f, Interpolation.bounce)
-                .moveTo(2, -200, 1.5f, Interpolation.slowFast)
+                .moveTo(4, 5, 0.2f, Interpolation.bounce, null)
+                .moveTo(2, -200, 1.5f, Interpolation.slowFast, null)
                 .setVisibility(false, 0f)
                 .build();
     }

@@ -18,7 +18,6 @@ import games.play4ever.libgdx.sprites.action.ActionBuilder;
 import games.play4ever.libgdx.sprites.action.ActionListener;
 import games.play4ever.mrrobot.actions.DropDownAction;
 import games.play4ever.mrrobot.actions.FallDownAction;
-import games.play4ever.mrrobot.actions.JumpSidewaysAction;
 import games.play4ever.mrrobot.actions.RiseUpAction;
 import games.play4ever.mrrobot.actions.SlideDownAction;
 import games.play4ever.mrrobot.actions.TeleportAction;
@@ -143,15 +142,22 @@ public class MrRobot implements ActionListener, CollisionListener {
         // we keep a specific reference to the movement action within the sideays jump, to be
         // able to set the direction at the time of commencing the jump
         jumpSidewaysRightAction = new ActionBuilder()
-                .custom(new JumpSidewaysAction(this, false))
+                .moveTo(18, 18, 0.5f, Interpolation.linear, Interpolation.exp5Out)
+//                .moveTo(15, -15, 0.5f, Interpolation.linear, Interpolation.exp5In)
                 .custom(new FallDownAction(this))
                 .build();
         jumpSidewaysLeftAction = new ActionBuilder()
-                .custom(new JumpSidewaysAction(this, true))
+                .moveTo(-18, 18, 0.5f, Interpolation.linear, Interpolation.exp5Out)
+//                .moveTo(15, -15, 0.5f, Interpolation.linear, Interpolation.exp5In)
+//                .custom(new JumpSidewaysAction(this, true))
                 .custom(new FallDownAction(this))
                 .build();
+        // Interpolations info
+        // bounce - earth-shake
+        //
         jumpUpAction = new ActionBuilder()
-                .moveTo(0, 18, 0.6f, Interpolation.circleOut)
+                .moveTo(0, 18, 0.5f, Interpolation.linear, Interpolation.exp5Out)
+//                .moveTo(0, 18, 0.6f, Interpolation.circleOut)
                 .custom(new DropDownAction(this))
                 .build();
         teleportAction = new ActionBuilder()
@@ -198,7 +204,7 @@ public class MrRobot implements ActionListener, CollisionListener {
                 .setAnimation(ANIM.mrrobot_dies.name())
                 .stayPut(0.3f)
                 .setAnimation(ANIM.mrrobot_downfall.name())
-                .moveTo(2, -120, 1.4f, Interpolation.slowFast)
+                .moveTo(2, -120, 1.4f, null, Interpolation.slowFast)
                 .setVisibility(false, 0.1f)
                 .build();
 
@@ -246,7 +252,7 @@ public class MrRobot implements ActionListener, CollisionListener {
             otherSprite.setVisible(false);
             magnetRightActive = true;
         }
-        if(otherSprite.getType() == SpriteTypes.SHIELDS) {
+        if(otherSprite.getType() == SpriteTypes.SHIELDS && getState() != MrRobotState.DYING) {
             Hud.addScore(100);
             shieldSprite.startAction(shieldAction, this);
             otherSprite.setVisible(false);
@@ -406,11 +412,13 @@ public class MrRobot implements ActionListener, CollisionListener {
         // ====================== TEMPORARY - ALLOW RESTART BY F1 =====================
 
         if(GameInput.isButtonOkPressed()) {
-            if(GameInput.isRightPressed()) {
+            if(GameInput.isRightPressed() && !isJumping()) {
+                changeState(MrRobotState.JUMP_RIGHT);
                 mrRobotSprite.startAction(jumpSidewaysRightAction, null);
-            } else if(GameInput.isLeftPressed()) {
+            } else if(GameInput.isLeftPressed() && !isJumping()) {
+                changeState(MrRobotState.JUMP_LEFT);
                 mrRobotSprite.startAction(jumpSidewaysLeftAction, null);
-            } else {
+            } else if (!isJumping()) {
                 changeState(MrRobotState.JUMPUP_RIGHT);
                 mrRobotSprite.startAction(jumpUpAction, this);
             }

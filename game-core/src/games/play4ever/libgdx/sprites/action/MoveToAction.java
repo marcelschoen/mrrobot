@@ -12,8 +12,8 @@ import com.badlogic.gdx.math.Interpolation;
  */
 public class MoveToAction extends Action {
 
-    protected Interpolation interpolation;
-    protected Interpolation interpolation2;
+    protected Interpolation interpolationX = Interpolation.linear;
+    protected Interpolation interpolationY = Interpolation.linear;
     protected float xOffset;
     protected float yOffset;
     protected float startX;
@@ -27,7 +27,7 @@ public class MoveToAction extends Action {
      * @param secDuration The duration of the movement in number of seconds.
      */
     public void moveTo(float xOffset, float yOffset, float secDuration) {
-        moveTo(xOffset, yOffset, secDuration, Interpolation.linear, null);
+        moveTo(xOffset, yOffset, secDuration, null, null);
     }
 
     /**
@@ -36,29 +36,33 @@ public class MoveToAction extends Action {
      * @param secDuration The duration of the movement in number of seconds.
      * @param interpolation The type of interpolation to use (instead of linear).
      */
+    /*
     public void moveTo(float xOffset, float yOffset, float secDuration,
-                       Interpolation interpolation) {
-        moveTo(xOffset, yOffset, secDuration, interpolation, null);
+                       Interpolation interpolationX) {
+        moveTo(xOffset, yOffset, secDuration, interpolationX, null);
     }
+
+     */
 
     /**
      *
      * @param xOffset The horizontal offset in pixels.
      * @param yOffset The vertical offset in pixels.
      * @param secDuration The duration of the movement in number of seconds.
-     * @param interpolationX The type of interpolation to use for the X-coordinate (instead of linear).
-     * @param interpolationY The type of interpolation to use for the Y-coordinate (instead of linear).
+     * @param interpolationX The type of interpolation to use for the X-coordinate (instead of linear). Will be linear if parameter is null.
+     * @param interpolationY The type of interpolation to use for the Y-coordinate (instead of linear). Will be linear if parameter is null.
      */
     public void moveTo(float xOffset, float yOffset, float secDuration,
                        Interpolation interpolationX,
                        Interpolation interpolationY) {
         this.xOffset = xOffset;
         this.yOffset = yOffset;
-        this.interpolation = interpolationX;
-        if(this.interpolation == null) {
-            this.interpolation = Interpolation.linear;
+        if(interpolationX != null) {
+            this.interpolationX = interpolationX;
         }
-        this.interpolation2 = interpolationY;
+        if(interpolationY != null) {
+            this.interpolationY = interpolationY;
+        }
         this.executionDuration = secDuration;
     }
 
@@ -75,6 +79,9 @@ public class MoveToAction extends Action {
     protected void execute(float delta) {
         if(executionTimer > 0) {
             float state = 1f - (executionTimer / executionDuration);
+            super.sprite.setX(interpolationX.apply(startX, targetX, state));
+            super.sprite.setY(interpolationY.apply(startY, targetY, state));
+            /*
             if(interpolation2 != null) {
                 super.sprite.setX(interpolation2.apply(startX, targetX, state));
             } else {
@@ -85,6 +92,8 @@ public class MoveToAction extends Action {
             } else {
                 super.sprite.setY(interpolation.apply(startY, targetY, state));
             }
+
+             */
         }
     }
 }

@@ -136,12 +136,15 @@ public class ActionBuilder {
      *                      If set to null, a linear interpolation will be used.
      * @return
      */
+    /*
     public ActionBuilder moveTo(float xOffset, float yOffset, float secDuration,
                                 Interpolation interpolation){
         MoveToAction newAction = (MoveToAction)addAction(new MoveToAction());
         newAction.moveTo(xOffset, yOffset, secDuration, interpolation);
         return this;
     }
+
+     */
 
     /**
      * Build the action (or chain of actions).

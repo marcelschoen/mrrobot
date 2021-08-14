@@ -26,11 +26,9 @@ public class Trampolins {
      * @param trampoline The trampoline to which the tiles belong.
      */
     public static void addTrampoline(int column, int row, Trampoline trampoline) {
-        trampolins[column][row] = trampoline;
-        trampolins[column+1][row] = trampoline;
-        trampolins[column+2][row] = trampoline;
-        trampolins[column+3][row] = trampoline;
-        trampolins[column+4][row] = trampoline;
+        for(int colCt = column; colCt < column + 7; colCt++) {
+            trampolins[colCt][row] = trampoline;
+        }
         Gdx.app.log("Trampolins", "Add trampolin at " + column + "," + row);
     }
 
