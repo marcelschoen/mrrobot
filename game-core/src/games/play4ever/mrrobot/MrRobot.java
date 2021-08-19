@@ -142,12 +142,12 @@ public class MrRobot implements ActionListener, CollisionListener {
         // we keep a specific reference to the movement action within the sideays jump, to be
         // able to set the direction at the time of commencing the jump
         jumpSidewaysRightAction = new ActionBuilder()
-                .moveTo(18, 18, 0.5f, Interpolation.linear, Interpolation.exp5Out)
+                .moveTo(18, 22, 0.5f, Interpolation.linear, Interpolation.exp5Out)
 //                .moveTo(15, -15, 0.5f, Interpolation.linear, Interpolation.exp5In)
                 .custom(new FallDownAction(this))
                 .build();
         jumpSidewaysLeftAction = new ActionBuilder()
-                .moveTo(-18, 18, 0.5f, Interpolation.linear, Interpolation.exp5Out)
+                .moveTo(-18, 22, 0.5f, Interpolation.linear, Interpolation.exp5Out)
 //                .moveTo(15, -15, 0.5f, Interpolation.linear, Interpolation.exp5In)
 //                .custom(new JumpSidewaysAction(this, true))
                 .custom(new FallDownAction(this))
@@ -156,7 +156,7 @@ public class MrRobot implements ActionListener, CollisionListener {
         // bounce - earth-shake
         //
         jumpUpAction = new ActionBuilder()
-                .moveTo(0, 18, 0.5f, Interpolation.linear, Interpolation.exp5Out)
+                .moveTo(0, 22, 0.5f, Interpolation.linear, Interpolation.exp5Out)
 //                .moveTo(0, 18, 0.6f, Interpolation.circleOut)
                 .custom(new DropDownAction(this))
                 .build();
@@ -411,7 +411,7 @@ public class MrRobot implements ActionListener, CollisionListener {
         }
         // ====================== TEMPORARY - ALLOW RESTART BY F1 =====================
 
-        if(GameInput.isButtonOkPressed()) {
+        if(GameInput.isJumpButtonPressed()) {
             if(GameInput.isRightPressed() && !isJumping()) {
                 changeState(MrRobotState.JUMP_RIGHT);
                 mrRobotSprite.startAction(jumpSidewaysRightAction, null);

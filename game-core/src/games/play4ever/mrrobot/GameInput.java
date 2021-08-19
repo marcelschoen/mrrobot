@@ -41,28 +41,56 @@ public class GameInput implements ControllerListener, InputProcessor {
         }
     }
 
-    public static boolean isButtonOkPressed() {
-        if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT) ||
-                Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)
-                || Gdx.input.isKeyPressed(Input.Keys.A)
-                || Gdx.input.isKeyPressed(Input.Keys.X)
-                || (connected && controllerOk)
-                || GamepadOverlay.isJumpPressed) {
+    public static boolean isFaceButtonLeftPressed() {
+        if(Gdx.input.isKeyPressed(Input.Keys.X)
+                || (connected && controllerOk)) {
             return true;
         }
         return false;
     }
 
-    public static boolean isButtonBackPressed() {
-        if(Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) ||
-                Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT)
-                || Gdx.input.isKeyPressed(Input.Keys.B)
-                || Gdx.input.isKeyPressed(Input.Keys.Y)
-                || (connected && controllerBack)
-                || backKeyPressed) {
+    public static boolean isFaceButtonDownPressed() {
+        if(Gdx.input.isKeyPressed(Input.Keys.A)
+                || (connected && controllerOk)) {
             return true;
         }
         return false;
+    }
+
+    public static boolean isFaceButtonRightPressed() {
+        if(Gdx.input.isButtonPressed(Input.Buttons.RIGHT)
+                || (connected && controllerOk)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isFaceButtonUpPressed() {
+        if(Gdx.input.isButtonPressed(Input.Buttons.RIGHT)
+                || (connected && controllerOk)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isJumpButtonPressed() {
+        return isFaceButtonDownPressed()
+                || GamepadOverlay.isJumpPressed
+                || Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)
+                || Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT);
+    }
+
+    public static boolean isButtonOkPressed() {
+        return isFaceButtonDownPressed()
+                || Gdx.input.isTouched()
+                || Gdx.input.isKeyPressed(Input.Keys.ENTER)
+                ;
+    }
+
+    public static boolean isButtonBackPressed() {
+        return isFaceButtonRightPressed()
+                || (connected && controllerBack)
+                || backKeyPressed;
     }
 
     public static boolean isDownPressed() {
@@ -202,8 +230,8 @@ public class GameInput implements ControllerListener, InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-//        Gdx.app.log(getClass().getName(), "==============>>>  keyDown: " + keycode);
         if(keycode == Input.Keys.BACK || keycode == Input.Keys.BACKSPACE) {
+        Gdx.app.log(getClass().getName(), "==============>>>  BACK keyDown: " + keycode);
             backKeyPressed = true;
         }
         return false;

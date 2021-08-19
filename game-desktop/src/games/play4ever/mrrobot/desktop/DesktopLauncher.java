@@ -30,6 +30,8 @@ public class DesktopLauncher {
 			Graphics.DisplayMode displayMode = findMatchingMode(1920, 1080);
 			Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 			config.setFullscreenMode(displayMode);
+			config.setResizable(false);
+			//config.setHdpiMode(H);
 			new Lwjgl3Application(new MrRobotGame(), config);
 		} else {
 			System.out.println("Running game in window mode...");

@@ -75,7 +75,7 @@ public class Flame {
         }
         this.sprite = Sprites.createSprite(animationNames, SpriteTypes.FLAMES);
         this.sprite.setVisible(true);
-        this.sprite.setDefaultCollisionBounds(4, 3, 14, 10);
+        this.sprite.setDefaultCollisionBounds(6, 3, 10, 10);
         Collision.addRectangles(this.sprite);
 
         killFlameAction = new ActionBuilder()
