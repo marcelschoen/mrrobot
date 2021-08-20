@@ -379,13 +379,15 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	 */
 	public void executeCurrentAction(float delta) {
 		if(currentAction != null) {
-			if(currentAction.isRunning()) {
-				currentAction.executeAction(delta);
-				if (currentAction.isCompleted()) {
-					currentAction = currentAction.runFollowUpAction();
+			synchronized (currentAction) {
+				if(currentAction.isRunning()) {
+					currentAction.executeAction(delta);
+					if (currentAction.isCompleted()) {
+						currentAction = currentAction.runFollowUpAction();
+					}
+				} else {
+					currentAction = null;
 				}
-			} else {
-				currentAction = null;
 			}
 		}
 	}

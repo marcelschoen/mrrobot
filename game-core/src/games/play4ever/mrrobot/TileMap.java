@@ -283,6 +283,7 @@ public class TileMap {
      */
     public void restart() {
         putCharactersAtStartingPosition();
+        mrRobot.reset();
     }
 
     public void clearCell(TiledMapTileLayer.Cell cell) {

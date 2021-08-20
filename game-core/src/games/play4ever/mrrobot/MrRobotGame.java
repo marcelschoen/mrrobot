@@ -64,7 +64,6 @@ public class MrRobotGame extends Game {
 
     @Override
     public void resize (int width, int height) {
-        System.out.println(">> resize screen to: " + width + "," + height);
         if (screen != null) screen.resize(width, height);
         //GamepadOverlay.resize(width, height);
     }

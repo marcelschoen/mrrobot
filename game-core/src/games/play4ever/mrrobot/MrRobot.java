@@ -143,13 +143,10 @@ public class MrRobot implements ActionListener, CollisionListener {
         // able to set the direction at the time of commencing the jump
         jumpSidewaysRightAction = new ActionBuilder()
                 .moveTo(18, 22, 0.5f, Interpolation.linear, Interpolation.exp5Out)
-//                .moveTo(15, -15, 0.5f, Interpolation.linear, Interpolation.exp5In)
                 .custom(new FallDownAction(this))
                 .build();
         jumpSidewaysLeftAction = new ActionBuilder()
                 .moveTo(-18, 22, 0.5f, Interpolation.linear, Interpolation.exp5Out)
-//                .moveTo(15, -15, 0.5f, Interpolation.linear, Interpolation.exp5In)
-//                .custom(new JumpSidewaysAction(this, true))
                 .custom(new FallDownAction(this))
                 .build();
         // Interpolations info
@@ -157,7 +154,6 @@ public class MrRobot implements ActionListener, CollisionListener {
         //
         jumpUpAction = new ActionBuilder()
                 .moveTo(0, 22, 0.5f, Interpolation.linear, Interpolation.exp5Out)
-//                .moveTo(0, 18, 0.6f, Interpolation.circleOut)
                 .custom(new DropDownAction(this))
                 .build();
         teleportAction = new ActionBuilder()
@@ -209,6 +205,8 @@ public class MrRobot implements ActionListener, CollisionListener {
                 .build();
 
         Collision.addListener(this);
+
+        reset();
     }
 
     public void createSprites() {
@@ -262,7 +260,8 @@ public class MrRobot implements ActionListener, CollisionListener {
             otherSprite.setVisible(false);
         }
         if(otherSprite.getType() == SpriteTypes.FLAMES) {
-            if(shieldSprite.getCurrentAction() != null && shieldSprite.getCurrentAction().isRunning()) {
+            Action currentShieldAction = shieldSprite.getCurrentAction();
+            if(currentShieldAction != null && currentShieldAction.isRunning()) {
                 if(!Flame.getFlameOfSprite(otherSprite).isDying()) {
                     // Mr. Robot vanquishes flame with shield
                     Flame.getFlameOfSprite(otherSprite).die();
@@ -499,6 +498,16 @@ public class MrRobot implements ActionListener, CollisionListener {
         }
     }
 
+    public void reset() {
+        magnetRightActive = false;
+        magnetLeftActive = false;
+        mrRobotState = STANDING_RIGHT;
+        if(shieldSprite != null) {
+            shieldSprite.reset();
+            shieldSprite.setVisible(false);
+        }
+    }
+
     // ================== ActionListener =====================
 
     @Override
@@ -507,7 +516,6 @@ public class MrRobot implements ActionListener, CollisionListener {
             // handle death
             Hud.removeLive();
             // TODO - some fade-out / fade-in effect?
-
             // reset Mr. Robot and flames and optionally rest of map
             this.tileMap.restart();
         } else if(completedAction.getFirstActionInChain() == magnetLeftAction) {

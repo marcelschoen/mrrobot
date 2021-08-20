@@ -64,7 +64,7 @@ public class PlayScreen extends AbstractBaseScreen {
          */
         if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             ScreenUtil.dispose();
-            System.exit(-1);
+            System.exit(0);
         }
         mrRobot.handleInput(delta);
         mrRobot.moveMrRobot(delta);
