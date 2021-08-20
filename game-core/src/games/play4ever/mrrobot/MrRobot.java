@@ -727,9 +727,9 @@ public class MrRobot implements ActionListener, CollisionListener {
             } else if(magnetRightActive && (getState() == MrRobotState.JUMP_LEFT || getState() == MrRobotState.FALL_LEFT) && Magnets.isMagnetRightClose(getX(), getY())) {
                 setPosition(mrRobotSprite.getX() - PULLING_SPEED * delta, mrRobotSprite.getY());
             }
-            if(tileBelowId == TILE_ROLL_LEFT_1 || tileBelowId == TILE_ROLL_LEFT_2) {
+            if(mrRobotIsAlignedVertically() && (tileBelowId == TILE_ROLL_LEFT_1 || tileBelowId == TILE_ROLL_LEFT_2)) {
                 setPosition(mrRobotSprite.getX() - ROLLING_SPEED * delta, mrRobotSprite.getY());
-            } else if(tileBelowId == TILE_ROLL_RIGHT_1 || tileBelowId == TILE_ROLL_RIGHT_2) {
+            } else if(mrRobotIsAlignedVertically() && (tileBelowId == TILE_ROLL_RIGHT_1 || tileBelowId == TILE_ROLL_RIGHT_2)) {
                 setPosition(mrRobotSprite.getX() + ROLLING_SPEED * delta, mrRobotSprite.getY());
             } else if(tileBelowId == TILE_ELEVATOR && tileBehindId == TILE_ELEVATOR && !isRisingUp() && !isJumping()) {
                 mrRobotSprite.startAction(riseUpAction, null);
@@ -788,6 +788,16 @@ public class MrRobot implements ActionListener, CollisionListener {
         int row = (int)(y / 8f);
         float diff = y - (row * 8f);
         return Math.abs(diff) < 1.5f;
+    }
+
+    /**
+     * @return True if Mr. Robot is nearly vertically aligned with his feet (lower sprite boundary).
+     */
+    public boolean mrRobotIsAlignedVertically() {
+        float y = mrRobotSprite.getY();
+        int row = (int)(y / 8f);
+        float diff = y - (row * 8f);
+        return Math.abs(diff) < 0.5f;
     }
 
     /**
