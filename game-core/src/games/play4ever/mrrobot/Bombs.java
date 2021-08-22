@@ -4,8 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 
-import games.play4ever.libgdx.DebugOutput;
-
 import static games.play4ever.mrrobot.TileMap.COLUMNS;
 import static games.play4ever.mrrobot.TileMap.ROWS;
 

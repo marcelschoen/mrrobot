@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Texture;
 
 import games.play4ever.libgdx.Assets;
 import games.play4ever.libgdx.screens.AbstractBaseScreen;
+import games.play4ever.libgdx.screens.TransitionScreen;
 import games.play4ever.mrrobot.GameInput;
 import games.play4ever.mrrobot.MrRobotAssets;
 import games.play4ever.mrrobot.MrRobotGame;
@@ -20,7 +21,9 @@ import games.play4ever.mrrobot.MrRobotGame;
  * @author Marcel Schoen
  */
 public class TitleScreen extends AbstractBaseScreen {
-	
+
+	private Game game = null;
+
 	/** The "BOMB" label sprite. */
 	private Texture titlePicture = null;
 
@@ -32,6 +35,7 @@ public class TitleScreen extends AbstractBaseScreen {
 	 */
 	public TitleScreen(Game game) {
 		super(game, null);
+		this.game = game;
 	}
 
 	/*
@@ -57,7 +61,9 @@ public class TitleScreen extends AbstractBaseScreen {
 
 	private void beginGame() {
 		MrRobotAssets.playMenuMusic();
-		MrRobotGame.instance().setScreen(MrRobotGame.instance().playScreen);
+
+		TransitionScreen transitionScreen = new TransitionScreen(this, MrRobotGame.instance().playScreen, game);
+		MrRobotGame.instance().setScreen(transitionScreen);
 	}
 
 	/* (non-Javadoc)

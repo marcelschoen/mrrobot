@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import games.play4ever.libgdx.Assets;
-import games.play4ever.libgdx.DebugOutput;
 import games.play4ever.libgdx.FileUtil;
 import games.play4ever.libgdx.FontID;
 import games.play4ever.libgdx.SoundID;

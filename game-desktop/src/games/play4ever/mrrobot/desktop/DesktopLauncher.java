@@ -19,23 +19,27 @@ import static games.play4ever.mrrobot.MrRobotGame.GAME_TESTING;
 public class DesktopLauncher {
 
 	public static void main(String[] args) {
-		Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
-		cfg.setTitle("mrrobot-gdx");
-		if (args != null && args.length > 0 && args[0].equalsIgnoreCase("fullscreen")) {
-		}
-		System.setProperty("desktop", "true");
-		System.setProperty(GAME_TESTING, "true");
+		try {
+			Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
+			cfg.setTitle("mrrobot-gdx");
+			if (args != null && args.length > 0 && args[0].equalsIgnoreCase("fullscreen")) {
+			}
+			System.setProperty("desktop", "true");
+			System.setProperty(GAME_TESTING, "true");
 
-		if (true) {
-			Graphics.DisplayMode displayMode = findMatchingMode(1920, 1080);
-			Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-			config.setFullscreenMode(displayMode);
-			config.setResizable(false);
-			//config.setHdpiMode(H);
-			new Lwjgl3Application(new MrRobotGame(), config);
-		} else {
-			System.out.println("Running game in window mode...");
-			new Lwjgl3Application(new MrRobotGame(), cfg);
+			if (true) {
+				Graphics.DisplayMode displayMode = findMatchingMode(1920, 1080);
+				Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+				config.setFullscreenMode(displayMode);
+				config.setResizable(false);
+				//config.setHdpiMode(H);
+				new Lwjgl3Application(new MrRobotGame(), config);
+			} else {
+				System.out.println("Running game in window mode...");
+				new Lwjgl3Application(new MrRobotGame(), cfg);
+			}
+		} catch(Throwable e) {
+			e.printStackTrace();
 		}
 	}
 

@@ -4,7 +4,7 @@ sourceCompatibility = 1.7
 sourceSets.main.java.srcDirs = [ "src/" ]
 sourceSets.main.resources.srcDirs = ["../game-android/assets"]
 
-project.ext.mainClassName = "DesktopLauncher"
+project.ext.mainClassName = "games.play4ever.mrrobot.desktop.DesktopLauncher"
 project.ext.assetsDir = new File("../game-android/assets")
 
 dependencies {

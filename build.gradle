@@ -38,21 +38,24 @@ allprojects {
     }
 }
 
-project(":jplay-gamepad") {
+project(":libgdx-transitions") {
     apply plugin: "java-library"
 }
 
-project(":libgdx-darkfunction") {
+project(":play4ever-libgdx") {
     apply plugin: "java-library"
+    dependencies {
+        implementation group: 'org.mini2Dx', name: 'universal-tween-engine', version: '6.3.3'
+        api "com.badlogicgames.gdx:gdx:$gdxVersion"
+    }
 }
 
 project(":game-core") {
     apply plugin: "java-library"
 
     dependencies {
-        implementation project(":libgdx-darkfunction")
-        implementation project(":jplay-gamepad")
-        implementation group: 'org.mini2Dx', name: 'universal-tween-engine', version: '6.3.3'
+        implementation project(":play4ever-libgdx")
+        implementation project(":libgdx-transitions")
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
     }
@@ -62,8 +65,9 @@ project(":game-desktop") {
     apply plugin: "java-library"
 
     dependencies {
-        implementation project(":jplay-gamepad")
-        implementation project(":libgdx-darkfunction")
+//        implementation project(":jplay-gamepad")
+//        implementation project(":libgdx-darkfunction")
+        implementation project(":libgdx-transitions")
         implementation project(":game-core")
         api "com.codeminders:hidapi:$hidVersion"
         api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
@@ -79,16 +83,15 @@ project(":game-android") {
     configurations { natives }
 
     dependencies {
+        implementation project(":play4ever-libgdx")
+        implementation project(":libgdx-transitions")
         implementation project(":game-core")
-        implementation project(":libgdx-darkfunction")
         api "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
-        //natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86_64"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
-        //natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-armeabi"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-armeabi-v7a"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-arm64-v8a"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"

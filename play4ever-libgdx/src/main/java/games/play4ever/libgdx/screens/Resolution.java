@@ -4,7 +4,7 @@
  * @Copyright: Marcel Schoen, Switzerland, 2013, All Rights Reserved.
  */
 
-package games.play4ever.mrrobot.screens;
+package games.play4ever.libgdx.screens;
 
 import java.awt.Dimension;
 

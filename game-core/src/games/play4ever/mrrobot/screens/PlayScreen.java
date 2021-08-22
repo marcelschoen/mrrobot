@@ -4,12 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 
-import games.play4ever.libgdx.DebugOutput;
 import games.play4ever.libgdx.collision.Collision;
 import games.play4ever.libgdx.screens.AbstractBaseScreen;
 import games.play4ever.libgdx.screens.ScreenUtil;
 import games.play4ever.libgdx.sprites.Sprites;
 import games.play4ever.mrrobot.Bombs;
+import games.play4ever.mrrobot.DebugOutput;
 import games.play4ever.mrrobot.Flame;
 import games.play4ever.mrrobot.GamepadOverlay;
 import games.play4ever.mrrobot.Hud;
@@ -31,7 +31,7 @@ public class PlayScreen extends AbstractBaseScreen {
     public PlayScreen(MrRobotGame game) {
         super(game, null, Color.BLUE);
 
-        DebugOutput.setPlayScreen(this);
+        //DebugOutput.setPlayScreen(this);
         TileMap.resetToFirstMap();
 
         this.mrRobot = new MrRobot(this);
@@ -73,6 +73,7 @@ public class PlayScreen extends AbstractBaseScreen {
     @Override
     public void show() {
         MrRobotAssets.stopMenuMusic();
+        super.show();
     }
 
     /* (non-Javadoc)
@@ -81,13 +82,10 @@ public class PlayScreen extends AbstractBaseScreen {
     @Override
     public void doRender(float delta) {
 
-
         if(tileMap.getNumberOfDots() == 0) {
             TileMap.switchToNextMap();
             startLevel();
         }
-
-
 
         // Handle controls
         handleInput(delta);
