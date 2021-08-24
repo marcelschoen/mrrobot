@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Matrix4;
 
 public class ToBlackOrWhiteTransition extends AbstractBaseTransition {
 
@@ -27,15 +26,12 @@ public class ToBlackOrWhiteTransition extends AbstractBaseTransition {
     @Override
     public void render(Batch batch, Texture currentScreenTexture, Texture nextScreenTexture, float percent) {
 
-
-        Matrix4 matrix = new Matrix4();
-        matrix.setToOrtho2D(0, 0, currentScreenTexture.getWidth(),
+        this.matrix.setToOrtho2D(0, 0, currentScreenTexture.getWidth(),
                 currentScreenTexture.getHeight());
         batch.setProjectionMatrix(matrix);
-
-
         batch.begin();
         batch.setColor(1, 1, 1, 1);
+
         if (fadeDirection == true) {
             batch.draw(currentScreenTexture, 0, 0, 0, 0,
                     currentScreenTexture.getWidth(), currentScreenTexture.getHeight(),
