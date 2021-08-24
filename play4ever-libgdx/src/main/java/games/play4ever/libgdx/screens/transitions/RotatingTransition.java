@@ -41,7 +41,7 @@ public class RotatingTransition extends AbstractBaseTransition {
 	}
 
 	@Override
-	public void render (Batch batch, float percent) {
+	public void doRender (Batch batch, float percent) {
 		float width = getCurrentTexture().getWidth();
 		float height = getCurrentTexture().getHeight();
 		float x = 0;

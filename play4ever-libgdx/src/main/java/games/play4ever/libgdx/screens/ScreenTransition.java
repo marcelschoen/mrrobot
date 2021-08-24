@@ -24,7 +24,7 @@ public interface ScreenTransition {
 	 * @param batch the {@link Batch}
 	 * @param percent the current progress 0.0 - 1.0 */
 	void render(Batch batch, float percent);
-	void setupTransition(Game game, AbstractBaseScreen currentScreen, AbstractBaseScreen nextScreen);
+	void setupTransition(Game game, float transitionDuration, AbstractBaseScreen currentScreen, AbstractBaseScreen nextScreen);
 	public AbstractBaseScreen getCurrentScreen();
 	public AbstractBaseScreen getNextScreen();
 	public Game getGame();

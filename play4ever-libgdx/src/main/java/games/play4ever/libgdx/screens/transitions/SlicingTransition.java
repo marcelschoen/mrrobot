@@ -48,7 +48,7 @@ public class SlicingTransition extends AbstractBaseTransition {
 	}
 
 	@Override
-	public void render (Batch batch, float percent) {
+	public void doRender (Batch batch, float percent) {
 		Texture currentScreenTexture = getCurrentTexture();
 		Texture nextScreenTexture = getNextTexture();
 		float width = currentScreenTexture.getWidth();

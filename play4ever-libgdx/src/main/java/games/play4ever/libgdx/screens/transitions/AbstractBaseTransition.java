@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Matrix4;
 
@@ -21,8 +22,11 @@ public abstract class AbstractBaseTransition implements ScreenTransition {
     private FrameBuffer nextBuffer;
     private Texture currentTexture;
     private Texture nextTexture;
+    private float currentTransitionTime;
+    private float transitionDuration;
 
-    public void setupTransition(Game game, AbstractBaseScreen currentScreen, AbstractBaseScreen nextScreen) {
+    public void setupTransition(Game game, float transitionDuration, AbstractBaseScreen currentScreen, AbstractBaseScreen nextScreen) {
+        this.transitionDuration = transitionDuration;
         this.game = game;
         this.currentScreen = currentScreen;
         this.nextScreen = nextScreen;
@@ -43,6 +47,24 @@ public abstract class AbstractBaseTransition implements ScreenTransition {
         currentTexture = currentBuffer.getColorBufferTexture();
         nextTexture = nextBuffer.getColorBufferTexture();
     }
+
+    protected Matrix4 getFreshMatrix4() {
+        this.matrix.set(startMatrix);
+        this.matrix.setToOrtho2D(0, 0, getCurrentTexture().getWidth(),
+                getCurrentTexture().getHeight());
+        return this.matrix;
+    }
+
+    public void render(Batch batch, float delta) {
+        float percent = currentTransitionTime / transitionDuration;
+        doRender(batch, percent);
+        currentTransitionTime += delta;
+        if(currentTransitionTime >= transitionDuration) {
+            getGame().setScreen(getNextScreen());
+        }
+    }
+
+    public abstract void doRender(Batch batch, float percent);
 
     public Texture getCurrentTexture() {
         return currentTexture;
