@@ -10,7 +10,9 @@ import com.badlogic.gdx.graphics.Texture;
 
 import games.play4ever.libgdx.Assets;
 import games.play4ever.libgdx.screens.AbstractBaseScreen;
+import games.play4ever.libgdx.screens.ScreenTransition;
 import games.play4ever.libgdx.screens.TransitionScreen;
+import games.play4ever.libgdx.screens.transitions.ScreenTransitions;
 import games.play4ever.mrrobot.GameInput;
 import games.play4ever.mrrobot.MrRobotAssets;
 import games.play4ever.mrrobot.MrRobotGame;
@@ -62,7 +64,9 @@ public class TitleScreen extends AbstractBaseScreen {
 	private void beginGame() {
 		MrRobotAssets.playMenuMusic();
 
-		TransitionScreen transitionScreen = new TransitionScreen(this, MrRobotGame.instance().playScreen, game);
+		ScreenTransition transition = ScreenTransitions.TO_BLACK_OR_WHITE.getTransition();
+		transition.setupTransition(game, this, MrRobotGame.instance().playScreen);
+		TransitionScreen transitionScreen = new TransitionScreen(transition);
 		MrRobotGame.instance().setScreen(transitionScreen);
 	}
 

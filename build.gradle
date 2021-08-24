@@ -38,10 +38,6 @@ allprojects {
     }
 }
 
-project(":libgdx-transitions") {
-    apply plugin: "java-library"
-}
-
 project(":play4ever-libgdx") {
     apply plugin: "java-library"
     dependencies {
@@ -55,7 +51,6 @@ project(":game-core") {
 
     dependencies {
         implementation project(":play4ever-libgdx")
-        implementation project(":libgdx-transitions")
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
     }
@@ -65,9 +60,6 @@ project(":game-desktop") {
     apply plugin: "java-library"
 
     dependencies {
-//        implementation project(":jplay-gamepad")
-//        implementation project(":libgdx-darkfunction")
-        implementation project(":libgdx-transitions")
         implementation project(":game-core")
         api "com.codeminders:hidapi:$hidVersion"
         api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
@@ -84,7 +76,6 @@ project(":game-android") {
 
     dependencies {
         implementation project(":play4ever-libgdx")
-        implementation project(":libgdx-transitions")
         implementation project(":game-core")
         api "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"

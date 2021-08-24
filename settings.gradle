@@ -1,1 +1,1 @@
-include 'libgdx-transitions', 'play4ever-libgdx', 'game-core', 'game-desktop', 'game-android'
+include 'play4ever-libgdx', 'game-core', 'game-desktop', 'game-android'
