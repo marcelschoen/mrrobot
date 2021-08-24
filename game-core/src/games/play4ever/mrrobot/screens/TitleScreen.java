@@ -51,6 +51,10 @@ public class TitleScreen extends AbstractBaseScreen {
 			batch.draw(this.titlePicture, 0, 0);
 		}
 		batch.end();
+	}
+
+	@Override
+	public void performLogic() {
 		if(GameInput.isButtonOkPressed()) {
 //		if(System.currentTimeMillis() - this.startTime > 5000) {
 			beginGame();

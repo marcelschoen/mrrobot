@@ -17,20 +17,15 @@
 package games.play4ever.libgdx.screens;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
 public interface ScreenTransition {
 	/** Renders two textures to the given batch
 	 * @param batch the {@link Batch}
-	 * @param currentScreenTexture {@link Texture} from a {@link FrameBuffer}
-	 * @param nextScreenTexture {@link Texture} from a {@link FrameBuffer}
 	 * @param percent the current progress 0.0 - 1.0 */
-	void render(Batch batch, Texture currentScreenTexture, Texture nextScreenTexture, float percent);
-	void setupTransition(Game game, Screen currentScreen, Screen nextScreen);
-	public Screen getCurrentScreen();
-	public Screen getNextScreen();
+	void render(Batch batch, float percent);
+	void setupTransition(Game game, AbstractBaseScreen currentScreen, AbstractBaseScreen nextScreen);
+	public AbstractBaseScreen getCurrentScreen();
+	public AbstractBaseScreen getNextScreen();
 	public Game getGame();
 }

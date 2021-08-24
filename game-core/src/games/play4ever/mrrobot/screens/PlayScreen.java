@@ -29,7 +29,7 @@ public class PlayScreen extends AbstractBaseScreen {
      * @param game
      */
     public PlayScreen(MrRobotGame game) {
-        super(game, null, Color.BLUE);
+        super(game, Color.BLUE);
 
         //DebugOutput.setPlayScreen(this);
         TileMap.resetToFirstMap();

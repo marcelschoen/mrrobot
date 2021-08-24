@@ -16,7 +16,6 @@
 
 package games.play4ever.libgdx.screens.transitions;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Interpolation;
 
@@ -27,15 +26,17 @@ import com.badlogic.gdx.math.Interpolation;
 public class AlphaFadingTransition extends AbstractBaseTransition {
 
 	@Override
-	public void render (Batch batch, Texture currentScreenTexture, Texture nextScreenTexture, float alpha) {
+	public void render (Batch batch, float alpha) {
 		alpha = Interpolation.fade.apply(alpha);
 		batch.begin();
 		batch.setColor(1, 1, 1, 1);
-		batch.draw(currentScreenTexture, 0, 0, 0, 0, currentScreenTexture.getWidth(), currentScreenTexture.getHeight(), 1, 1, 0, 0,
-			0, currentScreenTexture.getWidth(), currentScreenTexture.getHeight(), false, true);
+		batch.draw(getCurrentTexture(), 0, 0, 0, 0, getCurrentTexture().getWidth(),
+				getCurrentTexture().getHeight(), 1, 1, 0, 0,
+			0, getCurrentTexture().getWidth(), getCurrentTexture().getHeight(), false, true);
 		batch.setColor(1, 1, 1, alpha);
-		batch.draw(nextScreenTexture, 0, 0, 0, 0, nextScreenTexture.getWidth(), nextScreenTexture.getHeight(), 1, 1, 0, 0, 0,
-			nextScreenTexture.getWidth(), nextScreenTexture.getHeight(), false, true);
+		batch.draw(getNextTexture(), 0, 0, 0, 0, getNextTexture().getWidth(),
+				getNextTexture().getHeight(), 1, 1, 0, 0, 0,
+				getNextTexture().getWidth(), getNextTexture().getHeight(), false, true);
 		batch.end();
 
 	}

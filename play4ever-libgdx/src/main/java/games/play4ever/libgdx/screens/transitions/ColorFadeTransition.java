@@ -45,9 +45,9 @@ public class ColorFadeTransition extends AbstractBaseTransition {
 	}
 
 	@Override
-	public void render (Batch batch, Texture currentScreenTexture, Texture nextScreenTexture, float percent) {
-		float width = currentScreenTexture.getWidth();
-		float height = currentScreenTexture.getHeight();
+	public void render (Batch batch, float percent) {
+		float width = getCurrentTexture().getWidth();
+		float height = getCurrentTexture().getHeight();
 		float x = 0;
 		float y = 0;
 
@@ -62,15 +62,15 @@ public class ColorFadeTransition extends AbstractBaseTransition {
 			color.a = 1.0f - fade;
 			batch.setColor(color);
 
-			batch.draw(nextScreenTexture, 0, 0, width / 2, height / 2, nextScreenTexture.getWidth(), nextScreenTexture.getHeight(),
-				1, 1, 0, 0, 0, nextScreenTexture.getWidth(), nextScreenTexture.getHeight(), false, true);
+			batch.draw(getNextTexture(), 0, 0, width / 2, height / 2, getNextTexture().getWidth(), getNextTexture().getHeight(),
+				1, 1, 0, 0, 0, getNextTexture().getWidth(), getNextTexture().getHeight(), false, true);
 
 		} else {
 
 			color.a = 1.0f - fade;
 			batch.setColor(color);
 
-			batch.draw(currentScreenTexture, 0, 0, width / 2, height / 2, width, height, 1, 1, 0, 0, 0, (int)width, (int)height,
+			batch.draw(getCurrentTexture(), 0, 0, width / 2, height / 2, width, height, 1, 1, 0, 0, 0, (int)width, (int)height,
 				false, true);
 
 		}

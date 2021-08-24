@@ -1,7 +1,6 @@
 package games.play4ever.libgdx.screens.transitions;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
@@ -24,26 +23,27 @@ public class ToBlackOrWhiteTransition extends AbstractBaseTransition {
     }
 
     @Override
-    public void render(Batch batch, Texture currentScreenTexture, Texture nextScreenTexture, float percent) {
+    public void render(Batch batch, float percent) {
 
-        this.matrix.setToOrtho2D(0, 0, currentScreenTexture.getWidth(),
-                currentScreenTexture.getHeight());
+        this.matrix.set(startMatrix);
+        this.matrix.setToOrtho2D(0, 0, getCurrentTexture().getWidth(),
+                getCurrentTexture().getHeight());
         batch.setProjectionMatrix(matrix);
         batch.begin();
         batch.setColor(1, 1, 1, 1);
 
         if (fadeDirection == true) {
-            batch.draw(currentScreenTexture, 0, 0, 0, 0,
-                    currentScreenTexture.getWidth(), currentScreenTexture.getHeight(),
+            batch.draw(getCurrentTexture(), 0, 0, 0, 0,
+                    getCurrentTexture().getWidth(), getCurrentTexture().getHeight(),
                     1, 1, 0, 0,0,
-                    currentScreenTexture.getWidth(), currentScreenTexture.getHeight(),
+                    getCurrentTexture().getWidth(), getCurrentTexture().getHeight(),
                     false, true);
         } else {
 //            batch.setColor(1, 1, 1, alpha);
-            batch.draw(nextScreenTexture, 0, 0, 0, 0,
-                    nextScreenTexture.getWidth(), nextScreenTexture.getHeight(),
+            batch.draw(getNextTexture(), 0, 0, 0, 0,
+                    getNextTexture().getWidth(), getNextTexture().getHeight(),
                     1, 1, 0, 0, 0,
-                    nextScreenTexture.getWidth(), nextScreenTexture.getHeight(),
+                    getNextTexture().getWidth(), getNextTexture().getHeight(),
                     false, true);
         }
         batch.end();

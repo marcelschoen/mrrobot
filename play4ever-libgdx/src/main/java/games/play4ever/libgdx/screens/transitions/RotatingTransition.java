@@ -16,7 +16,6 @@
 
 package games.play4ever.libgdx.screens.transitions;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Interpolation;
 
@@ -42,9 +41,9 @@ public class RotatingTransition extends AbstractBaseTransition {
 	}
 
 	@Override
-	public void render (Batch batch, Texture currentScreenTexture, Texture nextScreenTexture, float percent) {
-		float width = currentScreenTexture.getWidth();
-		float height = currentScreenTexture.getHeight();
+	public void render (Batch batch, float percent) {
+		float width = getCurrentTexture().getWidth();
+		float height = getCurrentTexture().getHeight();
 		float x = 0;
 		float y = 0;
 
@@ -67,10 +66,10 @@ public class RotatingTransition extends AbstractBaseTransition {
 		if (interpolation != null) rotation = interpolation.apply(percent);
 
 		batch.begin();
-		batch.draw(currentScreenTexture, 0, 0, width / 2, height / 2, width, height, 1, 1, 0, 0, 0, (int)width, (int)height, false,
+		batch.draw(getCurrentTexture(), 0, 0, width / 2, height / 2, width, height, 1, 1, 0, 0, 0, (int)width, (int)height, false,
 			true);
-		batch.draw(nextScreenTexture, 0, 0, width / 2, height / 2, nextScreenTexture.getWidth(), nextScreenTexture.getHeight(),
-			scalefactor, scalefactor, rotation * angle, 0, 0, nextScreenTexture.getWidth(), nextScreenTexture.getHeight(), false,
+		batch.draw(getNextTexture(), 0, 0, width / 2, height / 2, getNextTexture().getWidth(), getNextTexture().getHeight(),
+			scalefactor, scalefactor, rotation * angle, 0, 0, getNextTexture().getWidth(), getNextTexture().getHeight(), false,
 			true);
 		batch.end();
 
