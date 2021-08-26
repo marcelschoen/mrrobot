@@ -520,6 +520,9 @@ public class MrRobot implements ActionListener, CollisionListener {
         if(completedAction.getFirstActionInChain() == dyingAction) {
             // handle death
             Hud.removeLive();
+            if(Hud.hasLessThanZeroLivesLeft()) {
+                MrRobotGame.isGameOver = true;
+            }
             // TODO - some fade-out / fade-in effect?
             // reset Mr. Robot and flames and optionally rest of map
             this.tileMap.restart();

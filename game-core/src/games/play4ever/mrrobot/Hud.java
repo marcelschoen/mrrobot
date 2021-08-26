@@ -7,12 +7,19 @@ import games.play4ever.libgdx.Assets;
 
 public class Hud {
 
+    private static final int MAX_LIVES = 1;
+
     private static int score = 0;
 
-    private static int lives = 3;
+    private static int lives = MAX_LIVES;
 
     public static void setScore(int value) {
         score = value;
+    }
+
+    public static void resetScoreAndLives() {
+        score = 0;
+        lives = MAX_LIVES;
     }
 
     public static void addScore(int value) {
@@ -20,6 +27,10 @@ public class Hud {
     }
 
     public static void removeLive() { lives--; }
+
+    public static boolean hasLessThanZeroLivesLeft() {
+        return lives < 0;
+    }
 
     public static void addLive() { lives++; }
 

@@ -26,12 +26,23 @@ public class TitleScreen extends AbstractBaseScreen {
 
 	private Game game = null;
 
+	private static TitleScreen instance = null;
+
 	/** The "BOMB" label sprite. */
 	private Texture titlePicture = null;
 
 	/** Start timer. */
 	private long startTime = -1;
-	
+
+	public static TitleScreen create(Game game) {
+		instance = new TitleScreen(game);
+		return instance;
+	}
+
+	public static TitleScreen getInstance() {
+		return instance;
+	}
+
 	/**
 	 * Creates a title screen.
 	 */
@@ -66,8 +77,8 @@ public class TitleScreen extends AbstractBaseScreen {
 	}
 
 	private void beginGame() {
+		MrRobotGame.instance().playScreen.startGame();
 		MrRobotAssets.playMenuMusic();
-
 		ScreenTransition transition = ScreenTransitions.ALPHA_FADE.getTransition();
 		transition.setupTransition(game, 3f, this, MrRobotGame.instance().playScreen);
 		TransitionScreen transitionScreen = TransitionScreen.getInstance();

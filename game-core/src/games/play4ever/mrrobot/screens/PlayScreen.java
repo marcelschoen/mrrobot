@@ -1,9 +1,9 @@
 package games.play4ever.mrrobot.screens;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
+import games.play4ever.libgdx.Assets;
 import games.play4ever.libgdx.collision.Collision;
 import games.play4ever.libgdx.screens.AbstractBaseScreen;
 import games.play4ever.libgdx.screens.ScreenTransition;
@@ -14,6 +14,7 @@ import games.play4ever.libgdx.sprites.Sprites;
 import games.play4ever.mrrobot.Bombs;
 import games.play4ever.mrrobot.DebugOutput;
 import games.play4ever.mrrobot.Flame;
+import games.play4ever.mrrobot.GameInput;
 import games.play4ever.mrrobot.GamepadOverlay;
 import games.play4ever.mrrobot.Hud;
 import games.play4ever.mrrobot.MrRobot;
@@ -35,18 +36,24 @@ public class PlayScreen extends AbstractBaseScreen {
      */
     public PlayScreen(MrRobotGame game) {
         super(game, Color.BLUE);
+    }
+
+    public void startGame() {
 
         //DebugOutput.setPlayScreen(this);
         TileMap.resetToFirstMap();
 
-        this.mrRobot = new MrRobot(this);
+        if(this.mrRobot == null) {
+            this.mrRobot = new MrRobot(this);
+        }
         startLevel();
-        Hud.setScore(0);
+        Hud.resetScoreAndLives();
 
         GamepadOverlay.initialize();
     }
 
     public void startLevel() {
+        MrRobotGame.isGameOver = false;
         Sprites.clearAll();
         Collision.clearRectangles();
         this.mrRobot.createSprites();
@@ -54,20 +61,18 @@ public class PlayScreen extends AbstractBaseScreen {
     }
 
     public void handleInput(float delta) {
-        /*
-        if(Gdx.input.isTouched()) {
-            camera.position.x += 100 * delta;
-        } else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                camera.position.x += 100 * delta;
+        if(MrRobotGame.isGameOver){
+            if(GameInput.isButtonOkPressed()) {
+                ScreenTransition transition = ScreenTransitions.ALPHA_FADE.getTransition();
+                transition.setupTransition(game, 3f, this, TitleScreen.getInstance());
+                TransitionScreen transitionScreen = TransitionScreen.getInstance();
+                transitionScreen.setTransition(transition);
+                MrRobotGame.instance().setScreen(transitionScreen);
             }
-        } else if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) {
-                camera.position.x -= 100 * delta;
-            }
+            return;
         }
-         */
-        if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+//        if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+        if(GameInput.isButtonBackPressed()) {
             ScreenUtil.dispose();
             System.exit(0);
         }
@@ -126,6 +131,11 @@ public class PlayScreen extends AbstractBaseScreen {
         this.tileMap.doRender(delta, camera);
 
         batch.begin();
+
+        if(MrRobotGame.isGameOver){
+            BitmapFont font = Assets.instance().getFont(MrRobotAssets.FONT_ID.SETTINGS);
+            font.draw(batch, "GAME OVER", 30f, 50f);
+        }
 
         // Draw Mr. Robot
         Sprites.drawSprites(batch, delta);

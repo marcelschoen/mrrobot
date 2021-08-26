@@ -37,6 +37,8 @@ public class MrRobotGame extends Game {
     /** Singleton instance of game. */
     private static MrRobotGame instance = null;
 
+    public static boolean isGameOver = false;
+
     public PlayScreen playScreen;
     public TitleScreen titleScreen;
 
@@ -58,7 +60,7 @@ public class MrRobotGame extends Game {
         Assets assets = new MrRobotAssets();
         assets.initialize();
 
-        titleScreen = new TitleScreen(this);
+        titleScreen = TitleScreen.create(this);
         setScreen(new LoadingScreen(this, titleScreen));
     }
 
