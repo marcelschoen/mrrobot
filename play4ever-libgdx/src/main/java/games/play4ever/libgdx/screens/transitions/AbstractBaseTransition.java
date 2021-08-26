@@ -32,27 +32,36 @@ public abstract class AbstractBaseTransition implements ScreenTransition {
     private float transitionDuration;
 
     @Override
-    public void setupTransition(Game game, float transitionDuration, AbstractBaseScreen currentScreen, AbstractBaseScreen nextScreen) {
+    public void setupTransition(Game game, float transitionDuration, AbstractBaseScreen currentScreen) {
         this.transitionDuration = transitionDuration;
+        this.currentTransitionTime = 0;
         this.game = game;
         this.currentScreen = currentScreen;
-        this.nextScreen = nextScreen;
-
         currentBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
-        nextBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
-
         Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(Gdx.gl.GL_COLOR_BUFFER_BIT);
-
         currentBuffer.begin();
         currentScreen.doRender(1f);
         currentBuffer.end();
+        currentTexture = currentBuffer.getColorBufferTexture();
+    }
+
+    @Override
+    public void setupNextScreen(AbstractBaseScreen nextScreen){
+        this.nextScreen = nextScreen;
+        nextBuffer = new FrameBuffer(Pixmap.Format.RGBA8888, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+        Gdx.gl.glClearColor(0, 0, 0, 0);
+        Gdx.gl.glClear(Gdx.gl.GL_COLOR_BUFFER_BIT);
         nextBuffer.begin();
         nextScreen.doRender(1f);
         nextBuffer.end();
-
-        currentTexture = currentBuffer.getColorBufferTexture();
         nextTexture = nextBuffer.getColorBufferTexture();
+    }
+
+    @Override
+    public void setupTransition(Game game, float transitionDuration, AbstractBaseScreen currentScreen, AbstractBaseScreen nextScreen) {
+        setupTransition(game, transitionDuration, currentScreen);
+        setupNextScreen(nextScreen);
     }
 
     /**

@@ -437,14 +437,14 @@ public class MrRobot implements ActionListener, CollisionListener {
         */
         completeMovement();
     }
-
+/*
     public void startLevel() {
         Sprites.clearAll();
         Collision.clearRectangles();
         createSprites();
         this.tileMap = new TileMap(TileMap.getCurrentMap(), this);
     }
-
+*/
     public void moveRight() {
         if(mrRobotState != MrRobotState.WALKING_RIGHT) {
             boolean tryMoveRight = false;

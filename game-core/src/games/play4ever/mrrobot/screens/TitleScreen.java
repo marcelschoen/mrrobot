@@ -68,10 +68,10 @@ public class TitleScreen extends AbstractBaseScreen {
 	private void beginGame() {
 		MrRobotAssets.playMenuMusic();
 
-//		ScreenTransition transition = ScreenTransitions.TO_BLACK_OR_WHITE.getTransition();
 		ScreenTransition transition = ScreenTransitions.ALPHA_FADE.getTransition();
 		transition.setupTransition(game, 3f, this, MrRobotGame.instance().playScreen);
-		TransitionScreen transitionScreen = new TransitionScreen(transition);
+		TransitionScreen transitionScreen = TransitionScreen.getInstance();
+		transitionScreen.setTransition(transition);
 		MrRobotGame.instance().setScreen(transitionScreen);
 	}
 

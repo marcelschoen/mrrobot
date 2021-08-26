@@ -15,13 +15,20 @@ public class TransitionScreen implements Screen {
 
     private ScreenTransition transition = ScreenTransitions.ALPHA_FADE.getTransition();
 
+    // No need to have multiple instances of this screen, ever.
+    private static TransitionScreen instance = new TransitionScreen();
+
+    public static TransitionScreen getInstance() {
+        return instance;
+    }
+
     /**
-     * Creates a transition screen with a certain type of transition.
+     * Sets up a transition screen with a certain type of transition.
      *
      * @param transition The transition to use with this screen. Use different transition
      *                   screen instances to use different transitions.
      */
-    public TransitionScreen(ScreenTransition transition) {
+    public void setTransition(ScreenTransition transition) {
         this.transition = transition;
     }
 
