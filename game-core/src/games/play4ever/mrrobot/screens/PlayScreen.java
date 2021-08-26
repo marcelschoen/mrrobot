@@ -1,5 +1,6 @@
 package games.play4ever.mrrobot.screens;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
@@ -39,6 +40,8 @@ public class PlayScreen extends AbstractBaseScreen {
     }
 
     public void startGame() {
+
+        Hud.setHighScore(Gdx.app.getPreferences("mrrobot").getInteger("highscore", 0));
 
         //DebugOutput.setPlayScreen(this);
         TileMap.resetToFirstMap();
@@ -132,13 +135,14 @@ public class PlayScreen extends AbstractBaseScreen {
 
         batch.begin();
 
-        if(MrRobotGame.isGameOver){
-            BitmapFont font = Assets.instance().getFont(MrRobotAssets.FONT_ID.SETTINGS);
-            font.draw(batch, "GAME OVER", 30f, 50f);
-        }
-
         // Draw Mr. Robot
         Sprites.drawSprites(batch, delta);
+
+        if(MrRobotGame.isGameOver){
+            BitmapFont font = Assets.instance().getFont(MrRobotAssets.FONT_ID.SETTINGS);
+            font.draw(batch, "GAME", 90f, 140f);
+            font.draw(batch, "OVER", 95f, 100f);
+        }
 
         // print debug stuff on screen
         // TODO: Enable only in testing / debug mode
