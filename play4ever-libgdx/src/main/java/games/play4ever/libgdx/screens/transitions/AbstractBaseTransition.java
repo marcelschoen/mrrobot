@@ -11,6 +11,12 @@ import com.badlogic.gdx.math.Matrix4;
 import games.play4ever.libgdx.screens.AbstractBaseScreen;
 import games.play4ever.libgdx.screens.ScreenTransition;
 
+/**
+ * Base class for all transition implementations. It stores references to the framebuffers and
+ * textures of both screens, and controls the duration timing.
+ *
+ * @author Marcel Schoen
+ */
 public abstract class AbstractBaseTransition implements ScreenTransition {
 
     private Game game;
@@ -25,6 +31,7 @@ public abstract class AbstractBaseTransition implements ScreenTransition {
     private float currentTransitionTime;
     private float transitionDuration;
 
+    @Override
     public void setupTransition(Game game, float transitionDuration, AbstractBaseScreen currentScreen, AbstractBaseScreen nextScreen) {
         this.transitionDuration = transitionDuration;
         this.game = game;
@@ -48,6 +55,10 @@ public abstract class AbstractBaseTransition implements ScreenTransition {
         nextTexture = nextBuffer.getColorBufferTexture();
     }
 
+    /**
+     * @return A re-set, freshly initialized Matrix4 instance. Re-uses and re-sets the same
+     *         instance every time. Also sets it up for orthographic 2D projection.
+     */
     protected Matrix4 getFreshMatrix4() {
         this.matrix.set(startMatrix);
         this.matrix.setToOrtho2D(0, 0, getCurrentTexture().getWidth(),
@@ -55,6 +66,7 @@ public abstract class AbstractBaseTransition implements ScreenTransition {
         return this.matrix;
     }
 
+    @Override
     public void render(Batch batch, float delta) {
         float percent = currentTransitionTime / transitionDuration;
         doRender(batch, percent);
@@ -64,32 +76,61 @@ public abstract class AbstractBaseTransition implements ScreenTransition {
         }
     }
 
+    /**
+     * Actual transition implementations must implement this method to render the transitioning
+     * images to the screen. They can access they framebuffers, textures etc. of the two
+     * screens using the method of this parent class.
+     *
+     * @param batch The sprite batch used for rendering.
+     * @param percent The percentage of completion, as a float value ranging from 0 (start) to 1 (done).
+     */
     public abstract void doRender(Batch batch, float percent);
 
+    /**
+     * @return The texture of the current (starting) screen.
+     */
     public Texture getCurrentTexture() {
         return currentTexture;
     }
 
+    /**
+     * @return The texture of the next (ending) screen.
+     */
     public Texture getNextTexture() {
         return nextTexture;
     }
 
+    /**
+     * @return The framebuffer of the current (starting) screen.
+     */
     public FrameBuffer getCurrentBuffer() {
         return currentBuffer;
     }
 
+    /**
+     * @return The framebuffer of the next (ending) screen.
+     */
     public FrameBuffer getNextBuffer() {
         return nextBuffer;
     }
 
+    /**
+     * @return The current (starting) screen.
+     */
     public AbstractBaseScreen getCurrentScreen() {
         return currentScreen;
     }
 
+    /**
+     * @return The next (ending) screen.
+     */
     public AbstractBaseScreen getNextScreen() {
         return nextScreen;
     }
 
+    /**
+     * @return The game instance on which to invoke "setScreen()"
+     */
     public Game getGame() {
         return this.game;
     }
