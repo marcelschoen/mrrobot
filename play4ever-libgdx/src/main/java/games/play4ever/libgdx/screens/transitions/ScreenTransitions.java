@@ -16,9 +16,9 @@ public enum ScreenTransitions {
 
     ALPHA_FADE(new AlphaFadingTransition()),
 
-    SLIDING_RIGHT(new SlidingTransition(SlidingTransition.Direction.RIGHT, Interpolation.exp5Out, false)),
+    SLIDING_RIGHT(new SlidingTransition(SlidingTransition.Direction.RIGHT, Interpolation.exp10Out, false)),
 
-    SLIDING_LEFT(new SlidingTransition(SlidingTransition.Direction.LEFT, Interpolation.exp5Out, false))
+    SLIDING_LEFT(new SlidingTransition(SlidingTransition.Direction.LEFT, Interpolation.exp10Out, false))
 
     ;
 

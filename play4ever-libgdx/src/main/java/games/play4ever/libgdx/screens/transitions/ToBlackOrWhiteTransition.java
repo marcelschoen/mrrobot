@@ -49,12 +49,12 @@ public class ToBlackOrWhiteTransition extends AbstractBaseTransition {
 
         Gdx.gl.glEnable(Gdx.gl.GL_BLEND);
         Gdx.gl.glBlendFunc(Gdx.gl.GL_SRC_ALPHA, Gdx.gl.GL_ONE_MINUS_SRC_ALPHA);
-        if(!fadingChanged) {
+        shapeRenderer.setColor(1, 1, 1, alpha);
+        if (!fadingChanged) {
             alpha = percent * 2;
         } else {
             alpha = 1 - (percent / 2);
         }
-        shapeRenderer.setColor(1, 1, 1, alpha);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         shapeRenderer.end();

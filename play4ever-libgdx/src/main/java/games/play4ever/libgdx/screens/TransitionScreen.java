@@ -1,5 +1,6 @@
 package games.play4ever.libgdx.screens;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.Batch;
 
@@ -20,6 +21,13 @@ public class TransitionScreen implements Screen {
 
     public static TransitionScreen getInstance() {
         return instance;
+    }
+
+    public static void setupAndShowTransition(Game game, float duration, ScreenTransition transition, AbstractBaseScreen currentScreen, AbstractBaseScreen nextScreen) {
+        transition.setupTransition(game, duration, currentScreen, nextScreen);
+        TransitionScreen transitionScreen = TransitionScreen.getInstance();
+        transitionScreen.setTransition(transition);
+        game.setScreen(transitionScreen);
     }
 
     /**

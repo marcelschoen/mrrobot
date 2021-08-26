@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.Texture;
 
 import games.play4ever.libgdx.Assets;
 import games.play4ever.libgdx.screens.AbstractBaseScreen;
-import games.play4ever.libgdx.screens.ScreenTransition;
 import games.play4ever.libgdx.screens.TransitionScreen;
 import games.play4ever.libgdx.screens.transitions.ScreenTransitions;
 import games.play4ever.mrrobot.GameInput;
@@ -67,7 +66,6 @@ public class TitleScreen extends AbstractBaseScreen {
 	@Override
 	public void performLogic(float delta) {
 		if(GameInput.isButtonOkPressed()) {
-//		if(System.currentTimeMillis() - this.startTime > 5000) {
 			beginGame();
 		}
 		if(GameInput.isButtonBackPressed()) {
@@ -79,11 +77,7 @@ public class TitleScreen extends AbstractBaseScreen {
 	private void beginGame() {
 		MrRobotGame.instance().playScreen.startGame();
 		MrRobotAssets.playMenuMusic();
-		ScreenTransition transition = ScreenTransitions.ALPHA_FADE.getTransition();
-		transition.setupTransition(game, 3f, this, MrRobotGame.instance().playScreen);
-		TransitionScreen transitionScreen = TransitionScreen.getInstance();
-		transitionScreen.setTransition(transition);
-		MrRobotGame.instance().setScreen(transitionScreen);
+		TransitionScreen.setupAndShowTransition(MrRobotGame.instance(), 2f, ScreenTransitions.ALPHA_FADE.getTransition(), this, MrRobotGame.instance().playScreen);
 	}
 
 	/* (non-Javadoc)

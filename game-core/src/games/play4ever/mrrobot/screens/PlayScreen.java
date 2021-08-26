@@ -68,15 +68,10 @@ public class PlayScreen extends AbstractBaseScreen {
     public void handleInput(float delta) {
         if(MrRobotGame.isGameOver){
             if(GameInput.isButtonOkPressed()) {
-                ScreenTransition transition = ScreenTransitions.ALPHA_FADE.getTransition();
-                transition.setupTransition(game, 3f, this, TitleScreen.getInstance());
-                TransitionScreen transitionScreen = TransitionScreen.getInstance();
-                transitionScreen.setTransition(transition);
-                MrRobotGame.instance().setScreen(transitionScreen);
+                TransitionScreen.setupAndShowTransition(game, 3f, ScreenTransitions.TO_BLACK_OR_WHITE.getTransition(), this, TitleScreen.getInstance());
             }
             return;
         }
-//        if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
         if(GameInput.isButtonBackPressed()) {
             ScreenUtil.dispose();
             System.exit(0);
@@ -100,7 +95,7 @@ public class PlayScreen extends AbstractBaseScreen {
             ScreenTransition transition = slidingDirection ?
                     ScreenTransitions.SLIDING_RIGHT.getTransition() :
                     ScreenTransitions.SLIDING_LEFT.getTransition();
-            transition.setupTransition(game, 3f, this);
+            transition.setupTransition(game, 2f, this);
 
             TileMap.switchToNextMap();
             startLevel();

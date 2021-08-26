@@ -524,7 +524,7 @@ public class MrRobot implements ActionListener, CollisionListener {
             if(Hud.hasLessThanZeroLivesLeft()) {
                 MrRobotGame.isGameOver = true;
                 if(Hud.getScore() > Hud.getHighScore()) {
-                    Gdx.app.log(getClass().getName(), ">>> HIGHSCORE SAVED: " + Hud.getHighScore());
+                    Hud.setHighScore(Hud.getScore());
                     Preferences prefs = Gdx.app.getPreferences("mrrobot");
                     prefs.putInteger("highscore", Hud.getHighScore());
                     prefs.flush();
