@@ -1,5 +1,10 @@
 # Development Notes
 
+## Known Issues / Bugs
+
+* When killed by flame while on an elevator, death animation may get stuck ->
+  probably because elevating action collides with death fall animation
+
 ## To Dos
 
 ### Gameplay features

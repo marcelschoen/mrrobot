@@ -26,7 +26,9 @@ public class Hud {
     }
 
     public static void resetScoreAndLives() {
-        highScore = score;
+        if(score > highScore) {
+            highScore = score;
+        }
         score = 0;
         lives = MAX_LIVES;
     }
@@ -47,6 +49,6 @@ public class Hud {
         BitmapFont font = Assets.instance().getFont(MrRobotAssets.FONT_ID.LOADING);
         font.draw(batch, "SCORE: " + score, 2f, 150f);
         font.draw(batch, "HIGHSCORE: " + highScore, 120f, 150f);
-        font.draw(batch, "LIVES: " + lives, 300f, 150f);
+        font.draw(batch, "LIVES: " + lives, 260f, 150f);
     }
 }

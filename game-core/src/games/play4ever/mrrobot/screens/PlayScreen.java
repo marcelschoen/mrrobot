@@ -41,7 +41,9 @@ public class PlayScreen extends AbstractBaseScreen {
 
     public void startGame() {
 
-        Hud.setHighScore(Gdx.app.getPreferences("mrrobot").getInteger("highscore", 0));
+        int highScore = Gdx.app.getPreferences("mrrobot").getInteger("highscore", 0);
+        Gdx.app.log(getClass().getName(), ">>> HIGHSCORE LOADED: " + highScore);
+        Hud.setHighScore(highScore);
 
         //DebugOutput.setPlayScreen(this);
         TileMap.resetToFirstMap();
