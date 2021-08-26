@@ -6,7 +6,10 @@ import com.badlogic.gdx.graphics.Color;
 
 import games.play4ever.libgdx.collision.Collision;
 import games.play4ever.libgdx.screens.AbstractBaseScreen;
+import games.play4ever.libgdx.screens.ScreenTransition;
 import games.play4ever.libgdx.screens.ScreenUtil;
+import games.play4ever.libgdx.screens.TransitionScreen;
+import games.play4ever.libgdx.screens.transitions.ScreenTransitions;
 import games.play4ever.libgdx.sprites.Sprites;
 import games.play4ever.mrrobot.Bombs;
 import games.play4ever.mrrobot.DebugOutput;
@@ -23,6 +26,8 @@ public class PlayScreen extends AbstractBaseScreen {
     private TileMap tileMap = null;
     private MrRobot mrRobot = null;
     private Hud hud = null;
+
+    private static boolean slidingDirection = true;
 
     /**
      *
@@ -76,15 +81,24 @@ public class PlayScreen extends AbstractBaseScreen {
         super.show();
     }
 
-    /* (non-Javadoc)
-     * @see com.jplay.gdx.screens.AbstractBaseScreen#doRender(float)
-     */
     @Override
-    public void doRender(float delta) {
+    public void performLogic(float delta) {
 
         if(tileMap.getNumberOfDots() == 0) {
+
+            slidingDirection = !slidingDirection;
+            ScreenTransition transition = slidingDirection ?
+                    ScreenTransitions.SLIDING_RIGHT.getTransition() :
+                    ScreenTransitions.SLIDING_LEFT.getTransition();
+            transition.setupTransition(game, 3f, this);
+
             TileMap.switchToNextMap();
             startLevel();
+            transition.setupNextScreen(this);
+
+            TransitionScreen transitionScreen = TransitionScreen.getInstance();
+            transitionScreen.setTransition(transition);
+            MrRobotGame.instance().setScreen(transitionScreen);
         }
 
         // Handle controls
@@ -94,22 +108,27 @@ public class PlayScreen extends AbstractBaseScreen {
             flame.move(delta);
         }
 
+        // TODO: MOVE INTO "Sprites" CONTROLLER
+        Collision.checkForCollisions();
+
+        Bombs.getInstance().processBombs(delta);
+    }
+
+    /* (non-Javadoc)
+     * @see com.jplay.gdx.screens.AbstractBaseScreen#doRender(float)
+     */
+    @Override
+    public void doRender(float delta) {
+
         this.camera.update();
 
         // Update tilemap
-
         this.tileMap.doRender(delta, camera);
-//        this.tileMap.doRender(delta, this.camera);
 
         batch.begin();
 
         // Draw Mr. Robot
         Sprites.drawSprites(batch, delta);
-
-        // TODO: MOVE INTO "Sprites" CONTROLLER
-        Collision.checkForCollisions();
-
-        Bombs.getInstance().processBombs(delta);
 
         // print debug stuff on screen
         // TODO: Enable only in testing / debug mode

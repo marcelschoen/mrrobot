@@ -43,6 +43,8 @@ public class SlidingTransition extends AbstractBaseTransition {
 
 	@Override
 	public void doRender (Batch batch, float percent) {
+		batch.setProjectionMatrix(getFreshMatrix4());
+
 		Texture currentScreenTexture = getCurrentTexture();
 		Texture nextScreenTexture = getNextTexture();
 		float width = currentScreenTexture.getWidth();

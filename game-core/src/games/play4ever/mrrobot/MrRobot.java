@@ -20,6 +20,7 @@ import games.play4ever.mrrobot.actions.DropDownAction;
 import games.play4ever.mrrobot.actions.FallDownAction;
 import games.play4ever.mrrobot.actions.RiseUpAction;
 import games.play4ever.mrrobot.actions.SlideDownAction;
+import games.play4ever.mrrobot.actions.SlideUpAction;
 import games.play4ever.mrrobot.actions.TeleportAction;
 import games.play4ever.mrrobot.actions.TeleportCompletedAction;
 import games.play4ever.mrrobot.screens.PlayScreen;
@@ -104,6 +105,7 @@ public class MrRobot implements ActionListener, CollisionListener {
     private Action magnetLeftAction = null;
     private Action magnetRightAction = null;
     private Action slideDownAction = null;
+    private Action slideUpAction = null;
     private Action dropDownAction = null;
     private Action riseUpAction = null;
 
@@ -163,6 +165,9 @@ public class MrRobot implements ActionListener, CollisionListener {
                 .build();
         slideDownAction = new ActionBuilder()
                 .custom(new SlideDownAction(this))
+                .build();
+        slideUpAction = new ActionBuilder()
+                .custom(new SlideUpAction(this))
                 .build();
         dropDownAction = new ActionBuilder()
                 .custom(new DropDownAction(this))
@@ -643,6 +648,13 @@ public class MrRobot implements ActionListener, CollisionListener {
     /**
      * @return True if Mr. Robot is sliding down
      */
+    public boolean isElevatingUp() {
+        return mrRobotState == MrRobotState.ELEVATING_LEFT || mrRobotState == MrRobotState.ELEVATING_RIGHT;
+    }
+
+    /**
+     * @return True if Mr. Robot is sliding down
+     */
     public boolean isSlidingDown() {
         return mrRobotState == MrRobotState.SLIDING_LEFT || mrRobotState == MrRobotState.SLIDING_RIGHT;
     }
@@ -715,7 +727,7 @@ public class MrRobot implements ActionListener, CollisionListener {
                 }
             }
         } else {
-            if(tileBelowId == TILE_DOT) {
+            if(tileBelowId == TILE_DOT && mrRobotIsAlignedVertically()) {
                 tileMap.clearCell(tileMap.getTileMapCell(TileMap.CELL_TYPE.BELOW));
                 tileMap.decreaseNumberOfDots();
                 Hud.addScore(1);
@@ -737,9 +749,12 @@ public class MrRobot implements ActionListener, CollisionListener {
         }
 
         if(line > 0) {
-            if(tileFurtherBelowId == TILE_SLIDER && !isSlidingDown()
-                    && !isJumping() && !isFalling()) {
-                mrRobotSprite.startAction(slideDownAction, null);
+            if(!isSlidingDown() && !isJumping() && !isFalling() && !isElevatingUp()) {
+                if(tileFurtherBelowId == TILE_SLIDER) {
+                    mrRobotSprite.startAction(slideDownAction, null);
+                } else if(tileBelowId == TILE_ELEVATOR) {
+                    mrRobotSprite.startAction(slideUpAction, null);
+                }
             }
         }
     }

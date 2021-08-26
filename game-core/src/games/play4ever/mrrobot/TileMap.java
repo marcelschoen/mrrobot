@@ -148,7 +148,7 @@ public class TileMap {
                                 mrRobot.setTileMap(this);
                                 mrRobotStartingPositionX = x - 8;
                                 mrRobotStartingPositionY = y;
-                            } else if(tile.getId() == TILE_DOT) {
+                            } else if(tile.getId() == TILE_DOT && mrRobot.mrRobotIsAlignedVertically()) {
                                 numberOfDots++;
                             } else if(tile.getId() == TILE_TELEPORTER) {
                                 Teleporter.addTeleporter(cellWrapper, x - 8, y);

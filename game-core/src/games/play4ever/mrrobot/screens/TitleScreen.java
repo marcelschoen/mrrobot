@@ -54,7 +54,7 @@ public class TitleScreen extends AbstractBaseScreen {
 	}
 
 	@Override
-	public void performLogic() {
+	public void performLogic(float delta) {
 		if(GameInput.isButtonOkPressed()) {
 //		if(System.currentTimeMillis() - this.startTime > 5000) {
 			beginGame();

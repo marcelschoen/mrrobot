@@ -89,19 +89,11 @@ public abstract class AbstractBaseScreen implements Screen {
 	public void render(float delta) {
 		baseRendering(delta);
 		doRender(delta);
-		performLogic();
+		performLogic(delta);
 	}
 
 	public void flickerBackground(Color color) {
 		flickerBackgroundColor = color;
-	}
-
-	protected void setBackground(Color color) {
-		backgroundColor = color;
-	}
-
-	protected void resetBackground() {
-		backgroundColor = Color.BLACK;
 	}
 
 	/**
@@ -130,7 +122,7 @@ public abstract class AbstractBaseScreen implements Screen {
 	/**
 	 * Executes input handling, logic stuff etc.
 	 */
-	public void performLogic() {
+	public void performLogic(float delta) {
 		// do nothing by default - implement input handling,
 		// screen switching etc. here
 	}
