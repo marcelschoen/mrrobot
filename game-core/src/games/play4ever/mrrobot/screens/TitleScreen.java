@@ -5,6 +5,7 @@
 package games.play4ever.mrrobot.screens;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 
 import games.play4ever.libgdx.Assets;
@@ -97,7 +98,7 @@ public class TitleScreen extends AbstractBaseScreen {
 				beginGame(GameDataStore.getLastUnlockedLevel());
 			} if(menu.getCurrentOption() == TitleMenu.optionLabels[TitleMenu.LEVEL_OPTION]) {
 			} if(menu.getCurrentOption() == TitleMenu.optionLabels[TitleMenu.EXIT_OPTION]) {
-				System.exit(0);
+				Gdx.app.exit();
 			}
 		}
 	}

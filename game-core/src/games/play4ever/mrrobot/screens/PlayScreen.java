@@ -7,7 +7,6 @@ import games.play4ever.libgdx.Assets;
 import games.play4ever.libgdx.collision.Collision;
 import games.play4ever.libgdx.screens.AbstractBaseScreen;
 import games.play4ever.libgdx.screens.ScreenTransition;
-import games.play4ever.libgdx.screens.ScreenUtil;
 import games.play4ever.libgdx.screens.TransitionScreen;
 import games.play4ever.libgdx.screens.transitions.ScreenTransitions;
 import games.play4ever.libgdx.sprites.Sprites;
@@ -70,9 +69,9 @@ public class PlayScreen extends AbstractBaseScreen {
             }
             return;
         }
-        if(GameInput.isButtonBackPressed()) {
-            ScreenUtil.dispose();
-            System.exit(0);
+        if(GameInput.isButtonBackJustPressed()) {
+            TransitionScreen.setupAndShowTransition(game, 3f, ScreenTransitions.TO_BLACK_OR_WHITE.getTransition(), this, TitleScreen.getInstance());
+            return;
         }
         mrRobot.handleInput(delta);
         mrRobot.moveMrRobot(delta);
