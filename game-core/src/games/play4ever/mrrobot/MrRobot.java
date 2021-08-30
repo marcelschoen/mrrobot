@@ -2,7 +2,6 @@ package games.play4ever.mrrobot;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
@@ -525,9 +524,9 @@ public class MrRobot implements ActionListener, CollisionListener {
                 MrRobotGame.isGameOver = true;
                 if(Hud.getScore() > Hud.getHighScore()) {
                     Hud.setHighScore(Hud.getScore());
-                    Preferences prefs = Gdx.app.getPreferences("mrrobot");
-                    prefs.putInteger("highscore", Hud.getHighScore());
-                    prefs.flush();
+                    GameDataStore.setHighScore(Hud.getHighScore());
+                    GameDataStore.setLastUnlockedLevel(TileMap.getLastUnlockedMapIndex());
+                    GameDataStore.persist();
                 }
             }
             // TODO - some fade-out / fade-in effect?

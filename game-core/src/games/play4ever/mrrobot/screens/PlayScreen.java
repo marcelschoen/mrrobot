@@ -1,6 +1,5 @@
 package games.play4ever.mrrobot.screens;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
@@ -15,6 +14,7 @@ import games.play4ever.libgdx.sprites.Sprites;
 import games.play4ever.mrrobot.Bombs;
 import games.play4ever.mrrobot.DebugOutput;
 import games.play4ever.mrrobot.Flame;
+import games.play4ever.mrrobot.GameDataStore;
 import games.play4ever.mrrobot.GameInput;
 import games.play4ever.mrrobot.GamepadOverlay;
 import games.play4ever.mrrobot.Hud;
@@ -41,12 +41,10 @@ public class PlayScreen extends AbstractBaseScreen {
 
     public void startGame() {
 
-        int highScore = Gdx.app.getPreferences("mrrobot").getInteger("highscore", 0);
-        Gdx.app.log(getClass().getName(), ">>> HIGHSCORE LOADED: " + highScore);
-        Hud.setHighScore(highScore);
+        TileMap.setLastUnlockedMapIndex(GameDataStore.getLastUnlockedLevel());
+        Hud.setHighScore(GameDataStore.getHighScore());
 
-        //DebugOutput.setPlayScreen(this);
-        TileMap.resetToFirstMap();
+        TileMap.jumpToLastUnlockedMap();
 
         if(this.mrRobot == null) {
             this.mrRobot = new MrRobot(this);

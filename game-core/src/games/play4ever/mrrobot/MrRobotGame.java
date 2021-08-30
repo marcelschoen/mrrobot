@@ -60,6 +60,8 @@ public class MrRobotGame extends Game {
         Assets assets = new MrRobotAssets();
         assets.initialize();
 
+        GameDataStore.load();
+
         titleScreen = TitleScreen.create(this);
         setScreen(new LoadingScreen(this, titleScreen));
     }

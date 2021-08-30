@@ -41,8 +41,8 @@ public class MrRobotAssets extends Assets {
         MENU,
         LOADING,
         SETTINGS,
-        DEBUG,
-        GAME;
+        DEBUG
+        ;
         public static FONT_ID fromString(String name) {
             for(FONT_ID id : values()) {
                 if(id.name().equals(name)) {
@@ -104,7 +104,8 @@ public class MrRobotAssets extends Assets {
 
     @Override
     public void loadingCompleted() {
-        DebugOutput.initialize(getFont(MrRobotAssets.FONT_ID.DEBUG));
+        DebugOutput.initialize(getFont(MrRobotAssets.FONT_ID.DEBUG),
+                MrRobotGame.instance().playScreen);
     }
 
     /**

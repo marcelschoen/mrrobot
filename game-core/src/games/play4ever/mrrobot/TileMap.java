@@ -1,6 +1,7 @@
 package games.play4ever.mrrobot;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapLayer;
@@ -56,7 +57,6 @@ public class TileMap {
     private TiledMapTileLayer tiledMapTileLayer;
     private TiledMapTile clearedFloor = null;
     private TiledMap map;
-    private String filename = null;
     private int numberOfDots = 0;
 
     private TmxMapLoader loader = new TmxMapLoader();
@@ -66,6 +66,7 @@ public class TileMap {
 
     private static Array<String> mapFileNames = new Array<>();
     private static int currentMapIndex = 0;
+    private static int lastUnlockedMapIndex = 0;
 
     public enum CELL_TYPE {
         BELOW(1f),
@@ -98,11 +99,30 @@ public class TileMap {
         currentMapIndex = 0;
     }
 
+    public static void jumpToLastUnlockedMap() {
+        currentMapIndex = lastUnlockedMapIndex;
+    }
+
     public static void switchToNextMap() {
         currentMapIndex++;
+        if(currentMapIndex > lastUnlockedMapIndex) {
+            lastUnlockedMapIndex = currentMapIndex;
+        }
+        Preferences prefs = Gdx.app.getPreferences("mrrobot");
+        // Store number of map where player last played
+        prefs.putInteger("lastUnlockedMapIndex", TileMap.getLastUnlockedMapIndex());
+        prefs.flush();
         if(currentMapIndex >= mapFileNames.size) {
             resetToFirstMap();
         }
+    }
+
+    public static int getLastUnlockedMapIndex() {
+        return lastUnlockedMapIndex;
+    }
+
+    public static void setLastUnlockedMapIndex(int lastUnlockedMapIndex) {
+        TileMap.lastUnlockedMapIndex = lastUnlockedMapIndex;
     }
 
     public TiledMapTileSet getTileSet() {
@@ -110,7 +130,6 @@ public class TileMap {
     }
 
     public TileMap(String filename, MrRobot mrRobot) {
-        this.filename = filename;
         this.map = loader.load(filename);
         this.mrRobot = mrRobot;
 

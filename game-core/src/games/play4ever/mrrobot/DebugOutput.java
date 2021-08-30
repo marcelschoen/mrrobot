@@ -33,8 +33,9 @@ public class DebugOutput {
 
 	private static boolean initialized = false;
 	
-	public static void initialize(BitmapFont font) {
+	public static void initialize(BitmapFont font, PlayScreen playScreen) {
 		if(!initialized) {
+			setPlayScreen(playScreen);
 			initialized = true;
 			debugFont = font;
 			Gdx.app.log("DebugOutput", "Debug line height: " + debugFont.getLineHeight() + ", cap height: " + debugFont.getCapHeight() + ", Xheight: " + debugFont.getXHeight());

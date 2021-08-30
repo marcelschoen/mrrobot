@@ -30,6 +30,8 @@ public class TitleScreen extends AbstractBaseScreen {
 	/** The "BOMB" label sprite. */
 	private Texture titlePicture = null;
 
+	private TitleMenu menu = new TitleMenu();
+
 	/** Start timer. */
 	private long startTime = -1;
 
@@ -60,6 +62,7 @@ public class TitleScreen extends AbstractBaseScreen {
 		if (this.titlePicture != null) {
 			batch.draw(this.titlePicture, 0, 0);
 		}
+		menu.render(batch, arg0);
 		batch.end();
 	}
 
