@@ -65,12 +65,12 @@ public class PlayScreen extends AbstractBaseScreen {
     public void handleInput(float delta) {
         if(MrRobotGame.isGameOver){
             if(GameInput.isButtonOkJustPressed()) {
-                TransitionScreen.setupAndShowTransition(game, 3f, ScreenTransitions.TO_BLACK_OR_WHITE.getTransition(), this, TitleScreen.getInstance());
+                TransitionScreen.setupAndShowTransition(game, 1.5f, ScreenTransitions.TO_BLACK_OR_WHITE.getTransition(), this, TitleScreen.getInstance());
             }
             return;
         }
         if(GameInput.isButtonBackJustPressed()) {
-            TransitionScreen.setupAndShowTransition(game, 3f, ScreenTransitions.TO_BLACK_OR_WHITE.getTransition(), this, TitleScreen.getInstance());
+            TransitionScreen.setupAndShowTransition(game, 1.5f, ScreenTransitions.TO_BLACK_OR_WHITE.getTransition(), this, TitleScreen.getInstance());
             return;
         }
         mrRobot.handleInput(delta);
