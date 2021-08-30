@@ -49,6 +49,6 @@ public class Hud {
         BitmapFont font = Assets.instance().getFont(MrRobotAssets.FONT_ID.LOADING);
         font.draw(batch, "SCORE: " + score, 2f, 150f);
         font.draw(batch, "HIGHSCORE: " + highScore, 120f, 150f);
-        font.draw(batch, "LIVES: " + lives, 260f, 150f);
+        font.draw(batch, "LIVES: " + (lives > -1 ? lives : 0), 260f, 150f);
     }
 }
