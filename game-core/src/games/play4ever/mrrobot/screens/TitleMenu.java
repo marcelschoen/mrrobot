@@ -18,7 +18,28 @@ public class TitleMenu {
             "EXIT GAME"
     };
 
-    private static final int LEVEL_OPTION = 2;
+    public static final int START_OPTION = 0;
+    public static final int CONTINUE_OPTION = 1;
+    public static final int LEVEL_OPTION = 2;
+    public static final int EXIT_OPTION = 3;
+
+    public void increaseOption() {
+        currentOption++;
+        if(currentOption == optionLabels.length) {
+            currentOption = 0;
+        }
+    }
+
+    public void decreaseOption() {
+        currentOption--;
+        if(currentOption < 0) {
+            currentOption = optionLabels.length - 1;
+        }
+    }
+
+    public CharSequence getCurrentOption() {
+        return optionLabels[currentOption];
+    }
 
     public void render(SpriteBatch batch, float arg0) {
         BitmapFont font = Assets.instance().getFont(MrRobotAssets.FONT_ID.LOADING);

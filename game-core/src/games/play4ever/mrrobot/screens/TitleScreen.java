@@ -5,7 +5,6 @@
 package games.play4ever.mrrobot.screens;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 
 import games.play4ever.libgdx.Assets;
@@ -68,12 +67,18 @@ public class TitleScreen extends AbstractBaseScreen {
 
 	@Override
 	public void performLogic(float delta) {
-		if(GameInput.isButtonOkPressed()) {
-			beginGame();
+		if(GameInput.isUpJustPressed()) {
+			menu.decreaseOption();
 		}
-		if(GameInput.isButtonBackPressed()) {
-			Gdx.app.log(getClass().getName(), "Back button pressed");
-			System.exit(0);
+		if(GameInput.isDownJustPressed()) {
+			menu.increaseOption();
+		}
+		if(GameInput.isButtonOkPressed()) {
+			if(menu.getCurrentOption() == TitleMenu.optionLabels[TitleMenu.START_OPTION]) {
+				beginGame();
+			} if(menu.getCurrentOption() == TitleMenu.optionLabels[TitleMenu.EXIT_OPTION]) {
+				System.exit(0);
+			}
 		}
 	}
 

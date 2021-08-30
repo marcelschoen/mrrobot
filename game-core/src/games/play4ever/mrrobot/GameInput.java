@@ -96,9 +96,17 @@ public class GameInput implements ControllerListener, InputProcessor {
     public static boolean isDownPressed() {
         if(Gdx.input.isKeyPressed(Input.Keys.DOWN)
                 || Gdx.input.isKeyPressed(Input.Keys.DPAD_DOWN)
-                || Gdx.input.isKeyPressed(Input.Keys.DPAD_DOWN)
                 || (connected && controllerDown)
                 || GamepadOverlay.isDownPressed) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isDownJustPressed() {
+        if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)
+                || Gdx.input.isKeyJustPressed(Input.Keys.DPAD_DOWN)
+                || (connected && controllerDown)) {
             return true;
         }
         return false;
@@ -109,6 +117,15 @@ public class GameInput implements ControllerListener, InputProcessor {
                 || Gdx.input.isKeyPressed(Input.Keys.DPAD_UP)
                 || (connected && controllerUp)
                 || GamepadOverlay.isUpPressed) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isUpJustPressed() {
+        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)
+                || Gdx.input.isKeyJustPressed(Input.Keys.DPAD_UP)
+                || (connected && controllerUp)) {
             return true;
         }
         return false;
