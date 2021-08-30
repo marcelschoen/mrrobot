@@ -99,8 +99,8 @@ public class TileMap {
         currentMapIndex = 0;
     }
 
-    public static void jumpToLastUnlockedMap() {
-        currentMapIndex = lastUnlockedMapIndex;
+    public static void jumpToLevel(int index) {
+        currentMapIndex = index;
     }
 
     public static void switchToNextMap() {

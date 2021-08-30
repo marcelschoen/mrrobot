@@ -39,12 +39,12 @@ public class PlayScreen extends AbstractBaseScreen {
         super(game, Color.BLUE);
     }
 
-    public void startGame() {
+    public void startGame(int level) {
 
         TileMap.setLastUnlockedMapIndex(GameDataStore.getLastUnlockedLevel());
         Hud.setHighScore(GameDataStore.getHighScore());
 
-        TileMap.jumpToLastUnlockedMap();
+        TileMap.jumpToLevel(level);
 
         if(this.mrRobot == null) {
             this.mrRobot = new MrRobot(this);
@@ -65,7 +65,7 @@ public class PlayScreen extends AbstractBaseScreen {
 
     public void handleInput(float delta) {
         if(MrRobotGame.isGameOver){
-            if(GameInput.isButtonOkPressed()) {
+            if(GameInput.isButtonOkJustPressed()) {
                 TransitionScreen.setupAndShowTransition(game, 3f, ScreenTransitions.TO_BLACK_OR_WHITE.getTransition(), this, TitleScreen.getInstance());
             }
             return;
@@ -78,6 +78,7 @@ public class PlayScreen extends AbstractBaseScreen {
         mrRobot.moveMrRobot(delta);
         mrRobot.checkMrRobot(delta);
     }
+
     @Override
     public void show() {
         MrRobotAssets.stopMenuMusic();

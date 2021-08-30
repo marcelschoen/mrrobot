@@ -11,6 +11,7 @@ import games.play4ever.libgdx.Assets;
 import games.play4ever.libgdx.screens.AbstractBaseScreen;
 import games.play4ever.libgdx.screens.TransitionScreen;
 import games.play4ever.libgdx.screens.transitions.ScreenTransitions;
+import games.play4ever.mrrobot.GameDataStore;
 import games.play4ever.mrrobot.GameInput;
 import games.play4ever.mrrobot.MrRobotAssets;
 import games.play4ever.mrrobot.MrRobotGame;
@@ -23,6 +24,8 @@ import games.play4ever.mrrobot.MrRobotGame;
 public class TitleScreen extends AbstractBaseScreen {
 
 	private Game game = null;
+
+	private static int selectedLevel = 0;
 
 	private static TitleScreen instance = null;
 
@@ -73,17 +76,34 @@ public class TitleScreen extends AbstractBaseScreen {
 		if(GameInput.isDownJustPressed()) {
 			menu.increaseOption();
 		}
+		if(GameInput.isRightJustPressed() && menu.getCurrentOption() == TitleMenu.optionLabels[TitleMenu.LEVEL_OPTION]) {
+			selectedLevel ++;
+			if(selectedLevel > GameDataStore.getLastUnlockedLevel()) {
+				selectedLevel = 0;
+			}
+			menu.setSelectedLevel(selectedLevel);
+		}
+		if(GameInput.isLeftJustPressed() && menu.getCurrentOption() == TitleMenu.optionLabels[TitleMenu.LEVEL_OPTION]) {
+			selectedLevel --;
+			if(selectedLevel < 0) {
+				selectedLevel = GameDataStore.getLastUnlockedLevel();
+			}
+			menu.setSelectedLevel(selectedLevel);
+		}
 		if(GameInput.isButtonOkPressed()) {
 			if(menu.getCurrentOption() == TitleMenu.optionLabels[TitleMenu.START_OPTION]) {
-				beginGame();
+				beginGame(menu.getSelectedLevel());
+			} if(menu.getCurrentOption() == TitleMenu.optionLabels[TitleMenu.CONTINUE_OPTION]) {
+				beginGame(GameDataStore.getLastUnlockedLevel());
+			} if(menu.getCurrentOption() == TitleMenu.optionLabels[TitleMenu.LEVEL_OPTION]) {
 			} if(menu.getCurrentOption() == TitleMenu.optionLabels[TitleMenu.EXIT_OPTION]) {
 				System.exit(0);
 			}
 		}
 	}
 
-	private void beginGame() {
-		MrRobotGame.instance().playScreen.startGame();
+	private void beginGame(int level) {
+		MrRobotGame.instance().playScreen.startGame(level);
 		MrRobotAssets.playMenuMusic();
 		TransitionScreen.setupAndShowTransition(MrRobotGame.instance(), 2f, ScreenTransitions.ALPHA_FADE.getTransition(), this, MrRobotGame.instance().playScreen);
 	}

@@ -4,12 +4,12 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import games.play4ever.libgdx.Assets;
-import games.play4ever.mrrobot.GameDataStore;
 import games.play4ever.mrrobot.MrRobotAssets;
 
 public class TitleMenu {
 
     private int currentOption = 0;
+    private int selectedLevel = 0;
 
     public static final CharSequence[] optionLabels = new CharSequence[] {
             "START",
@@ -22,6 +22,14 @@ public class TitleMenu {
     public static final int CONTINUE_OPTION = 1;
     public static final int LEVEL_OPTION = 2;
     public static final int EXIT_OPTION = 3;
+
+    public void setSelectedLevel(int selectedLevel) {
+        this.selectedLevel = selectedLevel;
+    }
+
+    public int getSelectedLevel() {
+        return this.selectedLevel;
+    }
 
     public void increaseOption() {
         currentOption++;
@@ -54,7 +62,7 @@ public class TitleMenu {
                     font.draw(batch, ">", x - 16, y);
                 }
                 if(i == LEVEL_OPTION) {
-                    font.draw(batch, "" + GameDataStore.getLastUnlockedLevel(), x + 50, y);
+                    font.draw(batch, "" + (selectedLevel + 1), x + 50, y);
                 }
                 y -= 20;
             }
