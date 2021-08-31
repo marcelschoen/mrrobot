@@ -4,6 +4,18 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class SpriteUtil {
 
+    public static boolean isCrossingLeftScreenBoundary(float x) {
+        return x < -5;
+    }
+
+    public static boolean isCrossingRightScreenBoundary(float x) {
+        return x > MrRobotGame.VIRTUAL_WIDTH - 19;
+    }
+
+    public static boolean isCrossingLowerScreenBoundary(float y) {
+        return y < 0;
+    }
+
     /**
      * @return True if the sprite is nearly vertically aligned with his feet (lower sprite boundary).
      */

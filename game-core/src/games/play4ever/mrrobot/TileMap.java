@@ -337,7 +337,8 @@ public class TileMap {
      * @return The tilemap column of the middle of the sprite
      */
     public static int getColumn(AnimatedSprite entity) {
-        return (int)((entity.getX() + 12f) / 8f);
+        return (int)((entity.getX() + entity.getWidth() / 2) / 8f);
+//        return (int)((entity.getX() + 12f) / 8f);
     }
 
     /**

@@ -124,9 +124,33 @@ public class Flame {
             movementTimer = random.nextInt(8) + 3;
         }
 
-        float x = getX() + currentMovement.xSpeed * delta;
-        float y = getY() + currentMovement.ySpeed * delta;
-        //////////////////setPosition(x, y);
+        float oldX = getX();
+        float oldY = getY();
+        float newX = oldX + currentMovement.xSpeed * delta;
+        float newY = oldY + currentMovement.ySpeed * delta;
+        setPosition(newX, newY);
+
+        boolean resetAndChangeDirection = false;
+        if(tileBelowId == NO_TILE) {
+            resetAndChangeDirection = true;
+        } else if(SpriteUtil.isCrossingLeftScreenBoundary(newX)) {
+            resetAndChangeDirection = true;
+        } else if(SpriteUtil.isCrossingRightScreenBoundary(newX)) {
+            resetAndChangeDirection = true;
+        }
+
+
+        if(resetAndChangeDirection) {
+            if(currentMovement == MOVE_LEFT) {
+                currentMovement = MOVE_RIGHT;
+            } else if(currentMovement == MOVE_RIGHT) {
+                currentMovement = MOVE_LEFT;
+            }
+        }
+
+        if(this.flameState != currentMovement.flame_state) {
+            setState(currentMovement.flame_state);
+        }
     }
 
     public void die() {
@@ -142,9 +166,9 @@ public class Flame {
 
     public void setPosition(float x, float y) {
         this.sprite.setPosition(x, y);
-        tileBehindId = tileMap.getTileMapTile(TileMap.CELL_TYPE.BEHIND);
-        tileBelowId = tileMap.getTileMapTile(TileMap.CELL_TYPE.BELOW);
-        tileFurtherBelowId = tileMap.getTileMapTile(TileMap.CELL_TYPE.FURTHER_BELOW);
+        tileBehindId = tileMap.getTileMapTile(this.sprite, TileMap.CELL_TYPE.BEHIND);
+        tileBelowId = tileMap.getTileMapTile(this.sprite, TileMap.CELL_TYPE.BELOW);
+        tileFurtherBelowId = tileMap.getTileMapTile(this.sprite, TileMap.CELL_TYPE.FURTHER_BELOW);
     }
 
     public void setState(FLAME_STATE state) {

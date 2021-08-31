@@ -327,6 +327,11 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	 */
 	public void addAnimation(String name, Animation<TextureRegion> animation) {
         animationMap.put(name, animation);
+        // Also set the sprite size, so that the sprite dimensions are returned properly
+		if(getWidth() == 0) {
+			TextureRegion frame = animation.getKeyFrames()[0];
+			setSize(frame.getRegionWidth(), frame.getRegionHeight());
+		}
     }
 
 	/**

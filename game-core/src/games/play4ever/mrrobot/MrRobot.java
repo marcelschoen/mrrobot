@@ -300,9 +300,9 @@ public class MrRobot implements ActionListener, CollisionListener {
      * @param y The y-coordinate in pixels.
      */
     public void setPosition(float x, float y) {
-        if(isCrossingLeftScreenBoundary(x)) {
+        if(SpriteUtil.isCrossingLeftScreenBoundary(x)) {
             x = -5;
-        } else if(isCrossingRightScreenBoundary(x)) {
+        } else if(SpriteUtil.isCrossingRightScreenBoundary(x)) {
             x = MrRobotGame.VIRTUAL_WIDTH - 19;
         }
         this.mrRobotSprite.setPosition(x, y);
@@ -318,18 +318,6 @@ public class MrRobot implements ActionListener, CollisionListener {
     public void changeState(MrRobotState state) {
         this.mrRobotState = state.changeFrom(this.mrRobotState, state);
         this.mrRobotSprite.showAnimation(mrRobotState.getAnimationName());
-    }
-
-    public boolean isCrossingLeftScreenBoundary(float x) {
-        return x < -5;
-    }
-
-    public boolean isCrossingRightScreenBoundary(float x) {
-        return x > MrRobotGame.VIRTUAL_WIDTH - 19;
-    }
-
-    public boolean isCrossingLowerScreenBoundary(float y) {
-        return y < 0;
     }
 
     /**
@@ -726,7 +714,7 @@ public class MrRobot implements ActionListener, CollisionListener {
 
         float line = (y / 8f) - 1f;
 
-        if(isCrossingLowerScreenBoundary(y)) {
+        if(SpriteUtil.isCrossingLowerScreenBoundary(y)) {
             // falling out of screen
             die();
         } else if(tileBelowId == NO_TILE) {
