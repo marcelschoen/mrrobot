@@ -41,7 +41,7 @@ public class RiseUpAction extends Action {
     protected boolean isDone() {
         int tileBelowId = mrRobot.getTileBelowId();
         if (tileBelowId != TILE_ELEVATOR) {
-            if (mrRobot.mrRobotIsNearlyAlignedVertically()) {
+            if (mrRobot.isNearlyAlignedVertically()) {
                 mrRobot.mrRobotLands();
                 return true;
             }

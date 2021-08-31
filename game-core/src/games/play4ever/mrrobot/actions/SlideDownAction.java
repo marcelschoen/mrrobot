@@ -45,7 +45,7 @@ public class SlideDownAction extends Action {
         int tileBelowId = mrRobot.getCellBelow().getTile().getId();
         if (tileBelowId != NO_TILE && tileBelowId != TILE_SLIDER
                 && tileBelowId != TILE_LADDER_LEFT && tileBelowId != TILE_LADDER_RIGHT) {
-            if (mrRobot.mrRobotIsNearlyAlignedVertically()) {
+            if (mrRobot.isNearlyAlignedVertically()) {
                 mrRobot.mrRobotLands();
                 return true;
             }

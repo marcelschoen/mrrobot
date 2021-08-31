@@ -2,6 +2,7 @@ package games.play4ever.mrrobot;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
@@ -38,7 +39,6 @@ import static games.play4ever.mrrobot.Tiles.TILE_ROLL_LEFT_2;
 import static games.play4ever.mrrobot.Tiles.TILE_ROLL_RIGHT_1;
 import static games.play4ever.mrrobot.Tiles.TILE_ROLL_RIGHT_2;
 import static games.play4ever.mrrobot.Tiles.TILE_SLIDER;
-import static games.play4ever.mrrobot.Tiles.TILE_TRAMPOLINE_MIDDLE;
 
 /**
  * Represents and handles the state and attributes of Mr. Robot.
@@ -379,18 +379,18 @@ public class MrRobot implements ActionListener, CollisionListener {
             moveRight();
 //        } else if(Gdx.input.isKeyPressed(Input.Keys.UP) || GamepadOverlay.isUpPressed) {
         } else if(GameInput.isUpPressed()) {
-            if(!mrRobotIsClimbing()) {
+            if(!isClimbing()) {
                 tryClimbingUp();
             }
 //        } else if(Gdx.input.isKeyPressed(Input.Keys.DOWN) || GamepadOverlay.isDownPressed) {
         } else if(GameInput.isDownPressed()) {
             if(tileBelowId == Tiles.TILE_TELEPORTER) {
                 mrRobotSprite.startAction(teleportAction, null);
-            } else if(!mrRobotIsClimbing()) {
+            } else if(!isClimbing()) {
                 tryClimbingDown();
             }
         } else {
-            if((mrRobotIsClimbing() || isWalking()) && !mrRobotState.isDying()) {
+            if((isClimbing() || isWalking()) && !mrRobotState.isDying()) {
                 // Stop movement
                 stopMrRobot();
             }
@@ -457,7 +457,7 @@ public class MrRobot implements ActionListener, CollisionListener {
                 if(tileBelowId != -1 && tileBelowId != TILE_LADDER_LEFT ) {
                     tryMoveRight = true;
                 } else if(tileBehindId != -1 && tileBehindId != TILE_LADDER_LEFT
-                        && mrRobotIsNearlyAlignedVerticallyAtTop()) {
+                        && SpriteUtil.isNearlyAlignedVerticallyAtTop(this.mrRobotSprite)) {
                     tryMoveRight = true;
                 }
             } else {
@@ -479,7 +479,7 @@ public class MrRobot implements ActionListener, CollisionListener {
                 if(tileBelowId != -1 && tileBelowId != TILE_LADDER_LEFT ) {
                     tryMoveLeft = true;
                 } else if(tileBehindId != -1 && tileBehindId != TILE_LADDER_LEFT
-                        && mrRobotIsNearlyAlignedVerticallyAtTop()) {
+                        && SpriteUtil.isNearlyAlignedVerticallyAtTop(this.mrRobotSprite)) {
                     tryMoveLeft = true;
                 }
             } else {
@@ -578,7 +578,7 @@ public class MrRobot implements ActionListener, CollisionListener {
                 climb = true;
             }
         }
-        if(climb && mrRobotIsNearlyAlignedHorizontally()) {
+        if(climb && SpriteUtil.isNearlyAlignedHorizontally(this.mrRobotSprite)) {
             alignMrRobotHorizontally(alignLeftTile);
             intendedMovement.animationName = ANIM.mrrobot_climb.name();
             intendedMovement.MrRobotState = MrRobotState.CLIMBING_UP;
@@ -599,7 +599,7 @@ public class MrRobot implements ActionListener, CollisionListener {
             alignLeftTile = tileFurtherBelowId == TILE_LADDER_RIGHT;
             climb = true;
         }
-        if(climb && mrRobotIsNearlyAlignedHorizontally()) {
+        if(climb && SpriteUtil.isNearlyAlignedHorizontally(this.mrRobotSprite)) {
             alignMrRobotHorizontally(alignLeftTile);
             intendedMovement.animationName = ANIM.mrrobot_climb.name();
             intendedMovement.MrRobotState = MrRobotState.CLIMBING_DOWN;
@@ -617,7 +617,7 @@ public class MrRobot implements ActionListener, CollisionListener {
     /**
      * @return true if Mr. Robot is climbing
      */
-    public boolean mrRobotIsClimbing() {
+    public boolean isClimbing() {
         return mrRobotState == MrRobotState.CLIMBING_DOWN
                 || mrRobotState == MrRobotState.CLIMBING_UP;
     }
@@ -636,7 +636,7 @@ public class MrRobot implements ActionListener, CollisionListener {
      * @return True if Mr. Robot is on a ladder
      */
     public boolean isOnLadder() {
-        return mrRobotState == MrRobotState.STANDING_ON_LADDER || mrRobotIsClimbing();
+        return mrRobotState == MrRobotState.STANDING_ON_LADDER || isClimbing();
     }
 
     /**
@@ -696,51 +696,68 @@ public class MrRobot implements ActionListener, CollisionListener {
         setPosition(x, y);
     }
 
+    public void jumpOnTrampoline() {
+        Trampoline trampoline = Trampolins.getTrampolineForTile(getTileMapColumn(), getTileMapRow());
+        trampoline.getSprite().showAnimation(MrRobot.ANIM.trampoline_big.name(), Animation.PlayMode.NORMAL);
+        if(GameInput.isRightPressed()) {
+            changeState(MrRobotState.JUMP_RIGHT);
+            mrRobotSprite.startAction(jumpSidewaysRightAction, null);
+        } else if(GameInput.isLeftPressed()) {
+            changeState(MrRobotState.JUMP_LEFT);
+            mrRobotSprite.startAction(jumpSidewaysLeftAction, null);
+        } else {
+            if(mrRobotState.isFacingRight()) {
+                changeState(MrRobotState.JUMPUP_RIGHT);
+                mrRobotSprite.startAction(jumpUpAction, null);
+            } else {
+                changeState(MrRobotState.JUMPUP_LEFT);
+                mrRobotSprite.startAction(jumpUpAction, null);
+            }
+        }
+    }
+
     /**
      * Checks Mr. Robot's status and may trigger stuff.
      *
      * @param delta Time delta.
      */
     public void checkMrRobot(float delta) {
-        float x = mrRobotSprite.getX() + 12f;
         float y = mrRobotSprite.getY() + 7f;
 
         float line = (y / 8f) - 1f;
 
-        if(isFalling()) {
-            if(tileBelowId == TILE_TRAMPOLINE_MIDDLE && mrRobotIsNearlyAlignedVertically()) {
-                Gdx.app.log("MrRobot", "* Fell on trampoline *");
-            }
-        }
         if(isCrossingLowerScreenBoundary(y)) {
             // falling out of screen
             die();
         } else if(tileBelowId == NO_TILE) {
             if (!isFalling() && !isJumping() && !mrRobotState.isDying()) {
                 mrRobotSprite.startAction(dropDownAction, null);
+                return;
             }
         } else if(tileBelowId == TILE_BOMB_EXPLODING) {
             die();
-        } else if(mrRobotIsClimbing()) {
+        } else if(isClimbing()) {
             if(mrRobotState == MrRobotState.CLIMBING_UP) {
                 if(tileBehindId == NO_TILE && tileBelowId != TILE_LADDER_LEFT) {
                     changeState(MrRobotState.STANDING_RIGHT);
                     mrRobotLands();
+                    return;
                 }
             } else {
                 if(tileBehindId == TILE_LADDER_LEFT && tileBelowId != TILE_LADDER_LEFT) {
-                    if(mrRobotIsNearlyAlignedVertically()) {
+                    if(isNearlyAlignedVertically()) {
                         changeState(MrRobotState.STANDING_RIGHT);
                         mrRobotLands();
+                        return;
                     }
                 }
             }
         } else {
-            if(tileBelowId == TILE_DOT && mrRobotIsAlignedVertically()) {
+            if(tileBelowId == TILE_DOT && SpriteUtil.isAlignedVertically(this.mrRobotSprite)) {
                 tileMap.clearCell(tileMap.getTileMapCell(TileMap.CELL_TYPE.BELOW));
                 tileMap.decreaseNumberOfDots();
                 Hud.addScore(1);
-            } else if(tileBelowId == TILE_BOMB && mrRobotIsNearlyAlignedVertically()) {
+            } else if(tileBelowId == TILE_BOMB && isNearlyAlignedVertically()) {
                 Bombs.getInstance().igniteBomb(tileBelow.getColumn(), tileBelow.getRow());
             }
             if(magnetLeftActive && (getState() == MrRobotState.JUMP_RIGHT || getState() == MrRobotState.FALL_RIGHT) && Magnets.isMagnetLeftClose(getX(), getY())) {
@@ -748,9 +765,9 @@ public class MrRobot implements ActionListener, CollisionListener {
             } else if(magnetRightActive && (getState() == MrRobotState.JUMP_LEFT || getState() == MrRobotState.FALL_LEFT) && Magnets.isMagnetRightClose(getX(), getY())) {
                 setPosition(mrRobotSprite.getX() - PULLING_SPEED * delta, mrRobotSprite.getY());
             }
-            if(mrRobotIsAlignedVertically() && (tileBelowId == TILE_ROLL_LEFT_1 || tileBelowId == TILE_ROLL_LEFT_2)) {
+            if(SpriteUtil.isAlignedVertically(this.mrRobotSprite) && (tileBelowId == TILE_ROLL_LEFT_1 || tileBelowId == TILE_ROLL_LEFT_2)) {
                 setPosition(mrRobotSprite.getX() - ROLLING_SPEED * delta, mrRobotSprite.getY());
-            } else if(mrRobotIsAlignedVertically() && (tileBelowId == TILE_ROLL_RIGHT_1 || tileBelowId == TILE_ROLL_RIGHT_2)) {
+            } else if(SpriteUtil.isAlignedVertically(this.mrRobotSprite) && (tileBelowId == TILE_ROLL_RIGHT_1 || tileBelowId == TILE_ROLL_RIGHT_2)) {
                 setPosition(mrRobotSprite.getX() + ROLLING_SPEED * delta, mrRobotSprite.getY());
             } else if(tileBelowId == TILE_ELEVATOR && tileBehindId == TILE_ELEVATOR && !isRisingUp() && !isJumping()) {
                 mrRobotSprite.startAction(riseUpAction, null);
@@ -807,42 +824,42 @@ public class MrRobot implements ActionListener, CollisionListener {
     /**
      * @return True if Mr. Robot is nearly vertically aligned with his feet (lower sprite boundary).
      */
-    public boolean mrRobotIsNearlyAlignedVertically() {
+    public boolean isNearlyAlignedVertically() {
         float y = mrRobotSprite.getY();
         int row = (int)(y / 8f);
         float diff = y - (row * 8f);
         return Math.abs(diff) < 1.5f;
     }
-
-    /**
-     * @return True if Mr. Robot is nearly vertically aligned with his feet (lower sprite boundary).
-     */
-    public boolean mrRobotIsAlignedVertically() {
-        float y = mrRobotSprite.getY();
-        int row = (int)(y / 8f);
-        float diff = y - (row * 8f);
-        return Math.abs(diff) < 0.5f;
-    }
-
-    /**
-     * @return True if Mr. Robot is nearly vertically aligned with his head (upper sprite boundary).
-     */
-    public boolean mrRobotIsNearlyAlignedVerticallyAtTop() {
-        float y = mrRobotSprite.getY();
-        int row = (int)(y / 8f);
-        float diff = y - (row * 8f);
-        return diff > 1.5f;
-    }
-
-    /**
-     * @return True if Mr. Robot is nearly aligned horizontally (center of sprite).
-     */
-    public boolean mrRobotIsNearlyAlignedHorizontally() {
-        float x = mrRobotSprite.getX() + 6f;
-        int col = (int)(x / 8f) + 1;
-        float diff = x - (col * 8f);
-        return Math.abs(diff) < 8f;
-    }
+//
+//    /**
+//     * @return True if Mr. Robot is nearly vertically aligned with his feet (lower sprite boundary).
+//     */
+//    public boolean isAlignedVertically() {
+//        float y = mrRobotSprite.getY();
+//        int row = (int)(y / 8f);
+//        float diff = y - (row * 8f);
+//        return Math.abs(diff) < 0.5f;
+//    }
+//
+//    /**
+//     * @return True if Mr. Robot is nearly vertically aligned with his head (upper sprite boundary).
+//     */
+//    public boolean isNearlyAlignedVerticallyAtTop() {
+//        float y = mrRobotSprite.getY();
+//        int row = (int)(y / 8f);
+//        float diff = y - (row * 8f);
+//        return diff > 1.5f;
+//    }
+//
+//    /**
+//     * @return True if Mr. Robot is nearly aligned horizontally (center of sprite).
+//     */
+//    public boolean isNearlyAlignedHorizontally() {
+//        float x = mrRobotSprite.getX() + 6f;
+//        int col = (int)(x / 8f) + 1;
+//        float diff = x - (col * 8f);
+//        return Math.abs(diff) < 8f;
+//    }
 
     /**
      * @return The tilemap row BELOW Mr. Robot (i.e. the row Mr. Robot is standing on)

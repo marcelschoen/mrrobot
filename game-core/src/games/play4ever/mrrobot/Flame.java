@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Interpolation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import games.play4ever.libgdx.collision.Collision;
 import games.play4ever.libgdx.sprites.AnimatedSprite;
@@ -15,9 +16,17 @@ import static games.play4ever.mrrobot.Tiles.NO_TILE;
 
 public class Flame {
 
-    private IntendedMovement intendedMovement = new IntendedMovement();
+    private static final Random random = new Random();
+
+    public static final float FLAME_MOVEMENT_SPEED = 10f;
+    public static final FlameMovement MOVE_RIGHT = new FlameMovement(FLAME_STATE.WALKING_RIGHT, FLAME_MOVEMENT_SPEED, 0);
+    public static final FlameMovement MOVE_LEFT = new FlameMovement(FLAME_STATE.WALKING_LEFT, FLAME_MOVEMENT_SPEED * -1, 0);
+    public static final FlameMovement MOVE_UP = new FlameMovement(FLAME_STATE.CLIMBING_UP, 0, FLAME_MOVEMENT_SPEED);
+    public static final FlameMovement MOVE_DOWN = new FlameMovement(FLAME_STATE.CLIMBING_DOWN, 0, FLAME_MOVEMENT_SPEED * -1);
 
     private Action killFlameAction;
+    private FlameMovement currentMovement = MOVE_LEFT;
+    private float movementTimer = 0f;
 
     public enum ANIM {
         flame_right,
@@ -105,7 +114,19 @@ public class Flame {
      * @param delta
      */
     public void move(float delta) {
+        if(movementTimer == 0f) {
+            // determine new direction
+            if(currentMovement == MOVE_LEFT || currentMovement == MOVE_RIGHT) {
 
+            } else {
+
+            }
+            movementTimer = random.nextInt(8) + 3;
+        }
+
+        float x = getX() + currentMovement.xSpeed * delta;
+        float y = getY() + currentMovement.ySpeed * delta;
+        //////////////////setPosition(x, y);
     }
 
     public void die() {
@@ -135,17 +156,18 @@ public class Flame {
     public float getX() {
         return this.sprite.getX();
     }
+
     public float getY() {
         return this.sprite.getY();
     }
 
-    class IntendedMovement {
-        public String animationName;
-        public FLAME_STATE flame_state;
-
-        public void clear() {
-            animationName = null;
-            flame_state = null;
-        }
+    /**
+     * @return True if Mr. Robot is nearly vertically aligned with his feet (lower sprite boundary).
+     */
+    public boolean isNearlyAlignedVertically() {
+        float y = getY();
+        int row = (int)(y / 8f);
+        float diff = y - (row * 8f);
+        return Math.abs(diff) < 1.5f;
     }
 }

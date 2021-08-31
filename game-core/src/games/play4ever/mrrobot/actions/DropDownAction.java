@@ -1,12 +1,7 @@
 package games.play4ever.mrrobot.actions;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Animation;
-
 import games.play4ever.libgdx.sprites.action.Action;
 import games.play4ever.mrrobot.MrRobot;
-import games.play4ever.mrrobot.Trampoline;
-import games.play4ever.mrrobot.Trampolins;
 
 import static games.play4ever.mrrobot.MrRobotState.DROP_RIGHT;
 import static games.play4ever.mrrobot.Tiles.NO_TILE;
@@ -55,13 +50,11 @@ public class DropDownAction extends Action {
 
         if (tileBelowId != NO_TILE && tileBelowId != TILE_SLIDER
                 && tileBelowId != TILE_LADDER_LEFT && tileBelowId != TILE_LADDER_RIGHT) {
-            if (mrRobot.mrRobotIsNearlyAlignedVertically()) {
+            if (mrRobot.isNearlyAlignedVertically()) {
                 mrRobot.mrRobotLands();
                 int fallHeight = startingHeight- mrRobot.getTileMapRow();
                 if(tileBelowId == TILE_TRAMPOLINE_MIDDLE) {
-                    Gdx.app.log("DropDownAction", "Get trampolinecolumn: " + mrRobot.getTileMapColumn() + ", row: " + (mrRobot.getTileMapRow() - 1));
-                    Trampoline trampoline = Trampolins.getTrampolineForTile(mrRobot.getTileMapColumn(), mrRobot.getTileMapRow());
-                    trampoline.getSprite().showAnimation(MrRobot.ANIM.trampoline_big.name(), Animation.PlayMode.NORMAL);
+                    mrRobot.jumpOnTrampoline();
                 } else {
                     if(fallHeight > 4) {
                         mrRobot.die();
