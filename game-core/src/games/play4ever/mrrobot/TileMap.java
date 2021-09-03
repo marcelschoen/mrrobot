@@ -69,18 +69,12 @@ public class TileMap {
     private static int lastUnlockedMapIndex = 0;
 
     public enum CELL_TYPE {
-        BELOW(1f),
-        FURTHER_BELOW(2f),
-        BEHIND(0f);
-
-        private float yOffset = 0;
-        CELL_TYPE(float yOffset) {
-            this.yOffset = yOffset;
-        }
-
-        public float getyOffset() {
-            return this.yOffset;
-        }
+        BELOW(),
+        BELOW_RIGHT(),
+        BELOW_LEFT(),
+        FURTHER_BELOW(),
+        BEHIND()
+        ;
     }
 
     public static void readMapLists() {
@@ -328,6 +322,10 @@ public class TileMap {
             line += 1;
         } else if(type == CELL_TYPE.FURTHER_BELOW) {
             line -= 1;
+        } else if(type == CELL_TYPE.BELOW_LEFT) {
+            col = -1;
+        } else if(type == CELL_TYPE.BELOW_RIGHT) {
+            col = +1;
         }
         return getCell(col, line);
     }

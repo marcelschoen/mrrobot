@@ -18,7 +18,7 @@ public class Flame {
 
     private static final Random random = new Random();
 
-    public static final float FLAME_MOVEMENT_SPEED = 10f;
+    public static final float FLAME_MOVEMENT_SPEED = 20f;
     public static final FlameMovement MOVE_RIGHT = new FlameMovement(FLAME_STATE.WALKING_RIGHT, FLAME_MOVEMENT_SPEED, 0);
     public static final FlameMovement MOVE_LEFT = new FlameMovement(FLAME_STATE.WALKING_LEFT, FLAME_MOVEMENT_SPEED * -1, 0);
     public static final FlameMovement MOVE_UP = new FlameMovement(FLAME_STATE.CLIMBING_UP, 0, FLAME_MOVEMENT_SPEED);
@@ -27,6 +27,14 @@ public class Flame {
     private Action killFlameAction;
     private FlameMovement currentMovement = MOVE_LEFT;
     private float movementTimer = 0f;
+
+
+    static {
+        MOVE_RIGHT.setAlternateMovements(new FlameMovement[] { MOVE_LEFT, MOVE_UP, MOVE_DOWN });
+        MOVE_LEFT.setAlternateMovements(new FlameMovement[] { MOVE_RIGHT, MOVE_UP, MOVE_DOWN });
+        MOVE_UP.setAlternateMovements(new FlameMovement[] { MOVE_LEFT, MOVE_RIGHT, MOVE_DOWN });
+        MOVE_DOWN.setAlternateMovements(new FlameMovement[] { MOVE_LEFT, MOVE_RIGHT, MOVE_UP });
+    }
 
     public enum ANIM {
         flame_right,
@@ -42,6 +50,8 @@ public class Flame {
 
     private int tileBehindId = NO_TILE;
     private int tileBelowId = NO_TILE;
+    private int tileBelowLeftId = NO_TILE;
+    private int tileBelowRightId = NO_TILE;
     private int tileFurtherBelowId = NO_TILE;
 
     private TileMap tileMap;
@@ -114,6 +124,9 @@ public class Flame {
      * @param delta
      */
     public void move(float delta) {
+        if(isDying()) {
+           return;
+        }
         if(movementTimer == 0f) {
             // determine new direction
             if(currentMovement == MOVE_LEFT || currentMovement == MOVE_RIGHT) {
@@ -141,6 +154,20 @@ public class Flame {
 
 
         if(resetAndChangeDirection) {
+            setPosition(oldX, oldY);
+
+            FlameMovement[] alternateMovements = currentMovement.getAlternateMovements();
+            for(int i = 0; i < alternateMovements.length; i++) {
+                FlameMovement movement = alternateMovements[i];
+                if(movement == MOVE_LEFT && tileBelowLeftId == NO_TILE) {
+                    //////////////// CONTINUE //////////////////  alternateMovements[i]
+                }
+            }
+
+            // 1st, just switch direction to reverse
+
+
+
             if(currentMovement == MOVE_LEFT) {
                 currentMovement = MOVE_RIGHT;
             } else if(currentMovement == MOVE_RIGHT) {
@@ -168,6 +195,8 @@ public class Flame {
         this.sprite.setPosition(x, y);
         tileBehindId = tileMap.getTileMapTile(this.sprite, TileMap.CELL_TYPE.BEHIND);
         tileBelowId = tileMap.getTileMapTile(this.sprite, TileMap.CELL_TYPE.BELOW);
+        tileBelowLeftId = tileMap.getTileMapTile(this.sprite, TileMap.CELL_TYPE.BELOW_LEFT);
+        tileBelowRightId = tileMap.getTileMapTile(this.sprite, TileMap.CELL_TYPE.BELOW_RIGHT);
         tileFurtherBelowId = tileMap.getTileMapTile(this.sprite, TileMap.CELL_TYPE.FURTHER_BELOW);
     }
 
@@ -183,15 +212,5 @@ public class Flame {
 
     public float getY() {
         return this.sprite.getY();
-    }
-
-    /**
-     * @return True if Mr. Robot is nearly vertically aligned with his feet (lower sprite boundary).
-     */
-    public boolean isNearlyAlignedVertically() {
-        float y = getY();
-        int row = (int)(y / 8f);
-        float diff = y - (row * 8f);
-        return Math.abs(diff) < 1.5f;
     }
 }

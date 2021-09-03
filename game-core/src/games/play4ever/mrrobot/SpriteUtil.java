@@ -46,4 +46,14 @@ public class SpriteUtil {
         return Math.abs(diff) < 8f;
     }
 
+    /**
+     * @return True if Mr. Robot is nearly vertically aligned with his feet (lower sprite boundary).
+     */
+    public static boolean isNearlyAlignedVertically(Sprite sprite) {
+        float y = sprite.getY();
+        int row = (int)(y / 8f);
+        float diff = y - (row * 8f);
+        return Math.abs(diff) < 1.5f;
+    }
+
 }
