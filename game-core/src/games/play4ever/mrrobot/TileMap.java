@@ -323,9 +323,9 @@ public class TileMap {
         } else if(type == CELL_TYPE.FURTHER_BELOW) {
             line -= 1;
         } else if(type == CELL_TYPE.BELOW_LEFT) {
-            col = -1;
+            col -= 1;
         } else if(type == CELL_TYPE.BELOW_RIGHT) {
-            col = +1;
+            col += 1;
         }
         return getCell(col, line);
     }

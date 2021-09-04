@@ -13,6 +13,7 @@ import games.play4ever.libgdx.sprites.action.Action;
 import games.play4ever.libgdx.sprites.action.ActionBuilder;
 
 import static games.play4ever.mrrobot.Tiles.NO_TILE;
+import static games.play4ever.mrrobot.Tiles.TILE_LADDER_LEFT;
 
 public class Flame {
 
@@ -57,6 +58,8 @@ public class Flame {
     private TileMap tileMap;
 
     public static List<Flame> flames = new ArrayList<>();
+
+    private static FlameMovement[] tempMovements = new FlameMovement[4];
 
     public enum FLAME_STATE {
         DYING(true, ANIM.flame_blue.name()),
@@ -156,28 +159,57 @@ public class Flame {
         if(resetAndChangeDirection) {
             setPosition(oldX, oldY);
 
-            FlameMovement[] alternateMovements = currentMovement.getAlternateMovements();
-            for(int i = 0; i < alternateMovements.length; i++) {
-                FlameMovement movement = alternateMovements[i];
+            System.out.println("--------------- CURRENT MOVEMENT: " + currentMovement.xSpeed + "/" + currentMovement.ySpeed);
+            FlameMovement[] temporaryMovements = getTempMovements(currentMovement.getAlternateMovements());
+            for(int i = 0; i < temporaryMovements.length; i++) {
+                FlameMovement movement = temporaryMovements[i];
                 if(movement == MOVE_LEFT && tileBelowLeftId == NO_TILE) {
-                    //////////////// CONTINUE //////////////////  alternateMovements[i]
+                    System.out.println("---> left not possible");
+                    temporaryMovements[i] = null;
+                } else if(movement == MOVE_RIGHT && tileBelowRightId == NO_TILE) {
+                    temporaryMovements[i] = null;
+                    System.out.println("---> right not possible");
+                } else if(movement == MOVE_UP &&
+                        (tileBehindId != TILE_LADDER_LEFT && tileBelowId != TILE_LADDER_LEFT)) {
+                    temporaryMovements[i] = null;
+                    System.out.println("---> up not possible");
+                } else if(movement == MOVE_DOWN &&
+                        (tileBelowId != TILE_LADDER_LEFT && tileFurtherBelowId != TILE_LADDER_LEFT)) {
+                    temporaryMovements[i] = null;
+                    System.out.println("---> down not possible");
                 }
             }
 
-            // 1st, just switch direction to reverse
-
-
-
-            if(currentMovement == MOVE_LEFT) {
-                currentMovement = MOVE_RIGHT;
-            } else if(currentMovement == MOVE_RIGHT) {
-                currentMovement = MOVE_LEFT;
+            // Select one of the available new directions.
+            int startNewDirection = random.nextInt(4);
+            int i = startNewDirection;
+            int counter = 0;
+            while(temporaryMovements[i] == null) {
+                i++;
+                counter++;
+                if(counter >= 4) {
+                    throw new IllegalStateException("*** NO DIRECTION FOUND ***");
+                }
+                if(i >= temporaryMovements.length) {
+                    i = 0;
+                }
             }
+            currentMovement = temporaryMovements[i];
         }
 
         if(this.flameState != currentMovement.flame_state) {
             setState(currentMovement.flame_state);
         }
+    }
+
+    private static FlameMovement[] getTempMovements(FlameMovement[] alternateMovements) {
+        for(int i=0; i < tempMovements.length; i++) {
+            tempMovements[i] = null;
+        }
+        for(int i=0; i < alternateMovements.length; i++) {
+            tempMovements[i] = alternateMovements[i];
+        }
+        return tempMovements;
     }
 
     public void die() {
