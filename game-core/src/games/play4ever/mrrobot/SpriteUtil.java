@@ -23,7 +23,7 @@ public class SpriteUtil {
         float y = sprite.getY();
         int row = (int)(y / 8f);
         float diff = y - (row * 8f);
-        return Math.abs(diff) < 0.5f;
+        return Math.abs(diff) < 1f;
     }
 
     /**
@@ -44,6 +44,18 @@ public class SpriteUtil {
         int col = (int)(x / 8f) + 1;
         float diff = x - (col * 8f);
         return Math.abs(diff) < 8f;
+    }
+
+    /**
+     * @return True if the sprite is  aligned horizontally (center of sprite).
+     */
+    public static boolean isAlignedHorizontally(Sprite sprite) {
+        float x = sprite.getX();
+        int col = (int)(x / 8f);
+        float diff = x - (col * 8f);
+        boolean isAligned = Math.abs(diff) < 1f;
+//        System.out.println("X: " + x + ", col: " + col + ", diff: " + diff + ", is aligned: " + isAligned);
+        return isAligned;
     }
 
     /**

@@ -17,24 +17,26 @@ import static games.play4ever.mrrobot.Tiles.TILE_LADDER_LEFT;
 
 public class Flame {
 
+    public static final float FLAME_MOVEMENT_SPEED = 25f;
+
     private static final Random random = new Random();
 
-    public static final float FLAME_MOVEMENT_SPEED = 20f;
-    public static final FlameMovement MOVE_RIGHT = new FlameMovement(FLAME_STATE.WALKING_RIGHT, FLAME_MOVEMENT_SPEED, 0);
-    public static final FlameMovement MOVE_LEFT = new FlameMovement(FLAME_STATE.WALKING_LEFT, FLAME_MOVEMENT_SPEED * -1, 0);
-    public static final FlameMovement MOVE_UP = new FlameMovement(FLAME_STATE.CLIMBING_UP, 0, FLAME_MOVEMENT_SPEED);
-    public static final FlameMovement MOVE_DOWN = new FlameMovement(FLAME_STATE.CLIMBING_DOWN, 0, FLAME_MOVEMENT_SPEED * -1);
-
     private Action killFlameAction;
-    private FlameMovement currentMovement = MOVE_LEFT;
+    private FlameMovement currentMovement = FlameMovement.LEFT;
     private float movementTimer = 0f;
 
+    // For debugging purposes, a flame can be disabled and be held in place
+    private boolean disabled = false;
 
     static {
-        MOVE_RIGHT.setAlternateMovements(new FlameMovement[] { MOVE_LEFT, MOVE_UP, MOVE_DOWN });
-        MOVE_LEFT.setAlternateMovements(new FlameMovement[] { MOVE_RIGHT, MOVE_UP, MOVE_DOWN });
-        MOVE_UP.setAlternateMovements(new FlameMovement[] { MOVE_LEFT, MOVE_RIGHT, MOVE_DOWN });
-        MOVE_DOWN.setAlternateMovements(new FlameMovement[] { MOVE_LEFT, MOVE_RIGHT, MOVE_UP });
+        FlameMovement.RIGHT.setAlternateMovements(new FlameMovement[] { FlameMovement.LEFT, FlameMovement.UP, FlameMovement.DOWN });
+        FlameMovement.RIGHT.setForcedAlternateMovements(new FlameMovement[] { FlameMovement.UP, FlameMovement.DOWN });
+        FlameMovement.LEFT.setAlternateMovements(new FlameMovement[] { FlameMovement.RIGHT, FlameMovement.UP, FlameMovement.DOWN });
+        FlameMovement.LEFT.setForcedAlternateMovements(new FlameMovement[] { FlameMovement.UP, FlameMovement.DOWN });
+        FlameMovement.UP.setAlternateMovements(new FlameMovement[] { FlameMovement.LEFT, FlameMovement.RIGHT, FlameMovement.DOWN });
+        FlameMovement.UP.setForcedAlternateMovements(new FlameMovement[] { FlameMovement.LEFT, FlameMovement.RIGHT });
+        FlameMovement.DOWN.setAlternateMovements(new FlameMovement[] { FlameMovement.LEFT, FlameMovement.RIGHT, FlameMovement.UP });
+        FlameMovement.DOWN.setForcedAlternateMovements(new FlameMovement[] { FlameMovement.LEFT, FlameMovement.RIGHT });
     }
 
     public enum ANIM {
@@ -42,10 +44,6 @@ public class Flame {
         flame_left,
         flame_blue
     };
-
-    private static final float WALK_SPEED = 32;
-    private static final float DOWN_SPEED = 40;
-    private static final float ROLLING_SPEED = 26;
 
     private AnimatedSprite sprite = null;
 
@@ -58,8 +56,6 @@ public class Flame {
     private TileMap tileMap;
 
     public static List<Flame> flames = new ArrayList<>();
-
-    private static FlameMovement[] tempMovements = new FlameMovement[4];
 
     public enum FLAME_STATE {
         DYING(true, ANIM.flame_blue.name()),
@@ -127,89 +123,93 @@ public class Flame {
      * @param delta
      */
     public void move(float delta) {
-        if(isDying()) {
-           return;
-        }
-        if(movementTimer == 0f) {
-            // determine new direction
-            if(currentMovement == MOVE_LEFT || currentMovement == MOVE_RIGHT) {
-
-            } else {
-
-            }
-            movementTimer = random.nextInt(8) + 3;
+        if(isDying() || disabled) {
+            return;
         }
 
-        float oldX = getX();
-        float oldY = getY();
-        float newX = oldX + currentMovement.xSpeed * delta;
-        float newY = oldY + currentMovement.ySpeed * delta;
+        float newX = sprite.getX() + currentMovement.getxSpeed() * delta;
+        float newY = sprite.getY() + currentMovement.getySpeed() * delta;
+//        float newX = sprite.getX();
+//        float newY = sprite.getY();
         setPosition(newX, newY);
-
-        boolean resetAndChangeDirection = false;
-        if(tileBelowId == NO_TILE) {
-            resetAndChangeDirection = true;
-        } else if(SpriteUtil.isCrossingLeftScreenBoundary(newX)) {
-            resetAndChangeDirection = true;
-        } else if(SpriteUtil.isCrossingRightScreenBoundary(newX)) {
-            resetAndChangeDirection = true;
+        if(this.flameState != currentMovement.getState()) {
+            setState(currentMovement.getState());
         }
 
-
-        if(resetAndChangeDirection) {
-            setPosition(oldX, oldY);
-
-            System.out.println("--------------- CURRENT MOVEMENT: " + currentMovement.xSpeed + "/" + currentMovement.ySpeed);
-            FlameMovement[] temporaryMovements = getTempMovements(currentMovement.getAlternateMovements());
-            for(int i = 0; i < temporaryMovements.length; i++) {
-                FlameMovement movement = temporaryMovements[i];
-                if(movement == MOVE_LEFT && tileBelowLeftId == NO_TILE) {
-                    System.out.println("---> left not possible");
-                    temporaryMovements[i] = null;
-                } else if(movement == MOVE_RIGHT && tileBelowRightId == NO_TILE) {
-                    temporaryMovements[i] = null;
-                    System.out.println("---> right not possible");
-                } else if(movement == MOVE_UP &&
-                        (tileBehindId != TILE_LADDER_LEFT && tileBelowId != TILE_LADDER_LEFT)) {
-                    temporaryMovements[i] = null;
-                    System.out.println("---> up not possible");
-                } else if(movement == MOVE_DOWN &&
-                        (tileBelowId != TILE_LADDER_LEFT && tileFurtherBelowId != TILE_LADDER_LEFT)) {
-                    temporaryMovements[i] = null;
-                    System.out.println("---> down not possible");
-                }
-            }
-
-            // Select one of the available new directions.
-            int startNewDirection = random.nextInt(4);
-            int i = startNewDirection;
-            int counter = 0;
-            while(temporaryMovements[i] == null) {
-                i++;
-                counter++;
-                if(counter >= 4) {
-                    throw new IllegalStateException("*** NO DIRECTION FOUND ***");
-                }
-                if(i >= temporaryMovements.length) {
-                    i = 0;
-                }
-            }
-            currentMovement = temporaryMovements[i];
-        }
-
-        if(this.flameState != currentMovement.flame_state) {
-            setState(currentMovement.flame_state);
+        if(currentMovement == FlameMovement.LEFT) {
+            moveLeft();
+        } else if(currentMovement == FlameMovement.RIGHT) {
+            moveRight();
+        } else if(currentMovement == FlameMovement.UP) {
+            moveUp();
+        } else if(currentMovement == FlameMovement.DOWN) {
+            moveDown();
         }
     }
 
-    private static FlameMovement[] getTempMovements(FlameMovement[] alternateMovements) {
-        for(int i=0; i < tempMovements.length; i++) {
-            tempMovements[i] = null;
+    private void moveLeft() {
+        if(tileBelowLeftId == NO_TILE) {
+            currentMovement = FlameMovement.RIGHT;
         }
-        for(int i=0; i < alternateMovements.length; i++) {
-            tempMovements[i] = alternateMovements[i];
+        if(SpriteUtil.isAlignedHorizontally(sprite)) {
+            if(random.nextInt(100) > 85) {
+                if(tileFurtherBelowId == TILE_LADDER_LEFT) {
+                    currentMovement = FlameMovement.DOWN;
+                }
+            }
+            if(random.nextInt(100) > 85) {
+                if(tileBehindId == TILE_LADDER_LEFT) {
+                    currentMovement = FlameMovement.UP;
+                }
+            }
         }
-        return tempMovements;
+    }
+    private void moveRight() {
+        if(tileBelowRightId == NO_TILE) {
+            currentMovement = FlameMovement.LEFT;
+        }
+        if(SpriteUtil.isAlignedHorizontally(sprite)) {
+            if(random.nextInt(100) > 85) {
+                if(tileFurtherBelowId == TILE_LADDER_LEFT) {
+                    currentMovement = FlameMovement.DOWN;
+                }
+            }
+            if(random.nextInt(100) > 85) {
+                if(tileBehindId == TILE_LADDER_LEFT) {
+                    currentMovement = FlameMovement.UP;
+                }
+            }
+        }
+    }
+    private void moveUp() {
+        if(SpriteUtil.isAlignedVertically(sprite)) {
+            if(tileBehindId != TILE_LADDER_LEFT && tileBelowId != TILE_LADDER_LEFT) {
+                if(random.nextInt(100) > 95) {
+                    currentMovement = FlameMovement.DOWN;
+                } else {
+                    if(random.nextInt(100) > 50) {
+                        currentMovement = FlameMovement.LEFT;
+                    } else {
+                        currentMovement = FlameMovement.RIGHT;
+                    }
+                }
+            }
+        }
+    }
+    private void moveDown() {
+        if(SpriteUtil.isAlignedVertically(sprite)) {
+            if(tileFurtherBelowId != TILE_LADDER_LEFT && tileBelowId != TILE_LADDER_LEFT) {
+                if(random.nextInt(100) > 95) {
+                    currentMovement = FlameMovement.UP;
+                } else {
+                    if(random.nextInt(100) > 50) {
+                        currentMovement = FlameMovement.LEFT;
+                    } else {
+                        currentMovement = FlameMovement.RIGHT;
+                    }
+                }
+            }
+        }
     }
 
     public void die() {

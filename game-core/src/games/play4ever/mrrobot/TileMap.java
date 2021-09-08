@@ -188,7 +188,8 @@ public class TileMap {
                                 Flame.flames.add(flame);
                                 flame.setTileMap(this);
                                 float[] flameStartingPosition = new float[2];
-                                flameStartingPosition[0] = x - 8;
+//                                flameStartingPosition[0] = x - 8;
+                                flameStartingPosition[0] = x;
                                 flameStartingPosition[1] = y;
                                 flameStartingPositions.put(flame, flameStartingPosition);
                             } else if(tile.getId() == TILE_MAGNET_ITEM_LEFT) {
@@ -335,8 +336,7 @@ public class TileMap {
      * @return The tilemap column of the middle of the sprite
      */
     public static int getColumn(AnimatedSprite entity) {
-        return (int)((entity.getX() + entity.getWidth() / 2) / 8f);
-//        return (int)((entity.getX() + 12f) / 8f);
+        return (int)((entity.getX() + entity.getWidth() / 2 - 1) / 8f);
     }
 
     /**
