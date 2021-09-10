@@ -196,10 +196,12 @@ public class MrRobot implements ActionListener, CollisionListener {
                 .setVisibility(false, 0.f)
                 .build();
         magnetLeftAction = new ActionBuilder()
-                .debugLog("Picked up magnet left....", 10)
+                .debugLog("Picked up magnet left....", 1000)
+                .debugLog("Left magnet now offline.", 0.1f)
                 .build();
         magnetRightAction = new ActionBuilder()
-                .debugLog("Picked up magnet right....", 10)
+                .debugLog("Picked up magnet right....", 1000)
+                .debugLog("Right magnet now offline.", 0.1f)
                 .build();
         dyingAction = new ActionBuilder()
                 .setAnimation(ANIM.mrrobot_dies.name())
@@ -247,13 +249,19 @@ public class MrRobot implements ActionListener, CollisionListener {
         }
         if(otherSprite.getType() == SpriteTypes.MAGNET_LEFT) {
             otherSprite.startAction(magnetLeftAction, this);
-            otherSprite.setVisible(false);
+            Hud.showMagnet(otherSprite);
             magnetLeftActive = true;
+            if(magnetRightActive) {
+                magnetRightActive = false;
+            }
         }
         if(otherSprite.getType() == SpriteTypes.MAGNET_RIGHT) {
             otherSprite.startAction(magnetRightAction, this);
-            otherSprite.setVisible(false);
+            Hud.showMagnet(otherSprite);
             magnetRightActive = true;
+            if(magnetLeftActive) {
+                magnetLeftActive = false;
+            }
         }
         if(otherSprite.getType() == SpriteTypes.SHIELDS && getState() != MrRobotState.DYING) {
             Hud.addScore(100);
@@ -494,6 +502,7 @@ public class MrRobot implements ActionListener, CollisionListener {
     public void reset() {
         magnetRightActive = false;
         magnetLeftActive = false;
+        Hud.hideMagnet();
         mrRobotState = STANDING_RIGHT;
         if(shieldSprite != null) {
             shieldSprite.reset();
@@ -523,9 +532,11 @@ public class MrRobot implements ActionListener, CollisionListener {
         } else if(completedAction.getFirstActionInChain() == magnetLeftAction) {
             // magnet left item is used up
             magnetLeftActive = false;
+            Hud.hideMagnet();
         } else if(completedAction.getFirstActionInChain() == magnetRightAction) {
             // magnet right item is used up
             magnetRightActive = false;
+            Hud.hideMagnet();
         }
     }
 
@@ -714,17 +725,21 @@ public class MrRobot implements ActionListener, CollisionListener {
 
         float line = (y / 8f) - 1f;
 
-        if(SpriteUtil.isCrossingLowerScreenBoundary(y)) {
+        if(SpriteUtil.isCrossingLowerScreenBoundary(y)
+            || tileBelowId == TILE_BOMB_EXPLODING) {
             // falling out of screen
             die();
-        } else if(tileBelowId == NO_TILE) {
+            return;
+        }
+
+        if(tileBelowId == NO_TILE) {
             if (!isFalling() && !isJumping() && !mrRobotState.isDying()) {
                 mrRobotSprite.startAction(dropDownAction, null);
                 return;
             }
-        } else if(tileBelowId == TILE_BOMB_EXPLODING) {
-            die();
-        } else if(isClimbing()) {
+        }
+
+        if(isClimbing()) {
             if(mrRobotState == MrRobotState.CLIMBING_UP) {
                 if(tileBehindId == NO_TILE && tileBelowId != TILE_LADDER_LEFT) {
                     changeState(MrRobotState.STANDING_RIGHT);
@@ -740,26 +755,30 @@ public class MrRobot implements ActionListener, CollisionListener {
                     }
                 }
             }
-        } else {
-            if(tileBelowId == TILE_DOT && SpriteUtil.isAlignedVertically(this.mrRobotSprite)) {
-                tileMap.clearCell(tileMap.getTileMapCell(TileMap.CELL_TYPE.BELOW));
-                tileMap.decreaseNumberOfDots();
-                Hud.addScore(1);
-            } else if(tileBelowId == TILE_BOMB && isNearlyAlignedVertically()) {
-                Bombs.getInstance().igniteBomb(tileBelow.getColumn(), tileBelow.getRow());
-            }
-            if(magnetLeftActive && (getState() == MrRobotState.JUMP_RIGHT || getState() == MrRobotState.FALL_RIGHT) && Magnets.isMagnetLeftClose(getX(), getY())) {
-                setPosition(mrRobotSprite.getX() + PULLING_SPEED * delta, mrRobotSprite.getY());
-            } else if(magnetRightActive && (getState() == MrRobotState.JUMP_LEFT || getState() == MrRobotState.FALL_LEFT) && Magnets.isMagnetRightClose(getX(), getY())) {
-                setPosition(mrRobotSprite.getX() - PULLING_SPEED * delta, mrRobotSprite.getY());
-            }
-            if(SpriteUtil.isAlignedVertically(this.mrRobotSprite) && (tileBelowId == TILE_ROLL_LEFT_1 || tileBelowId == TILE_ROLL_LEFT_2)) {
-                setPosition(mrRobotSprite.getX() - ROLLING_SPEED * delta, mrRobotSprite.getY());
-            } else if(SpriteUtil.isAlignedVertically(this.mrRobotSprite) && (tileBelowId == TILE_ROLL_RIGHT_1 || tileBelowId == TILE_ROLL_RIGHT_2)) {
-                setPosition(mrRobotSprite.getX() + ROLLING_SPEED * delta, mrRobotSprite.getY());
-            } else if(tileBelowId == TILE_ELEVATOR && tileBehindId == TILE_ELEVATOR && !isRisingUp() && !isJumping()) {
-                mrRobotSprite.startAction(riseUpAction, null);
-            }
+        }
+
+        if(tileBelowId == TILE_DOT && SpriteUtil.isAlignedVertically(this.mrRobotSprite)) {
+            tileMap.clearCell(tileMap.getTileMapCell(TileMap.CELL_TYPE.BELOW));
+            tileMap.decreaseNumberOfDots();
+            Hud.addScore(1);
+        } else if(tileBelowId == TILE_BOMB && isNearlyAlignedVertically()) {
+            Bombs.getInstance().igniteBomb(tileBelow.getColumn(), tileBelow.getRow());
+        }
+        if(magnetLeftActive
+                && (getState() == MrRobotState.JUMP_RIGHT || getState() == MrRobotState.FALL_RIGHT)
+                && Magnets.isMagnetLeftClose(getX(), getY())) {
+            setPosition(mrRobotSprite.getX() + PULLING_SPEED * delta, mrRobotSprite.getY());
+        } else if(magnetRightActive
+                && (getState() == MrRobotState.JUMP_LEFT || getState() == MrRobotState.FALL_LEFT)
+                && Magnets.isMagnetRightClose(getX(), getY())) {
+            setPosition(mrRobotSprite.getX() - PULLING_SPEED * delta, mrRobotSprite.getY());
+        }
+        if(SpriteUtil.isAlignedVertically(this.mrRobotSprite) && (tileBelowId == TILE_ROLL_LEFT_1 || tileBelowId == TILE_ROLL_LEFT_2)) {
+            setPosition(mrRobotSprite.getX() - ROLLING_SPEED * delta, mrRobotSprite.getY());
+        } else if(SpriteUtil.isAlignedVertically(this.mrRobotSprite) && (tileBelowId == TILE_ROLL_RIGHT_1 || tileBelowId == TILE_ROLL_RIGHT_2)) {
+            setPosition(mrRobotSprite.getX() + ROLLING_SPEED * delta, mrRobotSprite.getY());
+        } else if(tileBelowId == TILE_ELEVATOR && tileBehindId == TILE_ELEVATOR && !isRisingUp() && !isJumping()) {
+            mrRobotSprite.startAction(riseUpAction, null);
         }
 
         if(line > 0) {

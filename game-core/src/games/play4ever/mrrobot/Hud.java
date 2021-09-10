@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import games.play4ever.libgdx.Assets;
+import games.play4ever.libgdx.sprites.AnimatedSprite;
 
 public class Hud {
 
@@ -12,6 +13,8 @@ public class Hud {
     private static int score = 0;
     private static int highScore = 0;
     private static int lives = MAX_LIVES;
+
+    private static AnimatedSprite magnetSprite = null;
 
     public static int getHighScore() {
         return highScore;
@@ -33,6 +36,20 @@ public class Hud {
         lives = MAX_LIVES;
     }
 
+    public static void hideMagnet() {
+        if(magnetSprite != null) {
+            magnetSprite.setVisible(false);
+        }
+        magnetSprite = null;
+    }
+
+    public static void showMagnet(AnimatedSprite magnetSprite) {
+        if(Hud.magnetSprite != null) {
+            Hud.magnetSprite.setVisible(false);
+        }
+        Hud.magnetSprite = magnetSprite;
+    }
+
     public static void addScore(int value) {
         score += value;
     }
@@ -50,5 +67,9 @@ public class Hud {
         font.draw(batch, "SCORE: " + score, 2f, 150f);
         font.draw(batch, "HIGHSCORE: " + highScore, 120f, 150f);
         font.draw(batch, "LIVES: " + (lives > -1 ? lives : 0), 260f, 150f);
+        if(magnetSprite != null) {
+            magnetSprite.setPosition(80, 160);
+            magnetSprite.draw(batch, delta);
+        }
     }
 }

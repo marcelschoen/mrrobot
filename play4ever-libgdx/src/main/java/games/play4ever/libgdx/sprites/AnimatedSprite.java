@@ -91,6 +91,9 @@ public class AnimatedSprite extends Sprite implements Pool.Poolable {
 	public AnimatedSprite(TiledMapTile tiledMapTile, float duration, int type) {
 		setType(type);
 		TextureRegion texture = tiledMapTile.getTextureRegion();
+		if(texture == null) {
+			throw new IllegalStateException("* texture must not be null: " + tiledMapTile.getId());
+		}
 		initializeAnimationAndType(new TextureRegion[] { texture }, "tile-" + tiledMapTile.getId(), duration, type, BACKGROUND);
 	}
 

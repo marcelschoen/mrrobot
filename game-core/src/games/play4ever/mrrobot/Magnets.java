@@ -15,8 +15,8 @@ public class Magnets {
     public static List<Sprite> leftMagnets = new ArrayList<>();
     public static List<Sprite> rightMagnets = new ArrayList<>();
 
-    private final static float DISTANCE_VERTICAL = 100;
-    private final static float DISTANCE_HORIZONTAL = 150;
+    private final static float DISTANCE_VERTICAL = 20;
+    private final static float DISTANCE_HORIZONTAL = 50;
 
     public static void reset() {
         leftMagnets = new ArrayList<>();
@@ -33,7 +33,9 @@ public class Magnets {
 
     public static boolean isMagnetLeftClose(float xPos, float yPos) {
         for(Sprite leftMagnet : leftMagnets) {
-            if(xPos < leftMagnet.getX() && leftMagnet.getX() - xPos < DISTANCE_HORIZONTAL && Math.abs(leftMagnet.getY() - yPos) < DISTANCE_VERTICAL) {
+            if(xPos < leftMagnet.getX()
+                    && leftMagnet.getX() - xPos < DISTANCE_HORIZONTAL
+                    && Math.abs((leftMagnet.getY() + 8) - yPos) < DISTANCE_VERTICAL) {
                 return true;
             }
         }
@@ -42,7 +44,9 @@ public class Magnets {
 
     public static boolean isMagnetRightClose(float xPos, float yPos) {
         for(Sprite rightMagnet : rightMagnets) {
-            if(xPos > rightMagnet.getX() && xPos - rightMagnet.getX() < DISTANCE_HORIZONTAL && Math.abs(rightMagnet.getY() - yPos) < DISTANCE_VERTICAL) {
+            if(xPos > rightMagnet.getX()
+                    && xPos - rightMagnet.getX() < DISTANCE_HORIZONTAL
+                    && Math.abs((rightMagnet.getY() + 8) - yPos) < DISTANCE_VERTICAL) {
                 return true;
             }
         }

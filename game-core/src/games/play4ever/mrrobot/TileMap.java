@@ -188,7 +188,6 @@ public class TileMap {
                                 Flame.flames.add(flame);
                                 flame.setTileMap(this);
                                 float[] flameStartingPosition = new float[2];
-//                                flameStartingPosition[0] = x - 8;
                                 flameStartingPosition[0] = x;
                                 flameStartingPosition[1] = y;
                                 flameStartingPositions.put(flame, flameStartingPosition);
