@@ -216,6 +216,7 @@ public class Flame {
         if(!dying) {
             dying = true;
             this.sprite.startAction(killFlameAction, null);
+            currentMovement = FlameMovement.LEFT;
         }
     }
 

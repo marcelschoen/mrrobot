@@ -130,13 +130,13 @@ public class PlayScreen extends AbstractBaseScreen {
 
         batch.begin();
 
-        // Draw Mr. Robot
-        Sprites.drawSprites(batch, delta);
-
-        if(MrRobotGame.isGameOver){
+        if(MrRobotGame.isGameOver) {
             BitmapFont font = Assets.instance().getFont(MrRobotAssets.FONT_ID.SETTINGS);
             font.draw(batch, "GAME", 90f, 140f);
             font.draw(batch, "OVER", 95f, 100f);
+        } else {
+            // Draw Mr. Robot
+            Sprites.drawSprites(batch, delta);
         }
 
         // print debug stuff on screen

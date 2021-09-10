@@ -12,8 +12,6 @@
 
 ### Gameplay features
 
-* Magnets (https://www.youtube.com/watch?v=DRrW01Hfs1k / 23:06)
-** Small magnet icons (left/right): Player picks it up, becomes magnetic for matching magnet
 * Trampolins
 * Bombs kill flames (only when standing on top of exploding bomb)
 * Flames move around
