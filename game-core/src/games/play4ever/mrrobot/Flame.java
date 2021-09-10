@@ -13,6 +13,7 @@ import games.play4ever.libgdx.sprites.action.Action;
 import games.play4ever.libgdx.sprites.action.ActionBuilder;
 
 import static games.play4ever.mrrobot.Tiles.NO_TILE;
+import static games.play4ever.mrrobot.Tiles.TILE_BOMB_EXPLODING;
 import static games.play4ever.mrrobot.Tiles.TILE_LADDER_LEFT;
 
 public class Flame {
@@ -144,6 +145,10 @@ public class Flame {
             moveUp();
         } else if(currentMovement == FlameMovement.DOWN) {
             moveDown();
+        }
+
+        if(tileBelowId == TILE_BOMB_EXPLODING) {
+            die();
         }
     }
 
