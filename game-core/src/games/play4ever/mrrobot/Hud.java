@@ -8,11 +8,12 @@ import games.play4ever.libgdx.sprites.AnimatedSprite;
 
 public class Hud {
 
-    private static final int MAX_LIVES = 1;
+    private static final int MAX_LIVES = 9;
+    private static final int START_LIVES = 3;
 
     private static int score = 0;
     private static int highScore = 0;
-    private static int lives = MAX_LIVES;
+    private static int lives = START_LIVES;
 
     private static AnimatedSprite magnetSprite = null;
 
@@ -33,7 +34,7 @@ public class Hud {
             highScore = score;
         }
         score = 0;
-        lives = MAX_LIVES;
+        lives = START_LIVES;
     }
 
     public static void hideMagnet() {
@@ -60,7 +61,11 @@ public class Hud {
         return lives < 0;
     }
 
-    public static void addLive() { lives++; }
+    public static void addLive() {
+        if(lives < MAX_LIVES) {
+            lives++;
+        }
+    }
 
     public static void doRender(SpriteBatch batch, float delta) {
         BitmapFont font = Assets.instance().getFont(MrRobotAssets.FONT_ID.LOADING);

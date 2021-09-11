@@ -26,6 +26,7 @@ import games.play4ever.mrrobot.actions.TeleportAction;
 import games.play4ever.mrrobot.actions.TeleportCompletedAction;
 import games.play4ever.mrrobot.screens.PlayScreen;
 
+import static games.play4ever.mrrobot.MrRobotState.DYING;
 import static games.play4ever.mrrobot.MrRobotState.STANDING_RIGHT;
 import static games.play4ever.mrrobot.Tiles.NO_TILE;
 import static games.play4ever.mrrobot.Tiles.TILE_BOMB;
@@ -357,6 +358,9 @@ public class MrRobot implements ActionListener, CollisionListener {
      */
     public void handleInput(float delta) {
 
+        if(mrRobotState == DYING) {
+            return;
+        }
         if(mrRobotState.isInputBlocked()) {
             return;
         }
@@ -721,6 +725,10 @@ public class MrRobot implements ActionListener, CollisionListener {
      * @param delta Time delta.
      */
     public void checkMrRobot(float delta) {
+        if(mrRobotState == DYING) {
+            return;
+        }
+
         float y = mrRobotSprite.getY() + 7f;
 
         float line = (y / 8f) - 1f;

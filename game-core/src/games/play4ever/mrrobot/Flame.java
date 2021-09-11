@@ -118,6 +118,10 @@ public class Flame {
         return null;
     }
 
+    public void setCurrentMovement(FlameMovement currentMovement) {
+        this.currentMovement = currentMovement;
+    }
+
     /**
      * Makes the flame move around.
      *

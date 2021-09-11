@@ -287,6 +287,7 @@ public class TileMap {
             flame.setPosition(flameStartingPositions.get(flame)[0], flameStartingPositions.get(flame)[1]);
             flame.setState(Flame.FLAME_STATE.WALKING_LEFT);
             flame.getSprite().setVisible(true);
+            flame.setCurrentMovement(FlameMovement.LEFT);
         }
         mrRobot.getMrRobotSprite().setVisible(true);
     }

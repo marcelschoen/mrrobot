@@ -7,17 +7,18 @@
 
 ## To Dos
 
+* Implement correct key presses / touchscreen support for all screens (touchscreen on menu)
+* Fix joypad button mappings
 * Tune speed of movements, jumping, elevators etc.
 * Check which elements of the map get restored when level restarts after death (bombs? flames?)
 
 ### Gameplay features
 
 * Trampolins
-* Bombs kill flames (only when standing on top of exploding bomb)
-* Flames move around
 
 ### General
 
+* Attract mode (rotate display of levels until key press)
 * Pause
 * Abort ("Are you sure Y/N")
 * Timer ("Energy"): Starts with 99, decreases every second, remaining seconds give score points
