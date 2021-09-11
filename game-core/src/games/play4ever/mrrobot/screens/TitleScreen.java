@@ -5,17 +5,11 @@
 package games.play4ever.mrrobot.screens;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 
 import games.play4ever.libgdx.Assets;
 import games.play4ever.libgdx.screens.AbstractBaseScreen;
-import games.play4ever.libgdx.screens.TransitionScreen;
-import games.play4ever.libgdx.screens.transitions.ScreenTransitions;
-import games.play4ever.mrrobot.GameDataStore;
-import games.play4ever.mrrobot.GameInput;
 import games.play4ever.mrrobot.MrRobotAssets;
-import games.play4ever.mrrobot.MrRobotGame;
 
 /**
  * The title screen.
@@ -25,8 +19,6 @@ import games.play4ever.mrrobot.MrRobotGame;
 public class TitleScreen extends AbstractBaseScreen {
 
 	private Game game = null;
-
-	private static int selectedLevel = 0;
 
 	private static TitleScreen instance = null;
 
@@ -71,42 +63,7 @@ public class TitleScreen extends AbstractBaseScreen {
 
 	@Override
 	public void performLogic(float delta) {
-		if(GameInput.isUpJustPressed()) {
-			menu.decreaseOption();
-		}
-		if(GameInput.isDownJustPressed()) {
-			menu.increaseOption();
-		}
-		if(GameInput.isRightJustPressed() && menu.getCurrentOption() == TitleMenu.optionLabels[TitleMenu.LEVEL_OPTION]) {
-			selectedLevel ++;
-			if(selectedLevel > GameDataStore.getLastUnlockedLevel()) {
-				selectedLevel = 0;
-			}
-			menu.setSelectedLevel(selectedLevel);
-		}
-		if(GameInput.isLeftJustPressed() && menu.getCurrentOption() == TitleMenu.optionLabels[TitleMenu.LEVEL_OPTION]) {
-			selectedLevel --;
-			if(selectedLevel < 0) {
-				selectedLevel = GameDataStore.getLastUnlockedLevel();
-			}
-			menu.setSelectedLevel(selectedLevel);
-		}
-		if(GameInput.isButtonOkPressed()) {
-			if(menu.getCurrentOption() == TitleMenu.optionLabels[TitleMenu.START_OPTION]) {
-				beginGame(menu.getSelectedLevel());
-			} if(menu.getCurrentOption() == TitleMenu.optionLabels[TitleMenu.CONTINUE_OPTION]) {
-				beginGame(GameDataStore.getLastUnlockedLevel());
-			} if(menu.getCurrentOption() == TitleMenu.optionLabels[TitleMenu.LEVEL_OPTION]) {
-			} if(menu.getCurrentOption() == TitleMenu.optionLabels[TitleMenu.EXIT_OPTION]) {
-				Gdx.app.exit();
-			}
-		}
-	}
-
-	private void beginGame(int level) {
-		MrRobotGame.instance().playScreen.startGame(level);
-		MrRobotAssets.playMenuMusic();
-		TransitionScreen.setupAndShowTransition(MrRobotGame.instance(), 2f, ScreenTransitions.ALPHA_FADE.getTransition(), this, MrRobotGame.instance().playScreen);
+		menu.performLogic(this, delta);
 	}
 
 	/* (non-Javadoc)
