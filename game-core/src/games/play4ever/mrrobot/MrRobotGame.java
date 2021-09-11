@@ -6,6 +6,7 @@ import games.play4ever.libgdx.Assets;
 import games.play4ever.libgdx.screens.ScreenUtil;
 import games.play4ever.mrrobot.screens.LoadingScreen;
 import games.play4ever.mrrobot.screens.PlayScreen;
+import games.play4ever.mrrobot.screens.TitleMenu;
 import games.play4ever.mrrobot.screens.TitleScreen;
 
 /**
@@ -73,6 +74,7 @@ public class MrRobotGame extends Game {
     }
 
     public void finishInitialization() {
+        TitleMenu.initialize();
         playScreen = new PlayScreen(this);
     }
 

@@ -4,6 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import games.play4ever.libgdx.Assets;
 import games.play4ever.libgdx.screens.AbstractBaseScreen;
 import games.play4ever.libgdx.screens.TransitionScreen;
@@ -15,7 +18,9 @@ import games.play4ever.mrrobot.MrRobotGame;
 
 public class TitleMenu {
 
-    private int currentOption = 0;
+    private static MenuOption selectedOption = null;
+    private static List<MenuOption> options = new LinkedList<>();
+
     private int selectedLevel = 0;
 
     public static final CharSequence[] optionLabels = new CharSequence[] {
@@ -38,22 +43,47 @@ public class TitleMenu {
         return this.selectedLevel;
     }
 
-    public void increaseOption() {
-        currentOption++;
-        if(currentOption == optionLabels.length) {
-            currentOption = 0;
+    public static void initialize() {
+        BitmapFont font = Assets.instance().getFont(MrRobotAssets.FONT_ID.LOADING);
+        float y = 80;
+        float x = 190;
+        MenuOption option = null;
+        MenuOption firstOption = null;
+        for(int i = 0; i < optionLabels.length; i++) {
+            MenuOption nextOption = new MenuOption(font, optionLabels[i], x, y);
+            options.add(nextOption);
+            if(option != null) {
+                option.setNextOption(nextOption);
+                nextOption.setPreviousOption(option);
+            }
+            option = nextOption;
+            if(firstOption == null) {
+                firstOption = nextOption;
+            }
+            y -= 20;
         }
+        option.setNextOption(firstOption);
+        firstOption.setPreviousOption(option);
+        firstOption.setCurrentlySelected(true);
+        selectedOption = firstOption;
+    }
+
+    public void increaseOption() {
+        MenuOption newSelection = selectedOption.getNextOption();
+        selectedOption.setCurrentlySelected(false);
+        selectedOption = newSelection;
+        selectedOption.setCurrentlySelected(true);
     }
 
     public void decreaseOption() {
-        currentOption--;
-        if(currentOption < 0) {
-            currentOption = optionLabels.length - 1;
-        }
+        MenuOption newSelection = selectedOption.getPreviousOption();
+        selectedOption.setCurrentlySelected(false);
+        selectedOption = newSelection;
+        selectedOption.setCurrentlySelected(true);
     }
 
     public CharSequence getCurrentOption() {
-        return optionLabels[currentOption];
+        return selectedOption.getLabel();
     }
 
     public void performLogic(TitleScreen titleScreen, float delta) {
@@ -99,22 +129,8 @@ public class TitleMenu {
     }
 
     public void render(SpriteBatch batch, float arg0) {
-        BitmapFont font = Assets.instance().getFont(MrRobotAssets.FONT_ID.LOADING);
-        if(font != null) {
-            float y = 80;
-            float x = 190;
-            for(int i = 0; i < optionLabels.length; i++) {
-
-                font.draw(batch, optionLabels[i], x, y);
-
-                if(i == currentOption) {
-                    font.draw(batch, ">", x - 16, y);
-                }
-                if(i == LEVEL_OPTION) {
-                    font.draw(batch, "" + (selectedLevel + 1), x + 50, y);
-                }
-                y -= 20;
-            }
+        for(MenuOption option : options) {
+            option.draw(batch);
         }
     }
 }
