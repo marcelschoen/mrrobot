@@ -16,6 +16,9 @@ public class Tiles {
     public static final int TILE_TRAMPOLINE_MIDDLE = 257;
 
     public static final int TILE_DOT = 2;
+    public static final int TILE_EMPTY = 3;
+    public static final int TILE_EMPTY_LEFT = 1;
+    public static final int TILE_EMPTY_RIGHT = 4;
     public static final int TILE_SLIDER = 17;
     public static final int TILE_ROLL_RIGHT_1 = 12;
     public static final int TILE_ROLL_RIGHT_2 = 13;

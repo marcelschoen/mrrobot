@@ -13,7 +13,14 @@ import games.play4ever.libgdx.sprites.action.Action;
 import games.play4ever.libgdx.sprites.action.ActionBuilder;
 
 import static games.play4ever.mrrobot.Tiles.NO_TILE;
+import static games.play4ever.mrrobot.Tiles.TILE_BOMB;
+import static games.play4ever.mrrobot.Tiles.TILE_BOMB_BURNING;
 import static games.play4ever.mrrobot.Tiles.TILE_BOMB_EXPLODING;
+import static games.play4ever.mrrobot.Tiles.TILE_BOMB_IGNITING;
+import static games.play4ever.mrrobot.Tiles.TILE_DOT;
+import static games.play4ever.mrrobot.Tiles.TILE_EMPTY;
+import static games.play4ever.mrrobot.Tiles.TILE_EMPTY_LEFT;
+import static games.play4ever.mrrobot.Tiles.TILE_EMPTY_RIGHT;
 import static games.play4ever.mrrobot.Tiles.TILE_LADDER_LEFT;
 
 public class Flame {
@@ -156,8 +163,22 @@ public class Flame {
         }
     }
 
+    private boolean isNonUsableTile(int tileId) {
+        if(tileId != TILE_DOT
+                && tileId != TILE_BOMB
+                && tileId != TILE_BOMB_BURNING
+                && tileId != TILE_BOMB_IGNITING
+                && tileId != TILE_BOMB_EXPLODING
+                && tileId != TILE_EMPTY
+                && tileId != TILE_EMPTY_LEFT
+                && tileId != TILE_EMPTY_RIGHT) {
+            return true;
+        }
+        return false;
+    }
+
     private void moveLeft() {
-        if(tileBelowLeftId == NO_TILE) {
+        if(isNonUsableTile(tileBelowLeftId)) {
             currentMovement = FlameMovement.RIGHT;
         }
         if(SpriteUtil.isAlignedHorizontally(sprite)) {
@@ -174,7 +195,7 @@ public class Flame {
         }
     }
     private void moveRight() {
-        if(tileBelowRightId == NO_TILE) {
+        if(isNonUsableTile(tileBelowRightId)) {
             currentMovement = FlameMovement.LEFT;
         }
         if(SpriteUtil.isAlignedHorizontally(sprite)) {
