@@ -48,6 +48,15 @@ public class CollisionRectangle extends Rectangle {
         super(x, y, width, height);
     }
 
+    public boolean surroundsPoint(float x, float y) {
+        if(x >= getX() && x <= getX() + getWidth()) {
+            if(y >= getY() && y <= getY() + getHeight()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void setSprite(AnimatedSprite sprite) {
         this.sprite = sprite;
     }

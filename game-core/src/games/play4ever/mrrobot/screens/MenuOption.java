@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import games.play4ever.libgdx.collision.CollisionRectangle;
+import games.play4ever.mrrobot.GameInput;
 
 /**
  * Encapsulates the text and touch rectangle handling
@@ -34,6 +35,7 @@ public class MenuOption {
         this.yPos = yPos;
         if(font != null) {
             layout.setText(font, label);
+            collisionRectangle = new CollisionRectangle(xPos, yPos, layout.width, layout.height);
         } else {
             throw new IllegalStateException("Bitmap font not loaded!");
         }
@@ -70,12 +72,23 @@ public class MenuOption {
         this.currentlySelected = currentlySelected;
     }
 
-    public boolean isTouched() {
+    public boolean isCurrentlySelected() {
+        return currentlySelected;
+    }
+
+    public void performLogic() {
+        if (GameInput.isUpJustPressed() && isCurrentlySelected()) {
+            GameMenu.setSelectedOption(getPreviousOption());
+        }
+        if (GameInput.isDownJustPressed() && isCurrentlySelected()) {
+            GameMenu.setSelectedOption(getNextOption());
+        }
         for(int finger=0; finger<2; finger++) {
-            if (Gdx.input.isTouched(finger)) {
-////                transformTouchCoordinates(Gdx.input.getX(finger), Gdx.input.getY(finger), camera);
+            if (Gdx.input.isTouched(finger) && !isCurrentlySelected()) {
+                if(collisionRectangle.surroundsPoint(Gdx.input.getX(finger), Gdx.input.getY(finger))) {
+                    GameMenu.setSelectedOption(this);
+                }
             }
         }
-        return false;
     }
 }

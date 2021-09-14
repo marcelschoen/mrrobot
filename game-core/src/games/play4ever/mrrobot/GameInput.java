@@ -145,11 +145,19 @@ public class GameInput implements ControllerListener, InputProcessor {
     }
 
     public static boolean isUpJustPressed() {
+        if(Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+            System.out.println("______ UP just pressed _____");
+            return true;
+        }
+        /*
         if(Gdx.input.isKeyJustPressed(Input.Keys.UP)
                 || Gdx.input.isKeyJustPressed(Input.Keys.DPAD_UP)
                 || (connected && controllerJustUp)) {
+            System.out.println("______ UP just pressed _____");
             return true;
         }
+
+         */
         return false;
     }
 
